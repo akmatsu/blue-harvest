@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SmartCropController;
 
-Route::get('/user', function (Request $request): JsonResponse {
-  return response()->json('yoooooo');
-});
+Route::get('/blue-harvest', [SmartCropController::class, 'index'])->name(
+  'blue-harvest'
+);

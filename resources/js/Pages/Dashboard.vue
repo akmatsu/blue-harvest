@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { getUser } from '@/utils/apiAbstractions/userClient';
+import { getOptimizedImage } from '@/utils/apiAbstractions/userClient';
 import { Head } from '@inertiajs/vue3';
 
 async function handleClick() {
-  const user = await getUser();
-  console.log(user);
+  const image = await getOptimizedImage();
+  console.log(image);
 }
 </script>
 
