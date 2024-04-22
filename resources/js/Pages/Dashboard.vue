@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { getUser } from '@/utils/apiAbstractions/userClient';
 import { Head } from '@inertiajs/vue3';
+
+async function handleClick() {
+  const user = await getUser();
+  console.log(user);
+}
 </script>
 
 <template>
@@ -21,7 +27,7 @@ import { Head } from '@inertiajs/vue3';
           class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg"
         >
           <div class="p-6 text-gray-900 dark:text-gray-100">
-            You're logged in!
+            <button @click="handleClick()">Click me!</button>
           </div>
         </div>
       </div>
