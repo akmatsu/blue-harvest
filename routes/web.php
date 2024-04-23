@@ -5,6 +5,12 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// TODO: Implement the upload view.
+// TODO: Implement the image manage view for image owners.
+// TODO: Implement the public browse view.
+// TODO: Implement the wizard view.
+// TODO: Implement the user management view for admins.
+
 Route::get('/', function () {
   return Inertia::render('Welcome', [
     'canLogin' => Route::has('login'),

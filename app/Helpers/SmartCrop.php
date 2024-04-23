@@ -7,6 +7,22 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
 use Intervention\Image\Image as Img;
 
+/* 
+  TODO: Add support for more query parameters 
+  Height
+  Width
+  Quality
+  Format: jpeg, png, webp, gif? - default should be webp since it's most performant over web. We should specify this to users.
+*/
+
+/*
+  TODO: Prevent duplication. If an image that fits the parameters has already been set don't generate a new one
+*/
+
+/*
+  TODO: Implement smart cropping. Right now images get squished when aspect ratio is not maintained.
+*/
+
 class SmartCrop
 {
   protected string $input;
@@ -23,7 +39,7 @@ class SmartCrop
     $this->output = $this->generateOutputPath();
   }
 
-  public function createAndStoreImage(): string
+  public function createAndStoreImage()
   {
     try {
       $this->image = Image::read(file_get_contents($this->input));
@@ -56,12 +72,12 @@ class SmartCrop
     }
   }
 
-  protected function saveImageLocally(): string
+  protected function saveImageLocally()
   {
     // Store the image in the local filesystem
-    $path = Storage::disk('local')->path($this->output);
+    $path = Storage::path($this->output);
     Log::info($path);
     $this->image->toJpeg(90)->save($path);
-    return $path;
+    return Storage::download($this->output);
   }
 }
