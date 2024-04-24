@@ -8,20 +8,16 @@ use Intervention\Image\Laravel\Facades\Image;
 use Intervention\Image\Image as Img;
 
 /* 
-  TODO: Add support for more query parameters 
+  TODO Add support for more query parameters 
   Height
   Width
   Quality
   Format: jpeg, png, webp, gif? - default should be webp since it's most performant over web. We should specify this to users.
 */
 
-/*
-  TODO: Prevent duplication. If an image that fits the parameters has already been set don't generate a new one
-*/
+// TODO: Prevent duplication. If an image that fits the parameters has already been set don't generate a new one
 
-/*
-  TODO: Implement smart cropping. Right now images get squished when aspect ratio is not maintained.
-*/
+// TODO: Implement smart cropping.
 
 class SmartCrop
 {
@@ -29,9 +25,9 @@ class SmartCrop
   protected string $output;
   public Img $image;
 
-  const MAX_SIZE_BYTES = 30000000; // 30 MB, potentially unnecessary if only local files are handled
-  const MAX_HEIGHT = 1000; // Reducing max size for practical use
-  const MAX_WIDTH = 1000; // Reducing max size for practical use
+  const MAX_SIZE_BYTES = 25000000; // 25 MB, potentially unnecessary if only local files are handled
+  const MAX_HEIGHT = 500; // Reducing max size for practical use
+  const MAX_WIDTH = 500; // Reducing max size for practical use
 
   public function __construct($input)
   {
@@ -53,7 +49,7 @@ class SmartCrop
 
   protected function generateOutputPath(): string
   {
-    return 'public/processed_images/' . md5($this->input) . '.jpg';
+    return 'public/processed_images/' . md5($this->input) . '.webp';
   }
 
   protected function resizeImage(): void
@@ -63,12 +59,7 @@ class SmartCrop
       $this->image->width() > self::MAX_WIDTH ||
       $this->image->height() > self::MAX_HEIGHT
     ) {
-      $this->image->resize(self::MAX_WIDTH, self::MAX_HEIGHT, function (
-        $constraint
-      ) {
-        $constraint->aspectRatio();
-        $constraint->upsize();
-      });
+      $this->image->pad(self::MAX_WIDTH, self::MAX_HEIGHT);
     }
   }
 
@@ -77,7 +68,7 @@ class SmartCrop
     // Store the image in the local filesystem
     $path = Storage::path($this->output);
     Log::info($path);
-    $this->image->toJpeg(90)->save($path);
+    $this->image->toWebp(90)->save($path);
     return Storage::download($this->output);
   }
 }

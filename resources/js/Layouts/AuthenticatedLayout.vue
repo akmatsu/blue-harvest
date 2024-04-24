@@ -37,6 +37,11 @@ const showingNavigationDropdown = ref(false);
                 >
                   Dashboard
                 </NavLink>
+                <NavLink
+                  :href="route('image-upload')"
+                  :active="route().current('image-upload')"
+                  >Image Upload</NavLink
+                >
               </div>
             </div>
 
