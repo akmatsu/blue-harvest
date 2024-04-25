@@ -2,7 +2,10 @@
 
 namespace App\Helpers;
 
+use App\Helpers\Concerns\SetOptions;
+use Illuminate\Process\Exceptions\ProcessFailedException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
 use Intervention\Image\Image as Img;
@@ -15,12 +18,12 @@ use Intervention\Image\Image as Img;
   Format: jpeg, png, webp, gif? - default should be webp since it's most performant over web. We should specify this to users.
 */
 
-// TODO: Prevent duplication. If an image that fits the parameters has already been set don't generate a new one
-
 // TODO: Implement smart cropping.
 
 class SmartCrop
 {
+  use SetOptions;
+
   protected string $input;
   protected string $output;
   public Img $image;
@@ -37,13 +40,21 @@ class SmartCrop
 
   public function createAndStoreImage()
   {
+    // if ($this->imageExists()) {
+    //   return $this->download();
+    // }
+
     try {
-      $this->image = Image::read(file_get_contents($this->input));
+      $this->image = Image::read(Storage::get($this->input));
+      if ($this->crop == 'smart') {
+        $this->runSmartCropJs();
+      }
       $this->resizeImage();
-      return $this->saveImageLocally();
+      $this->formatImage();
+      $this->saveImage();
+      return $this->download();
     } catch (\Exception $e) {
-      echo 'Caught exception: ', $e->getMessage(), '\n';
-      return 'Oops';
+      Log::error($e->getMessage());
     }
   }
 
@@ -63,12 +74,36 @@ class SmartCrop
     }
   }
 
-  protected function saveImageLocally()
+  protected function formatImage(): void
+  {
+    //
+    $this->image->encodeByExtension('webp');
+  }
+
+  protected function saveImage()
   {
     // Store the image in the local filesystem
     $path = Storage::path($this->output);
-    Log::info($path);
-    $this->image->toWebp(90)->save($path);
+    $this->image->save($path);
+  }
+
+  protected function imageExists(): bool
+  {
+    return Storage::exists($this->output);
+  }
+
+  public function download()
+  {
     return Storage::download($this->output);
+  }
+
+  protected function runSmartCropJs()
+  {
+    $result = Process::path(base_path())->run('smartcrop');
+    if ($result->failed()) {
+      Log::error('Error: ' . $result->errorOutput());
+    } else {
+      Log::debug('Success: ' . $result->output());
+    }
   }
 }

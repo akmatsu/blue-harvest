@@ -5,16 +5,32 @@ namespace App\Http\Controllers;
 use App\Helpers\SmartCrop;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Image;
 
 class SmartCropController extends Controller
 {
   public function index(Request $r): object
   {
-    $input = $r->query(
-      'input',
-      'https://images.unsplash.com/photo-1713086158386-a3dccad87df9?q=80&w=2586&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-    );
-    $sc = new SmartCrop($input);
-    return $sc->createAndStoreImage();
+    $r->validate(['id' => 'required|integer']);
+    $id = $r->query('id');
+    $path = Image::findOrFail($id)->path;
+    $options = $this->getOptions();
+    $sc = new SmartCrop($path);
+    return $sc->options($options)->createAndStoreImage();
+  }
+
+  protected function getOptions(): object
+  {
+    $return = (object) [
+      // Defaults
+      'width' => (int) request('width', 0),
+      'height' => (int) request('height', 0),
+      'crop' => (string) request('crop', 'none'),
+      'extension' => (string) request('extension', 'webp'),
+      'quality' => (string) request('quality', '75'),
+      'filter' => (string) request('filter', null),
+    ];
+
+    return $return;
   }
 }

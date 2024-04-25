@@ -25,11 +25,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::get('/dashboard', [WebPageController::class, 'index'])->name(
     'dashboard'
   );
-  Route::get('/upload', [ImageUploadController::class, 'index'])->name(
+  Route::get('/upload', [ImageUploadController::class, 'uploadView'])->name(
     'image-upload'
   );
-  Route::post('/images', [ImageUploadController::class, 'upload'])->name(
+  Route::post('/images', [ImageUploadController::class, 'uploadImage'])->name(
     'image.upload'
+  );
+  Route::get('/images', [ImageUploadController::class, 'index'])->name(
+    'browse-images'
+  );
+  Route::get('/images/{id}', [ImageUploadController::class, 'view'])->name(
+    'image-view'
   );
 });
 

@@ -8,15 +8,21 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ImageUploadController extends Controller
 {
   public function index()
   {
+    $images = Image::all();
+    return Inertia::render('Browse', ['images' => $images]);
+  }
+  public function uploadView()
+  {
     return Inertia::render('ImageUpload');
   }
-  public function upload(Request $request): JsonResponse
+  public function uploadImage(Request $request): JsonResponse
   {
     $request->validate([
       'files' => 'required|array',
@@ -29,17 +35,27 @@ class ImageUploadController extends Controller
     foreach ($files as $file) {
       $path = $file->store('public/uploads');
 
+      Log::debug('APP_URL: ' . env('APP_URL'));
+      Log::debug('Generated URL: ' . Storage::url($path));
+
       $image = new Image();
       $image->user_id = Auth::id();
       $image->name = $file->getClientOriginalName();
       $image->path = $path;
       $image->mime_type = $file->getClientMimeType();
       $image->size = $file->getSize();
+      $image->url = Storage::url($path);
       $image->save();
 
       $paths[] = $path;
     }
 
     return response()->json(['uploaded' => true, 'paths' => $paths], 200);
+  }
+
+  public function view($id)
+  {
+    $image = Image::findOrFail($id);
+    return Inertia::render('ViewImage', ['image' => $image]);
   }
 }

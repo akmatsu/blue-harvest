@@ -40,8 +40,15 @@ const showingNavigationDropdown = ref(false);
                 <NavLink
                   :href="route('image-upload')"
                   :active="route().current('image-upload')"
-                  >Image Upload</NavLink
                 >
+                  Image Upload
+                </NavLink>
+                <NavLink
+                  :href="route('browse-images')"
+                  :active="route().current('browse-images')"
+                >
+                  Browse
+                </NavLink>
               </div>
             </div>
 
