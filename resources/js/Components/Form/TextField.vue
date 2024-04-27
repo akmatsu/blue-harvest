@@ -6,6 +6,9 @@ withDefaults(
     name?: string;
     type?: InputHTMLAttributes['type'];
     required?: boolean;
+    min?: InputHTMLAttributes['min'];
+    max?: InputHTMLAttributes['max'];
+    rules?: ((input?: string | number) => string | true)[];
   }>(),
   {
     type: 'text',
@@ -23,9 +26,11 @@ const input = defineModel();
     <input
       :id="`input-${name}`"
       v-model="input"
-      class="hover:cursor-text"
+      class="form-input"
       :required="required"
       :type="type"
+      :min="min"
+      :max="max"
     />
   </div>
 </template>

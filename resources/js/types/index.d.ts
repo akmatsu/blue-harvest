@@ -17,6 +17,8 @@ export interface Image {
   updated_at: string;
   user_id: number;
   url: string;
+  width: number;
+  height: number;
 }
 
 export type PageProps<

@@ -7,9 +7,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// TODO: Remove the dashboard view or change it to something else.
 // TODO: Implement the image manage view for image owners.
-// TODO: Implement the public browse view.
-// TODO: Implement the wizard view.
 // TODO: Implement the user management view for admins.
 
 Route::get('/', function () {

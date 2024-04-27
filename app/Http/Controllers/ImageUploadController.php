@@ -35,9 +35,6 @@ class ImageUploadController extends Controller
     foreach ($files as $file) {
       $path = $file->store('public/uploads');
 
-      Log::debug('APP_URL: ' . env('APP_URL'));
-      Log::debug('Generated URL: ' . Storage::url($path));
-
       $image = new Image();
       $image->user_id = Auth::id();
       $image->name = $file->getClientOriginalName();
@@ -45,6 +42,12 @@ class ImageUploadController extends Controller
       $image->mime_type = $file->getClientMimeType();
       $image->size = $file->getSize();
       $image->url = Storage::url($path);
+
+      // Get image dimensions
+      $imageDetails = getimagesize($file->getRealPath());
+      $image->width = $imageDetails[0];
+      $image->height = $imageDetails[1];
+
       $image->save();
 
       $paths[] = $path;

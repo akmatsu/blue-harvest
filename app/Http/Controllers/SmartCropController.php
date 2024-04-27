@@ -15,8 +15,8 @@ class SmartCropController extends Controller
     $id = $r->query('id');
     $path = Image::findOrFail($id)->path;
     $options = $this->getOptions();
-    $sc = new SmartCrop($path);
-    return $sc->options($options)->createAndStoreImage();
+    $sc = new SmartCrop($path, $options);
+    return $sc->createAndStoreImage();
   }
 
   protected function getOptions(): object
