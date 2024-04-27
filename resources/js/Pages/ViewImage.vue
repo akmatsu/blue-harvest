@@ -10,14 +10,7 @@ import {
   TextField,
 } from '@/Components';
 import { Image } from '@/types';
-import {
-  reactive,
-  computed,
-  ref,
-  onBeforeMount,
-  watchEffect,
-  watch,
-} from 'vue';
+import { reactive, computed, ref, onBeforeMount, watch } from 'vue';
 import { useAspectRatio } from '@/composables/useAspectRatio';
 
 const props = defineProps<{
@@ -58,6 +51,43 @@ const cropOptions = [
   {
     text: 'Smart',
     value: 'smart',
+  },
+  {
+    text: 'Center',
+    value: 'center',
+  },
+  {
+    text: 'Top',
+    value: 'top',
+  },
+  {
+    text: 'Top Left',
+    value: 'top-left',
+  },
+
+  {
+    text: 'Top Right',
+    value: 'top-right',
+  },
+  {
+    text: 'Bottom',
+    value: 'bottom',
+  },
+  {
+    text: 'Bottom Right',
+    value: 'bottom-right',
+  },
+  {
+    text: 'Bottom Left',
+    value: 'bottom-left',
+  },
+  {
+    text: 'Left',
+    value: 'left',
+  },
+  {
+    text: 'Right',
+    value: 'right',
   },
 ];
 

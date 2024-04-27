@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Facades\Bus;
+use App\Jobs\DeleteFileJob;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
@@ -47,7 +49,11 @@ class SmartCrop
       $this->resizeImage();
       $this->formatImage();
       $this->saveImage();
-      return $this->download();
+      $response = $this->download();
+
+      Bus::chain([new DeleteFileJob($this->output)]);
+
+      return $response;
     } catch (\Exception $e) {
       Log::error($e->getMessage());
     }
@@ -63,12 +69,18 @@ class SmartCrop
 
   protected function resizeImage(): void
   {
-    if ($this->height) {
-      $this->image->resize(height: $this->height);
+    if ($this->crop == 'none') {
+      if ($this->height) {
+        $this->image->resize(height: $this->height);
+      }
+
+      if ($this->width) {
+        $this->image->resize(width: $this->width);
+      }
     }
 
-    if ($this->width) {
-      $this->image->resize(width: $this->width);
+    if ($this->crop != 'smart' || $this->crop != 'none') {
+      $this->image->crop($this->width, $this->height, position: $this->crop);
     }
 
     if (
