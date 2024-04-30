@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Image;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
-class ImageUploadController extends Controller
+class ImageController extends Controller
 {
   public function index()
   {
@@ -60,5 +61,14 @@ class ImageUploadController extends Controller
   {
     $image = Image::findOrFail($id);
     return Inertia::render('ViewImage', ['image' => $image]);
+  }
+
+  public function manageImages()
+  {
+    $user = Auth::user();
+
+    if ($user) {
+      return Inertia::render('ManageImages', ['images' => $user->images]);
+    }
   }
 }

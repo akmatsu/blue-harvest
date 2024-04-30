@@ -10,7 +10,6 @@ import {
   TextField,
 } from '@/Components';
 import { Image } from '@/types';
-import { reactive, computed, ref, onBeforeMount, watch } from 'vue';
 import { useAspectRatio } from '@/composables/useAspectRatio';
 
 const props = defineProps<{

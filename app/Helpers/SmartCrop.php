@@ -51,7 +51,8 @@ class SmartCrop
       $this->saveImage();
       $response = $this->download();
 
-      Bus::chain([new DeleteFileJob($this->output)]);
+      // Bus::chain([new DeleteFileJob($this->output)])->dispatch();
+      DeleteFileJob::dispatch($this->output);
 
       return $response;
     } catch (\Exception $e) {

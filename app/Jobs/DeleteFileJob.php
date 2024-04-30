@@ -6,6 +6,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class DeleteFileJob implements ShouldQueue
@@ -21,6 +22,11 @@ class DeleteFileJob implements ShouldQueue
 
   public function handle()
   {
-    Storage::delete($this->filePath);
+    Log::info("Starting to delete file: {$this->filePath}");
+    if (Storage::delete($this->filePath)) {
+      Log::info("File deleted successfully: {$this->filePath}");
+    } else {
+      Log::error("Failed to delete file: {$this->filePath}");
+    }
   }
 }

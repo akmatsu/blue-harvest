@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ImageUploadController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WebPageController;
 use Illuminate\Foundation\Application;
@@ -24,17 +24,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::get('/dashboard', [WebPageController::class, 'index'])->name(
     'dashboard'
   );
-  Route::get('/upload', [ImageUploadController::class, 'uploadView'])->name(
+  Route::get('/upload', [ImageController::class, 'uploadView'])->name(
     'image-upload'
   );
-  Route::post('/images', [ImageUploadController::class, 'uploadImage'])->name(
+  Route::post('/images', [ImageController::class, 'uploadImage'])->name(
     'image.upload'
   );
-  Route::get('/images', [ImageUploadController::class, 'index'])->name(
+  Route::get('/images', [ImageController::class, 'index'])->name(
     'browse-images'
   );
-  Route::get('/images/{id}', [ImageUploadController::class, 'view'])->name(
+  Route::get('/images/{id}', [ImageController::class, 'view'])->name(
     'image-view'
+  );
+  Route::get('/manage-images', [ImageController::class, 'manageImages'])->name(
+    'image-manage'
   );
 });
 
