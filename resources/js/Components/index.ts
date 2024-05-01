@@ -17,3 +17,4 @@ export { default as PrimaryButton } from './PrimaryButton.vue';
 export { default as ResponsiveNavLink } from './ResponsiveNavLink.vue';
 export { default as SecondaryButton } from './SecondaryButton.vue';
 export { default as TextInput } from './TextInput.vue';
+export { default as ToastStack } from './ToastStack.vue';

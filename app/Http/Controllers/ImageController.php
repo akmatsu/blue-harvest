@@ -87,7 +87,6 @@ class ImageController extends Controller
 
   public function bulkDelete(Request $request)
   {
-    Log::info('ran');
     $validated = $request->validate([
       'ids' => 'required|array|min:1',
       'ids.*' => 'integer:exists:images,id',
@@ -96,8 +95,6 @@ class ImageController extends Controller
     $images = Image::all()
       ->whereIn('id', $validated['ids'])
       ->where('user_id', $user_id);
-
-    Log::info($images);
 
     foreach ($images as $image) {
       $image->delete();

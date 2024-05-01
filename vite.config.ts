@@ -31,7 +31,7 @@ export default defineConfig({
     }),
 
     AutoImport({
-      imports: ['vue'],
+      imports: ['vue', 'pinia'],
       vueTemplate: true,
       dts: './resources/js/auto-imports.d.ts',
     }),
