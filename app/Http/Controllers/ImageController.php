@@ -71,4 +71,38 @@ class ImageController extends Controller
       return Inertia::render('ManageImages', ['images' => $user->images]);
     }
   }
+
+  public function delete($id)
+  {
+    $user_id = Auth::id();
+    $image = Image::findOrFail($id)->where('user_id', $user_id);
+
+    if ($image) {
+      $image->delete();
+      return response('Image successfully deleted', 202);
+    }
+
+    return response('Image does not exist or has already been deleted', 204);
+  }
+
+  public function bulkDelete(Request $request)
+  {
+    Log::info('ran');
+    $validated = $request->validate([
+      'ids' => 'required|array|min:1',
+      'ids.*' => 'integer:exists:images,id',
+    ]);
+    $user_id = Auth::id();
+    $images = Image::all()
+      ->whereIn('id', $validated['ids'])
+      ->where('user_id', $user_id);
+
+    Log::info($images);
+
+    foreach ($images as $image) {
+      $image->delete();
+    }
+
+    return response('Images successfully deleted', 202);
+  }
 }

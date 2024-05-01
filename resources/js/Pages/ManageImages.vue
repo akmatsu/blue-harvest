@@ -1,13 +1,16 @@
 <script lang="ts" setup>
-// import { CCard, Header2, ImageCard, PageContainer } from '@/Components';
 import { Head } from '@inertiajs/vue3';
 import { Image } from '@/types';
-import { formatDate } from '@/utils';
+import { formatDate, imageDelete } from '@/utils';
 import CoreLayout from '@/Layouts/CoreLayout.vue';
 
 defineProps<{ images: Image[] }>();
 
-const selected = ref([]);
+const selected = ref<number[]>([]);
+
+async function handleDelete() {
+  return imageDelete(selected.value);
+}
 
 const headers = [
   {
@@ -29,6 +32,10 @@ const headers = [
   {
     title: 'Updated',
     key: 'updated_at',
+  },
+  {
+    title: 'Actions',
+    key: 'url',
   },
 ];
 </script>
@@ -67,7 +74,9 @@ const headers = [
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn @click="isActive.value = false">Cancel</v-btn>
-                  <v-btn variant="flat" color="error">Delete</v-btn>
+                  <v-btn variant="flat" color="error" @click="handleDelete">
+                    Delete
+                  </v-btn>
                 </v-card-actions>
               </v-card>
             </template>
@@ -80,6 +89,25 @@ const headers = [
       </template>
       <template #item.updated_at="{ item }">
         {{ formatDate(item.updated_at) }}
+      </template>
+      <template #item.url="{ item }">
+        <v-dialog max-width="800">
+          <template #activator="{ props }">
+            <v-btn v-bind="props" color="primary">View Image</v-btn>
+          </template>
+          <v-card :title="item.name">
+            <v-card-text>
+              <v-img :src="item.url"></v-img>
+              <div class="d-flex">
+                <p class="text-caption">
+                  Dimensions: {{ item.width }} x {{ item.height }}
+                </p>
+                <v-spacer></v-spacer>
+                <p class="text-caption">Size: {{ item.size }} Bytes</p>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
       </template>
     </v-data-table>
   </CoreLayout>

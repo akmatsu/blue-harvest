@@ -6,6 +6,9 @@ import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 
 export default defineConfig({
+  optimizeDeps: {
+    include: ['vuetify'],
+  },
   plugins: [
     laravel({
       input: 'resources/js/app.ts',

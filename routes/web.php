@@ -27,14 +27,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::get('/upload', [ImageController::class, 'uploadView'])->name(
     'image-upload'
   );
+  Route::get('/images', [ImageController::class, 'manageImages'])->name(
+    'image-manage'
+  );
   Route::post('/images', [ImageController::class, 'uploadImage'])->name(
     'image.upload'
+  );
+  Route::delete('/images', [ImageController::class, 'bulkDelete'])->name(
+    'image-delete-bulk'
   );
   Route::get('/images/{id}', [ImageController::class, 'view'])->name(
     'image-view'
   );
-  Route::get('/images', [ImageController::class, 'manageImages'])->name(
-    'image-manage'
+  Route::delete('/images/{id}', [ImageController::class, 'delete'])->name(
+    'image-delete'
   );
 });
 
