@@ -21,8 +21,8 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-  Route::get('/dashboard', [WebPageController::class, 'index'])->name(
-    'dashboard'
+  Route::get('/browse', [ImageController::class, 'index'])->name(
+    'browse-images'
   );
   Route::get('/upload', [ImageController::class, 'uploadView'])->name(
     'image-upload'
@@ -30,13 +30,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::post('/images', [ImageController::class, 'uploadImage'])->name(
     'image.upload'
   );
-  Route::get('/images', [ImageController::class, 'index'])->name(
-    'browse-images'
-  );
   Route::get('/images/{id}', [ImageController::class, 'view'])->name(
     'image-view'
   );
-  Route::get('/manage-images', [ImageController::class, 'manageImages'])->name(
+  Route::get('/images', [ImageController::class, 'manageImages'])->name(
     'image-manage'
   );
 });

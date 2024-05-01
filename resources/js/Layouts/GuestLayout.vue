@@ -5,9 +5,7 @@ import { Link } from '@inertiajs/vue3';
 <template>
   <v-app>
     <VAppBar title="Muffins" elevation="2">
-      <Link :href="route('dashboard')">
-        <v-icon>$delete</v-icon>
-      </Link>
+      <Link class="v-btn" href="/browse">Start Browsing</Link>
     </VAppBar>
     <v-main>
       <slot />

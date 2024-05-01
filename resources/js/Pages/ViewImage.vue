@@ -1,16 +1,8 @@
 <script setup lang="ts">
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import {
-  CCard,
-  InputLabel,
-  PrimaryButton,
-  SecondaryButton,
-  SelectField,
-  TextField,
-} from '@/Components';
 import { Image } from '@/types';
 import { useAspectRatio } from '@/composables/useAspectRatio';
+import CoreLayout from '@/Layouts/CoreLayout.vue';
 
 const props = defineProps<{
   image: Image;
@@ -29,63 +21,63 @@ const currentUrl = ref<string>(props.image.url);
 
 const fileExtOptions = [
   {
-    text: 'WEBP',
+    title: 'WEBP',
     value: 'webp',
   },
   {
-    text: 'PNG',
+    title: 'PNG',
     value: 'png',
   },
   {
-    text: 'JPG',
+    title: 'JPG',
     value: 'jpg',
   },
 ];
 
 const cropOptions = [
   {
-    text: 'None',
+    title: 'None',
     value: 'none',
   },
   {
-    text: 'Smart',
+    title: 'Smart',
     value: 'smart',
   },
   {
-    text: 'Center',
+    title: 'Center',
     value: 'center',
   },
   {
-    text: 'Top',
+    title: 'Top',
     value: 'top',
   },
   {
-    text: 'Top Left',
+    title: 'Top Left',
     value: 'top-left',
   },
 
   {
-    text: 'Top Right',
+    title: 'Top Right',
     value: 'top-right',
   },
   {
-    text: 'Bottom',
+    title: 'Bottom',
     value: 'bottom',
   },
   {
-    text: 'Bottom Right',
+    title: 'Bottom Right',
     value: 'bottom-right',
   },
   {
-    text: 'Bottom Left',
+    title: 'Bottom Left',
     value: 'bottom-left',
   },
   {
-    text: 'Left',
+    title: 'Left',
     value: 'left',
   },
   {
-    text: 'Right',
+    title: 'Right',
     value: 'right',
   },
 ];
@@ -111,110 +103,72 @@ const qualityOptions = computed(() => {
   for (let i = 1; i <= 100; i++) {
     const t = i.toString();
     options.push({
-      text: t,
+      title: t,
       value: i,
     });
   }
   return options;
 });
+
+const lockIcon = computed(() =>
+  isAspectRatioLocked.value ? 'mdi-lock' : 'mdi-lock-open-variant',
+);
 </script>
 
 <template>
   <Head title="Dashboard" />
 
-  <AuthenticatedLayout>
-    <div class="flex p-4 gap-4">
-      <CCard
-        title="Image Properties"
-        class="w-full sticky top-4 h-fit max-w-xl overflow-visible"
-      >
-        <form>
-          <div class="flex gap-4 flex-wrap items-center">
-            <div>
-              <InputLabel>Width</InputLabel>
-              <TextField
-                v-model="width"
-                type="number"
-                min="1"
-                max="3840"
-                @input="updateHeight"
-              />
-            </div>
-            <div>
-              <InputLabel>Height</InputLabel>
-              <TextField
-                v-model="height"
-                type="number"
-                min="1"
-                max="3840"
-                @input="updateWidth"
-              />
-            </div>
-
-            <SecondaryButton
-              @click="isAspectRatioLocked = !isAspectRatioLocked"
-            >
-              <svg
-                v-if="isAspectRatioLocked"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
-                />
-              </svg>
-
-              <svg
-                v-if="!isAspectRatioLocked"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
-                />
-              </svg>
-            </SecondaryButton>
-          </div>
-          <SelectField v-model="fields.crop" :items="cropOptions" name="Crop" />
-          <SelectField
-            v-model="fields.extension"
-            :items="fileExtOptions"
-            name="File Extension"
+  <CoreLayout fluid>
+    <VNavigationDrawer location="right" width="600">
+      <v-list nav>
+        <v-list-item title="Image Properties"></v-list-item>
+      </v-list>
+      <v-form class="pa-2">
+        <div class="d-flex" style="gap: 1rem">
+          <v-text-field
+            v-model="width"
+            type="number"
+            min="1"
+            max="3840"
+            @input="updateHeight"
           />
-          <SelectField
-            v-model="fields.quality"
-            :items="qualityOptions"
-            name="Quality"
+          <v-text-field
+            v-model="height"
+            type="number"
+            min="1"
+            max="3840"
+            @input="updateWidth"
           />
-        </form>
-      </CCard>
-      <CCard class="w-full flex flex-col" title="Preview">
-        <div class="h-full flex flex-col justify-between gap-4">
-          <div class="mx-auto">
-            <img :src="currentUrl" class="max-w-full" />
-          </div>
-
-          <div
-            class="flex flex-wrap flex-col sm:flex-row justify-end gap-2 items-center"
-          >
-            <SecondaryButton>View Original Image</SecondaryButton>
-            <SecondaryButton>Download</SecondaryButton>
-            <PrimaryButton>Copy URL</PrimaryButton>
-          </div>
+          <v-btn
+            :icon="lockIcon"
+            size="small"
+            @click="isAspectRatioLocked = !isAspectRatioLocked"
+          />
         </div>
-      </CCard>
-    </div>
-  </AuthenticatedLayout>
+        <v-autocomplete
+          v-model="fields.crop"
+          :items="cropOptions"
+          name="Crop"
+        />
+        <v-autocomplete
+          v-model="fields.extension"
+          :items="fileExtOptions"
+          name="File Extension"
+        />
+        <v-select
+          v-model="fields.quality"
+          :items="qualityOptions"
+          name="Quality"
+        />
+        <v-btn>View Original Image</v-btn>
+        <v-btn>Download</v-btn>
+        <v-btn>Copy URL</v-btn>
+      </v-form>
+    </VNavigationDrawer>
+    <v-container class="d-flex justify-center align-center">
+      <div style="max-width: 100%">
+        <v-img :src="currentUrl" height="auto" width="auto" />
+      </div>
+    </v-container>
+  </CoreLayout>
 </template>
