@@ -3,14 +3,17 @@ import { Head } from '@inertiajs/vue3';
 import { Image } from '@/types';
 import { formatDate, imageDelete } from '@/utils';
 import CoreLayout from '@/Layouts/CoreLayout.vue';
+import { useRequest } from '@/composables/useRequest';
+import { useToasts } from '@/store/toasts';
 
 defineProps<{ images: Image[] }>();
+const toast = useToasts();
 
 const selected = ref<number[]>([]);
-
-async function handleDelete() {
-  return imageDelete(selected.value);
-}
+const { exec, loading } = useRequest(imageDelete, {
+  onSuccess: () =>
+    toast.show({ text: 'Items successfully deleted.', color: 'error' }),
+});
 
 const headers = [
   {
@@ -61,6 +64,7 @@ const headers = [
                 v-bind="props"
                 color="error"
                 :disabled="!selected.length"
+                :loading="loading"
               ></v-btn>
             </template>
             <template #default="{ isActive }">
@@ -74,7 +78,7 @@ const headers = [
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn @click="isActive.value = false">Cancel</v-btn>
-                  <v-btn variant="flat" color="error" @click="handleDelete">
+                  <v-btn variant="flat" color="error" @click="exec(selected)">
                     Delete
                   </v-btn>
                 </v-card-actions>

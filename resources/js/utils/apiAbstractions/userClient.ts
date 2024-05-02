@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { apiV1Instance, webInstance } from './apiInstance';
+import { apiV1Instance } from './apiInstance';
 
 const api = apiV1Instance;
-const webApi = webInstance;
 
 export function getOptimizedImage() {
   return api.get('/blue-harvest', {
@@ -12,11 +11,10 @@ export function getOptimizedImage() {
   });
 }
 
-export function uploadImages(images: FileList) {
+export function uploadImages(images: File[]) {
   const formData = new FormData();
-  const files = Array.from(images);
 
-  files.forEach((file) => formData.append('files[]', file));
+  images.forEach((file) => formData.append('files[]', file));
   return axios.post('/images', formData);
 }
 

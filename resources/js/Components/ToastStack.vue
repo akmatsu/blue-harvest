@@ -5,20 +5,7 @@ const toast = useToasts();
 </script>
 
 <template>
-  <div class="toast-stack">
-    <TransitionGroup name="toast-stack">
-      <v-snackbar
-        v-for="(t, i) in toast.toasts"
-        :key="t.id"
-        v-model="t.show"
-        :color="t.color"
-        :attach="true"
-        absolute
-      >
-        {{ t.message }}
-      </v-snackbar>
-    </TransitionGroup>
-  </div>
+  <v-snackbar-queue v-model="toast.toasts"></v-snackbar-queue>
 </template>
 
 <style lang="scss" scoped>

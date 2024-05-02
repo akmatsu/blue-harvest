@@ -5,24 +5,21 @@ export type ColorOptions =
   | 'error'
   | 'info'
   | 'primary';
+
 export type Toast = {
-  message: string;
+  text: string;
   color: ColorOptions;
-  id: number;
-  show: boolean;
+  timeout?: number;
 };
 
 export const useToasts = defineStore('toasts', () => {
   const toasts = ref<Toast[]>([]);
 
-  function show(message: string, color: ColorOptions = 'default') {
-    const id = toasts.value.length ? toasts.value[0].id + 1 : 1;
-
+  function show({ text = 'Text', color = 'default', timeout }: Partial<Toast>) {
     toasts.value.unshift({
-      message,
+      text,
       color,
-      id,
-      show: true,
+      timeout,
     });
   }
 

@@ -1,3 +1,5 @@
+import { useToasts } from '@/store/toasts';
+
 /**
  * This function abstracts out the complexity of handing async requests. Handles
  * loading as well as options for onSuccess and onError callback functions.
@@ -13,6 +15,7 @@ export function useRequest<T = any, TArgs extends Array<any> = Array<any>>(
   const loading = ref(false);
   const error = ref<any>();
   const result = ref<T>();
+  const toast = useToasts();
 
   async function exec(...args: TArgs) {
     try {
@@ -25,6 +28,12 @@ export function useRequest<T = any, TArgs extends Array<any> = Array<any>>(
     } catch (err) {
       _clearResult();
       _setError(err);
+      if (!options?.silent)
+        toast.show({
+          text: 'Oops! Something went wrong. Please try again.',
+          color: 'error',
+        });
+
       if (options?.onError) options.onError(err);
     } finally {
       _stopLoading();

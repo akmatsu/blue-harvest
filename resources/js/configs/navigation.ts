@@ -10,5 +10,10 @@ export const navigation = {
       icon: 'mdi-database',
       to: '/images',
     },
+    {
+      title: 'Upload a new Image',
+      icon: 'mdi-upload',
+      to: '/upload',
+    },
   ],
 };
