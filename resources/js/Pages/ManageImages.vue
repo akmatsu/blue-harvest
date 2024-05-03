@@ -46,73 +46,76 @@ const headers = [
 <template>
   <Head title="Manage Images" />
   <CoreLayout>
-    <v-data-table
-      v-model="selected"
-      :items="images"
-      :headers="headers"
-      item-value="id"
-      show-select
-    >
-      <template #top>
-        <v-toolbar flat>
-          <v-toolbar-title>Your Images</v-toolbar-title>
-          <v-divider inset vertical class="mx-1"></v-divider>
-          <v-dialog max-width="400px">
+    <v-card>
+      <v-data-table
+        v-model="selected"
+        :items="images"
+        :headers="headers"
+        item-value="id"
+        show-select
+      >
+        <template #top>
+          <v-toolbar>
+            <!-- <v-divider inset vertical class="mx-1"></v-divider> -->
+            <v-spacer></v-spacer>
+            <v-dialog max-width="400px">
+              <template #activator="{ props }">
+                <v-btn
+                  prepend-icon="mdi-delete"
+                  v-bind="props"
+                  color="error"
+                  :disabled="!selected.length"
+                  :loading="loading"
+                >
+                  Delete
+                </v-btn>
+              </template>
+              <template #default="{ isActive }">
+                <v-card title="Delete Images">
+                  <v-card-text>
+                    <p>
+                      Are you sure you want to delete the selected images? This
+                      is not reversible.
+                    </p>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn @click="isActive.value = false">Cancel</v-btn>
+                    <v-btn variant="flat" color="error" @click="exec(selected)">
+                      Delete
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </template>
+            </v-dialog>
+          </v-toolbar>
+        </template>
+        <template #item.created_at="{ item }">
+          {{ formatDate(item.created_at) }}
+        </template>
+        <template #item.updated_at="{ item }">
+          {{ formatDate(item.updated_at) }}
+        </template>
+        <template #item.url="{ item }">
+          <v-dialog max-width="800">
             <template #activator="{ props }">
-              <v-btn
-                icon="mdi-delete"
-                v-bind="props"
-                color="error"
-                :disabled="!selected.length"
-                :loading="loading"
-              ></v-btn>
+              <v-btn v-bind="props" color="primary">View Image</v-btn>
             </template>
-            <template #default="{ isActive }">
-              <v-card title="Delete Images">
-                <v-card-text>
-                  <p>
-                    Are you sure you want to delete the selected images? This is
-                    not reversible.
+            <v-card :title="item.name">
+              <v-card-text>
+                <v-img :src="item.url"></v-img>
+                <div class="d-flex">
+                  <p class="text-caption">
+                    Dimensions: {{ item.width }} x {{ item.height }}
                   </p>
-                </v-card-text>
-                <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn @click="isActive.value = false">Cancel</v-btn>
-                  <v-btn variant="flat" color="error" @click="exec(selected)">
-                    Delete
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </template>
+                  <p class="text-caption">Size: {{ item.size }} Bytes</p>
+                </div>
+              </v-card-text>
+            </v-card>
           </v-dialog>
-          <v-spacer></v-spacer>
-        </v-toolbar>
-      </template>
-      <template #item.created_at="{ item }">
-        {{ formatDate(item.created_at) }}
-      </template>
-      <template #item.updated_at="{ item }">
-        {{ formatDate(item.updated_at) }}
-      </template>
-      <template #item.url="{ item }">
-        <v-dialog max-width="800">
-          <template #activator="{ props }">
-            <v-btn v-bind="props" color="primary">View Image</v-btn>
-          </template>
-          <v-card :title="item.name">
-            <v-card-text>
-              <v-img :src="item.url"></v-img>
-              <div class="d-flex">
-                <p class="text-caption">
-                  Dimensions: {{ item.width }} x {{ item.height }}
-                </p>
-                <v-spacer></v-spacer>
-                <p class="text-caption">Size: {{ item.size }} Bytes</p>
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-dialog>
-      </template>
-    </v-data-table>
+        </template>
+      </v-data-table>
+    </v-card>
   </CoreLayout>
 </template>

@@ -5,10 +5,14 @@ import { Link } from '@inertiajs/vue3';
 <template>
   <v-app>
     <VAppBar title="Muffins" elevation="2">
-      <Link class="v-btn" href="/browse">Start Browsing</Link>
+      <Link :href="route('browse-images')" as="div">
+        <v-btn>Start Browsing</v-btn>
+      </Link>
     </VAppBar>
     <v-main>
-      <slot />
+      <v-container>
+        <slot />
+      </v-container>
     </v-main>
   </v-app>
 </template>
