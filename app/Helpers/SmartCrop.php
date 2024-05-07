@@ -115,7 +115,7 @@ class SmartCrop
 
   public function download()
   {
-    return Storage::download($this->output);
+    return Storage::response($this->output);
   }
 
   protected function runSmartCropJs()
