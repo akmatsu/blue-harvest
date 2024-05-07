@@ -1,8 +1,7 @@
 <?php
 
 return [
-
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Image Driver
     |--------------------------------------------------------------------------
@@ -16,6 +15,5 @@ return [
     |
     */
 
-    'driver' => \Intervention\Image\Drivers\Gd\Driver::class
-
+  'driver' => \Intervention\Image\Drivers\Gd\Driver::class,
 ];
