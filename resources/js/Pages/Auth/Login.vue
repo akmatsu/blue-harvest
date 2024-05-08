@@ -2,6 +2,7 @@
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { required } from '@/utils';
+import { useToasts } from '@/store/toasts';
 
 defineProps<{
   canResetPassword?: boolean;
@@ -16,9 +17,14 @@ const form = useForm({
   remember: false,
 });
 
+const toast = useToasts();
+
 const submit = () => {
   if (isValid.value)
     form.post(route('login'), {
+      onSuccess: () => toast.success('Successfully logged in!'),
+      onError: (err) =>
+        toast.error(err.email || err.password || 'An error occurred.'),
       onFinish: () => {
         form.reset('password');
       },

@@ -6,6 +6,7 @@ use App\Models\Image;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Intervention\Image\Laravel\Facades\Image as ImageFacade;
@@ -32,12 +33,19 @@ class ImageController extends Controller
     $paths = [];
 
     foreach ($files as $file) {
-      $path = Storage::put('uploads', $file);
+      $path = Storage::put('public/uploads', $file);
 
       $storedImage = Storage::get($path);
-      $image = ImageFacade::make($storedImage);
+      $image = ImageFacade::read($storedImage);
+
+      $sizes = [
+        'small' => ['width' => 500, 'height' => 500],
+        'medium' => ['width' => 1000, 'height' => 1000],
+        'large' => ['width' => 1920, 'height' => 1920],
+      ];
 
       $dbImage = new Image();
+
       $dbImage->user_id = Auth::id();
       $dbImage->name = $file->getClientOriginalName();
       $dbImage->path = $path;
@@ -52,6 +60,28 @@ class ImageController extends Controller
 
       $dbImage->save();
 
+      foreach ($sizes as $size => $dims) {
+        $resizedImage = $image->scaleDown($dims['width'], $dims['height']);
+        $filePath = generateOptimizedImagePath(
+          $file,
+          $resizedImage->width(),
+          $resizedImage->height()
+        );
+        $storePath = storeInterventionImage($filePath, $resizedImage);
+        $url = Storage::url($filePath);
+        $paths[$size] = $url;
+        Log::info($dbImage->id);
+        $dbImage->optimizedImages()->create([
+          'image_id' => $dbImage->id,
+          'size' => $size,
+          'path' => $storePath,
+          'url' => $url,
+          'width' => $resizedImage->size()->width(),
+          'height' => $resizedImage->size()->height(),
+          'file_size' => Storage::size($filePath),
+        ]);
+      }
+
       $paths[] = $path;
     }
 
@@ -61,13 +91,17 @@ class ImageController extends Controller
   public function view($id)
   {
     $image = Image::findOrFail($id);
-    return Inertia::render('ViewImage', ['image' => $image]);
+    $optimizedImages = $image->predefinedImages();
+    $imageData = $image->toArray();
+    $imageData['optimizedImages'] = $optimizedImages;
+
+    return Inertia::render('Image/View', ['image' => $imageData]);
   }
 
   public function edit($id)
   {
     $image = Image::findOrFail($id);
-    return Inertia::render('EditImage', ['image' => $image]);
+    return Inertia::render('Image/Edit', ['image' => $image]);
   }
 
   public function manageImages()

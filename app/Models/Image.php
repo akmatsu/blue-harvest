@@ -40,5 +40,28 @@ class Image extends Model
     if (Storage::exists($this->path)) {
       Storage::delete($this->path);
     }
+
+    foreach ($this->optimizedImages as $optimizedImage) {
+      if (Storage::exists($optimizedImage->path)) {
+        Storage::delete($optimizedImage->path);
+      }
+    }
+  }
+
+  public function optimizedImages()
+  {
+    return $this->hasMany(OptimizedImage::class);
+  }
+
+  public function predefinedImages()
+  {
+    $optimizedImages = $this->optimizedImages;
+    $grouped = [
+      'small' => $optimizedImages->where('size', 'small')->first(),
+      'medium' => $optimizedImages->where('size', 'medium')->first(),
+      'large' => $optimizedImages->where('size', 'large')->first(),
+    ];
+
+    return $grouped;
   }
 }

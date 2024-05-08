@@ -19,6 +19,24 @@ export interface Image {
   url: string;
   width: number;
   height: number;
+  optimizedImages: {
+    small?: OptimizedImage;
+    medium?: OptimizedImage;
+    large?: OptimizedImage;
+  };
+}
+
+export interface OptimizedImage {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  image_id: number;
+  file_size: number;
+  path: string;
+  url: string;
+  size: string;
+  width: number;
+  height: number;
 }
 
 export type PageProps<

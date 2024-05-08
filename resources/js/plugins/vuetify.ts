@@ -11,7 +11,7 @@ export const vuetify = createVuetify({
     VAppBar: {
       flat: true,
       border: 'b',
-      color: 'primary',
+      density: 'compact',
     },
     VBtn: {
       flat: true,

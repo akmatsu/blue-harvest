@@ -15,12 +15,12 @@ async function logout() {
   axios.post('/logout');
 }
 
-const { exec, loading } = useRequest(logout);
+const { exec } = useRequest(logout);
 </script>
 
 <template>
   <v-app>
-    <v-app-bar title="Blue Harvest" density="compact">
+    <v-app-bar title="Blue Harvest">
       <template #prepend>
         <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       </template>
