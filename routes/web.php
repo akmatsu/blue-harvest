@@ -39,6 +39,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::get('/images/{id}', [ImageController::class, 'view'])->name(
     'image-view'
   );
+  Route::get('/images/{id}/edit', [ImageController::class, 'edit'])->name(
+    'image-edit'
+  );
   Route::delete('/images/{id}', [ImageController::class, 'delete'])->name(
     'image-delete'
   );
