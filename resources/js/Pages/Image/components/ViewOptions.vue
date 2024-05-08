@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { Image } from '@/types';
 import ViewOptionsListItem from './ViewOptionsListItem.vue';
-import { formatBytes } from '@/utils';
 
 defineProps<{
   image: Image;
@@ -19,7 +18,6 @@ defineProps<{
       <div v-for="img in image.optimizedImages" :key="image?.id">
         <ViewOptionsListItem v-if="img" :image="img" />
       </div>
-
       <v-divider></v-divider>
 
       <ViewOptionsListItem :image="image" />
