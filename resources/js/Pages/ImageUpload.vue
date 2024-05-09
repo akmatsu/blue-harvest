@@ -18,10 +18,9 @@ async function handleSubmit() {
 
 const { exec, loading } = useRequest(handleSubmit, {
   onSuccess: () => {
-    toast.show({ text: 'successfully uploaded images', color: 'success' });
-
-    form.value.reset();
+    toast.success('successfully uploaded images');
   },
+  onError: (err) => toast.error(err.message),
 });
 </script>
 

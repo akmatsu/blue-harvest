@@ -19,6 +19,7 @@ class Image extends Model
     'url',
     'width',
     'height',
+    'folder_name',
   ];
 
   public function user()

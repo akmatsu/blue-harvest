@@ -33,10 +33,25 @@ class ImageController extends Controller
     $paths = [];
 
     foreach ($files as $file) {
-      $path = Storage::put('public/uploads', $file);
+      $dbImage = new Image();
+      
+      $uniqueFolder = generateUniqueFolder();
+      $path = storeBaseImage($uniqueFolder, $file);
+      
+      $dbImage->user_id = Auth::id();
+      $dbImage->name = $file->getClientOriginalName();
+      $dbImage->path = $path;
+      $dbImage->mime_type = Storage::mimeType($path);
+      $dbImage->size = Storage::size($path);
+      $dbImage->url = Storage::url($path);
+      $dbImage->folder_name = $uniqueFolder;
+      $imageDetails = getimagesize($file->getRealPath());
+      $dbImage->width = $imageDetails[0];
+      $dbImage->height = $imageDetails[1];
+
+      $dbImage->save();
 
       $storedImage = Storage::get($path);
-      $image = ImageFacade::read($storedImage);
 
       $sizes = [
         'small' => ['width' => 500, 'height' => 500],
@@ -44,33 +59,15 @@ class ImageController extends Controller
         'large' => ['width' => 1920, 'height' => 1920],
       ];
 
-      $dbImage = new Image();
-
-      $dbImage->user_id = Auth::id();
-      $dbImage->name = $file->getClientOriginalName();
-      $dbImage->path = $path;
-      $dbImage->mime_type = $file->getClientMimeType();
-      $dbImage->size = $file->getSize();
-      $dbImage->url = Storage::url($path);
-
-      // Get image dimensions
-      $imageDetails = getimagesize($file->getRealPath());
-      $dbImage->width = $imageDetails[0];
-      $dbImage->height = $imageDetails[1];
-
-      $dbImage->save();
-
       foreach ($sizes as $size => $dims) {
+        $image = ImageFacade::read($storedImage);
         $resizedImage = $image->scaleDown($dims['width'], $dims['height']);
-        $filePath = generateOptimizedImagePath(
-          $file,
-          $resizedImage->width(),
-          $resizedImage->height()
-        );
-        $storePath = storeInterventionImage($filePath, $resizedImage);
-        $url = Storage::url($filePath);
+        $filePath = $uniqueFolder . 'optimized_images/';
+        $storePath = storeOptimizedImage($filePath, $resizedImage);
+        $url = Storage::url($storePath);
         $paths[$size] = $url;
-        Log::info($dbImage->id);
+        
+        Log::info($storePath);
         $dbImage->optimizedImages()->create([
           'image_id' => $dbImage->id,
           'size' => $size,
@@ -78,7 +75,7 @@ class ImageController extends Controller
           'url' => $url,
           'width' => $resizedImage->size()->width(),
           'height' => $resizedImage->size()->height(),
-          'file_size' => Storage::size($filePath),
+          'file_size' => Storage::size($storePath),
         ]);
       }
 
