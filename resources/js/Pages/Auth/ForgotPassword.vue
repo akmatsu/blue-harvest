@@ -1,17 +1,22 @@
 <script setup lang="ts">
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import { required } from '@/utils';
 
 defineProps<{
   status?: string;
 }>();
+
+const isValid = ref(false);
 
 const form = useForm({
   email: '',
 });
 
 const submit = () => {
-  form.post(route('password.email'));
+  if (isValid.value) {
+    form.post(route('password.email'));
+  }
 };
 </script>
 
@@ -35,16 +40,16 @@ const submit = () => {
           {{ status }}
         </div>
 
-        <v-form @submit.prevent="submit">
+        <v-form v-model="isValid" @submit.prevent="submit">
           <v-text-field
             id="email"
             v-model="form.email"
             label="Email"
             type="email"
             class="mt-1 block w-full"
-            required
             autofocus
             autocomplete="username"
+            :rules="[required]"
           />
 
           <div class="d-flex justify-center">

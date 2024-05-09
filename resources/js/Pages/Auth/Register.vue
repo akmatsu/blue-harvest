@@ -23,12 +23,14 @@ function passwordsMatch() {
 }
 
 const submit = () => {
-  form.post(route('register'), {
-    onError: (err) => toast.error(err.message),
-    onFinish: () => {
-      form.reset('password', 'password_confirmation');
-    },
-  });
+  if (isValid.value) {
+    form.post(route('register'), {
+      onError: (err) => toast.error(err.message),
+      onFinish: () => {
+        form.reset('password', 'password_confirmation');
+      },
+    });
+  }
 };
 </script>
 
