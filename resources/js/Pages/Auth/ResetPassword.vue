@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+
 import { Head, useForm } from '@inertiajs/vue3';
+import { required } from '@/utils';
+import { PasswordInput } from '@/Components';
+import { useToasts } from '@/store/toasts';
 
 const props = defineProps<{
   email: string;
   token: string;
 }>();
+
+const toast = useToasts();
+const isValid = ref(false);
 
 const form = useForm({
   token: props.token,
@@ -18,74 +21,58 @@ const form = useForm({
   password_confirmation: '',
 });
 
+function passwordsMatch(val: string) {
+  return val === form.password || 'Passwords do not match.';
+}
+
 const submit = () => {
-  form.post(route('password.store'), {
-    onFinish: () => {
-      form.reset('password', 'password_confirmation');
-    },
-  });
+  if (isValid.value) {
+    form.post(route('password.store'), {
+      onSuccess: () => toast.success('Password successfully reset!'),
+      onError: (err) => toast.error(err.message),
+      onFinish: () => {
+        form.reset('password', 'password_confirmation');
+      },
+    });
+  }
 };
 </script>
 
 <template>
   <GuestLayout>
     <Head title="Reset Password" />
+    <v-card max-width="500" class="mx-auto">
+      <v-card-text>
+        <v-form v-model="isValid" @submit.prevent="submit">
+          <v-text-field
+            v-model="form.email"
+            label="Email"
+            type="email"
+            :rules="[required]"
+          ></v-text-field>
+          <PasswordInput
+            v-model="form.password"
+            label="Password"
+            :rules="[required]"
+          ></PasswordInput>
+          <PasswordInput
+            v-model="form.password_confirmation"
+            label="Confirm Password"
+            :rules="[required, passwordsMatch]"
+          />
 
-    <form @submit.prevent="submit">
-      <div>
-        <InputLabel for="email" value="Email" />
-
-        <TextInput
-          id="email"
-          type="email"
-          class="mt-1 block w-full"
-          v-model="form.email"
-          required
-          autofocus
-          autocomplete="username"
-        />
-
-        <InputError class="mt-2" :message="form.errors.email" />
-      </div>
-
-      <div class="mt-4">
-        <InputLabel for="password" value="Password" />
-
-        <TextInput
-          id="password"
-          type="password"
-          class="mt-1 block w-full"
-          v-model="form.password"
-          required
-          autocomplete="new-password"
-        />
-
-        <InputError class="mt-2" :message="form.errors.password" />
-      </div>
-
-      <div class="mt-4">
-        <InputLabel for="password_confirmation" value="Confirm Password" />
-
-        <TextInput
-          id="password_confirmation"
-          type="password"
-          class="mt-1 block w-full"
-          v-model="form.password_confirmation"
-          required
-          autocomplete="new-password"
-        />
-
-        <InputError class="mt-2" :message="form.errors.password_confirmation" />
-      </div>
-
-      <div class="flex items-center justify-end mt-4">
-        <PrimaryButton
-          :class="{ 'opacity-25': form.processing }"
-          :disabled="form.processing"
-        >
-          Reset Password
-        </PrimaryButton>
-      </div>
-    </form>
+          <div class="d-flex justify-center">
+            <v-btn
+              color="primary"
+              type="submit"
+              :loading="form.processing"
+              :disabled="!isValid"
+            >
+              Reset Password
+            </v-btn>
+          </div>
+        </v-form>
+      </v-card-text>
+    </v-card>
   </GuestLayout>
 </template>
