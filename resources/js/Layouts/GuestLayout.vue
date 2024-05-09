@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ToastStack } from '@/Components';
 import { Link } from '@inertiajs/vue3';
 </script>
 
@@ -14,5 +15,7 @@ import { Link } from '@inertiajs/vue3';
         <slot />
       </v-container>
     </v-main>
+
+    <ToastStack />
   </v-app>
 </template>
