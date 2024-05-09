@@ -2,20 +2,12 @@
 import { NavigationMenu } from '@/Components/nav';
 import { ToastStack } from '@/Components';
 import { Link } from '@inertiajs/vue3';
-import axios from 'axios';
-import { useRequest } from '@/composables/useRequest';
 
 defineProps<{
   fluid?: boolean;
 }>();
 
 const drawer = ref(true);
-
-async function logout() {
-  axios.post('/logout');
-}
-
-const { exec } = useRequest(logout);
 </script>
 
 <template>
@@ -36,11 +28,11 @@ const { exec } = useRequest(logout);
                 View Account
               </v-list-item>
             </Link>
-            <!-- <Link href="/profile" as="div"> -->
-            <v-list-item prepend-icon="mdi-logout" @click="exec">
-              Log out
-            </v-list-item>
-            <!-- </Link> -->
+            <Link href="/logout" as="div" method="post">
+              <v-list-item prepend-icon="mdi-logout" link>
+                Log out
+              </v-list-item>
+            </Link>
           </v-list>
         </v-menu>
       </template>

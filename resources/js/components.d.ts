@@ -27,6 +27,7 @@ declare module 'vue' {
     NavigationMenu: typeof import('./Components/nav/NavigationMenu.vue')['default']
     NavLink: typeof import('./Components/NavLink.vue')['default']
     PageContainer: typeof import('./Components/layout/PageContainer.vue')['default']
+    PasswordInput: typeof import('./Components/Form/PasswordInput.vue')['default']
     PrimaryButton: typeof import('./Components/PrimaryButton.vue')['default']
     ResponsiveNavLink: typeof import('./Components/ResponsiveNavLink.vue')['default']
     SecondaryButton: typeof import('./Components/SecondaryButton.vue')['default']
