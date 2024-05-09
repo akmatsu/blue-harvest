@@ -29,10 +29,7 @@ export function useRequest<T = any, TArgs extends Array<any> = Array<any>>(
       _clearResult();
       _setError(err);
       if (!options?.silent)
-        toast.show({
-          text: 'Oops! Something went wrong. Please try again.',
-          color: 'error',
-        });
+        toast.error('Oops! Something went wrong. Please try again.');
 
       if (options?.onError) options.onError(err);
     } finally {
