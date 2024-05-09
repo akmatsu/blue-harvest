@@ -2,8 +2,11 @@
 import { PasswordInput } from '@/Components';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { useToasts } from '@/store/toasts';
+import { required } from '@/utils';
 
 import { Head, useForm } from '@inertiajs/vue3';
+
+const isValid = ref(false);
 
 const form = useForm({
   password: '',
@@ -12,13 +15,15 @@ const form = useForm({
 const toast = useToasts();
 
 const submit = () => {
-  form.post(route('password.confirm'), {
-    onSuccess: () => toast.success('Success!'),
-    onError: (err) => toast.error(err.message),
-    onFinish: () => {
-      form.reset();
-    },
-  });
+  if (isValid) {
+    form.post(route('password.confirm'), {
+      onSuccess: () => toast.success('Success!'),
+      onError: (err) => toast.error(err.message),
+      onFinish: () => {
+        form.reset();
+      },
+    });
+  }
 };
 </script>
 
@@ -32,8 +37,12 @@ const submit = () => {
         before continuing.
       </v-card-text>
       <v-card-text>
-        <v-form @submit.prevent="submit">
-          <PasswordInput v-model="form.password" label="Password" />
+        <v-form v-model="isValid" @submit.prevent="submit">
+          <PasswordInput
+            v-model="form.password"
+            label="Password"
+            :rules="[required]"
+          />
 
           <div class="d-flex justify-center">
             <v-btn color="primary" :loading="form.processing">Confirm</v-btn>
