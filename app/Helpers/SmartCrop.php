@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
 use Intervention\Image\Image as Img;
 
-// TODO Add support for more query parameters
-// TODO: Implement smart cropping.
-
 class SmartCrop
 {
   protected string $input;

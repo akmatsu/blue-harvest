@@ -8,7 +8,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-// TODO Implement User permission levels. Admin, creator (Read write), regular user (Read only), public (unauthenticated).
 class User extends Authenticatable
 {
   use HasFactory, Notifiable, HasApiTokens;
