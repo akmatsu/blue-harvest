@@ -1,17 +1,20 @@
 <script setup lang="ts">
+import { PasswordInput } from '@/Components';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { useToasts } from '@/store/toasts';
+
 import { Head, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
   password: '',
 });
 
+const toast = useToasts();
+
 const submit = () => {
   form.post(route('password.confirm'), {
+    onSuccess: () => toast.success('Success!'),
+    onError: (err) => toast.error(err.message),
     onFinish: () => {
       form.reset();
     },
@@ -23,35 +26,20 @@ const submit = () => {
   <GuestLayout>
     <Head title="Confirm Password" />
 
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-      This is a secure area of the application. Please confirm your password
-      before continuing.
-    </div>
+    <v-card title="Confirm Your Password" max-width="500" class="mx-auto">
+      <v-card-text>
+        This is a secure area of the application. Please confirm your password
+        before continuing.
+      </v-card-text>
+      <v-card-text>
+        <v-form @submit.prevent="submit">
+          <PasswordInput v-model="form.password" label="Password" />
 
-    <form @submit.prevent="submit">
-      <div>
-        <InputLabel for="password" value="Password" />
-        <TextInput
-          id="password"
-          type="password"
-          class="mt-1 block w-full"
-          v-model="form.password"
-          required
-          autocomplete="current-password"
-          autofocus
-        />
-        <InputError class="mt-2" :message="form.errors.password" />
-      </div>
-
-      <div class="flex justify-end mt-4">
-        <PrimaryButton
-          class="ms-4"
-          :class="{ 'opacity-25': form.processing }"
-          :disabled="form.processing"
-        >
-          Confirm
-        </PrimaryButton>
-      </div>
-    </form>
+          <div class="d-flex justify-center">
+            <v-btn color="primary" :loading="form.processing">Confirm</v-btn>
+          </div>
+        </v-form>
+      </v-card-text>
+    </v-card>
   </GuestLayout>
 </template>
