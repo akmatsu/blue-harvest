@@ -33,7 +33,7 @@ test('email can be verified', function () {
   Event::assertDispatched(Verified::class);
   expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
   $response->assertRedirect(
-    route('dashboard', absolute: false) . '?verified=1'
+    route('browse-images', absolute: false) . '?verified=1'
   );
 });
 

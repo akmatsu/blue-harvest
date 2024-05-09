@@ -2,25 +2,21 @@
 
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\WebPageController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
+Route::get('/', [ImageController::class, 'index'])->name(
+  'browse-images'
+);
 
-Route::get('/', function () {
-  return Inertia::render('Welcome', [
-    'canLogin' => Route::has('login'),
-    'canRegister' => Route::has('register'),
-    'laravelVersion' => Application::VERSION,
-    'phpVersion' => PHP_VERSION,
-  ]);
-});
+Route::get('/images/{id}', [ImageController::class, 'view'])->name(
+  'image-view'
+);
+
+Route::get('/images/{id}/edit', [ImageController::class, 'edit'])->name(
+  'image-edit'
+);
 
 Route::middleware(['auth', 'verified'])->group(function () {
-  Route::get('/browse', [ImageController::class, 'index'])->name(
-    'browse-images'
-  );
   Route::get('/upload', [ImageController::class, 'uploadView'])->name(
     'image-upload'
   );
@@ -32,12 +28,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
   );
   Route::delete('/images', [ImageController::class, 'bulkDelete'])->name(
     'image-delete-bulk'
-  );
-  Route::get('/images/{id}', [ImageController::class, 'view'])->name(
-    'image-view'
-  );
-  Route::get('/images/{id}/edit', [ImageController::class, 'edit'])->name(
-    'image-edit'
   );
   Route::delete('/images/{id}', [ImageController::class, 'delete'])->name(
     'image-delete'
