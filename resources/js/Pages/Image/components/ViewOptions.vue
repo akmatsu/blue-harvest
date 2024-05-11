@@ -8,11 +8,11 @@ defineProps<{
 </script>
 
 <template>
-  <v-menu>
+  <v-menu open-on-hover>
     <template #activator="{ props }">
-      <v-btn color="primary" v-bind="props" append-icon="mdi-chevron-down">
+      <primary-btn v-bind="props" append-icon="mdi-chevron-down">
         Download
-      </v-btn>
+      </primary-btn>
     </template>
     <v-list>
       <div v-for="img in image.optimizedImages" :key="image?.id">

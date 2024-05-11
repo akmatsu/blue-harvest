@@ -7,7 +7,8 @@ import Components from 'unplugin-vue-components/vite';
 
 export default defineConfig({
   optimizeDeps: {
-    include: ['vuetify'],
+    // include: ['vuetify'],
+    exclude: ['vuetify'],
   },
   plugins: [
     laravel({
@@ -28,6 +29,7 @@ export default defineConfig({
     vuetify({
       autoImport: true,
       styles: { configFile: '/resources/css/vuetifySettings.scss' },
+      // styles: 'sass',
     }),
 
     AutoImport({

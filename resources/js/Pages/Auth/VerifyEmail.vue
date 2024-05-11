@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import AuthLayout from '@/Layouts/AuthLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { useToasts } from '@/store/toasts';
 
@@ -26,7 +26,7 @@ watch(
 </script>
 
 <template>
-  <GuestLayout>
+  <AuthLayout>
     <Head title="Email Verification" />
     <v-card title="Email Verification" max-width="500" class="mx-auto">
       <v-card-text>
@@ -52,5 +52,5 @@ watch(
         </v-card-actions>
       </v-form>
     </v-card>
-  </GuestLayout>
+  </AuthLayout>
 </template>

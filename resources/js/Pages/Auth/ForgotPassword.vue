@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import AuthLayout from '@/Layouts/AuthLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { required } from '@/utils';
 
@@ -21,7 +21,7 @@ const submit = () => {
 </script>
 
 <template>
-  <GuestLayout>
+  <AuthLayout>
     <Head title="Forgot Password" />
 
     <v-card max-width="500" class="mx-auto">
@@ -60,5 +60,5 @@ const submit = () => {
         </v-form>
       </v-card-text>
     </v-card>
-  </GuestLayout>
+  </AuthLayout>
 </template>

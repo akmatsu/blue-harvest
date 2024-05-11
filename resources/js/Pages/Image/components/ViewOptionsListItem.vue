@@ -16,7 +16,7 @@ async function handleCopy(url: string) {
   <v-menu location="right">
     <template #activator="{ props }">
       <v-list-item v-bind="props" append-icon="mdi-chevron-right">
-        <v-list-item-title class="text-uppercase">
+        <v-list-item-title>
           {{ typeof image.size === 'string' ? image.size : 'Original' }}
         </v-list-item-title>
         <v-list-item-subtitle>

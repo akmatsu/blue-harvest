@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import { Image } from '@/types';
 import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { ViewOptions } from './components';
 
-const props = defineProps<{
+defineProps<{
   image: Image;
 }>();
-
-onMounted(() => {
-  console.log(props.image);
-});
 </script>
 
 <template>
@@ -19,21 +15,23 @@ onMounted(() => {
   <CoreLayout fluid>
     <v-container class="d-flex justify-center align-center">
       <v-card width="100%">
-        <v-card-title class="d-flex justify-space-between" style="width: 100%">
-          <span>
-            {{ image.name }}
-          </span>
-          <div class="d-flex" style="gap: 8px">
-            <Link :href="route('image-edit', { id: image.id })">
-              <v-btn color="primary">Edit</v-btn>
-            </Link>
-            <ViewOptions :image="image" />
-          </div>
-        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            :href="route('image-edit', { id: image.id })"
+            @click.prevent.stop="
+              $inertia.get(route('image-edit', { id: image.id }))
+            "
+          >
+            Customize
+          </v-btn>
+          <ViewOptions :image="image" />
+        </v-card-actions>
 
-        <v-card-text>
-          <v-img :src="image.url" max-width="100%" max-height="500px" />
-        </v-card-text>
+        <v-img :src="image.url" max-width="100%" max-height="700px" />
+        <v-card-title class="d-flex justify-space-between" style="width: 100%">
+          {{ image.name }}
+        </v-card-title>
       </v-card>
     </v-container>
   </CoreLayout>
