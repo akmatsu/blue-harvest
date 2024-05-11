@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import AuthLayout from '@/Layouts/AuthLayout.vue';
+import { Head, useForm } from '@inertiajs/vue3';
 import { required } from '@/utils';
 import { useToasts } from '@/store/toasts';
 
@@ -33,10 +33,10 @@ const submit = () => {
 </script>
 
 <template>
-  <GuestLayout>
+  <AuthLayout>
     <Head title="Log in" />
 
-    <v-card max-width="500" class="mx-auto">
+    <v-card width="350" max-width="100%">
       <v-card-title class="text-center"> Log In </v-card-title>
       <v-card-text>
         <v-form v-model="isValid" @submit.prevent="submit">
@@ -57,6 +57,17 @@ const submit = () => {
             :rules="[required]"
             autocomplete="current-password"
           />
+          <div class="d-flex">
+            <v-spacer></v-spacer>
+            <secondary-btn
+              v-if="canResetPassword"
+              :href="route('password.request')"
+              size="small"
+              @click.prevent.stop="$inertia.get(route('password.request'))"
+            >
+              Forgot your password?
+            </secondary-btn>
+          </div>
 
           <v-checkbox
             v-model:checked="form.remember"
@@ -65,21 +76,24 @@ const submit = () => {
           />
 
           <div class="d-flex flex-column justify-center align-center">
-            <v-btn
+            <PrimaryBtn
               type="submit"
               color="primary"
               :loading="form.processing"
               :disabled="!isValid"
             >
               Log in
+            </PrimaryBtn>
+            <v-btn
+              v-if="canResetPassword"
+              href="/register"
+              @click.prevent.stop="$inertia.get('/register')"
+            >
+              Don't have an account?
             </v-btn>
-
-            <Link v-if="canResetPassword" :href="route('password.request')">
-              <v-btn>Forgot your password?</v-btn>
-            </Link>
           </div>
         </v-form>
       </v-card-text>
     </v-card>
-  </GuestLayout>
+  </AuthLayout>
 </template>

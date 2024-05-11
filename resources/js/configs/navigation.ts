@@ -1,19 +1,21 @@
 export const navigation = {
   items: [
     {
-      title: 'Home',
+      title: 'Browse',
       icon: 'mdi-view-dashboard',
-      to: '/browse',
+      to: '/',
     },
     {
       title: 'Manage Your Images',
       icon: 'mdi-database',
       to: '/images',
+      requireAuth: true,
     },
     {
       title: 'Upload a new Image',
       icon: 'mdi-upload',
       to: '/upload',
+      requireAuth: true,
     },
   ],
 };

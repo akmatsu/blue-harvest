@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GuestLayout } from '@/Layouts';
+import { AuthLayout } from '@/Layouts';
 
 defineProps<{
   canLogin?: boolean;
@@ -10,5 +10,5 @@ defineProps<{
 </script>
 
 <template>
-  <GuestLayout> Welcome! </GuestLayout>
+  <AuthLayout> Welcome! </AuthLayout>
 </template>

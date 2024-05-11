@@ -6,6 +6,20 @@
 
 // https://vuetifyjs.com/features/sass-variables/`
 
+@use 'sass:map';
+$default-font: 'Inter', sans-serif;
+
 @use 'vuetify/settings' with (
-  $color-pack: true
+  $color-pack: true,
+  $body-font-family: $default-font,
+  $typography: (
+    'button': (
+      'size': 0.875rem,
+      'weight': 500,
+      'line-height': 2.6,
+      'letter-spacing': normal,
+      'font-family': $default-font,
+      'text-transform': Capitalize,
+    ),
+  )
 );

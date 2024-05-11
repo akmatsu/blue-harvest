@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import AuthLayout from '@/Layouts/AuthLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { useToasts } from '@/store/toasts';
 import { required } from '@/utils';
@@ -36,8 +36,8 @@ const submit = () => {
 
 <template>
   <Head title="Register" />
-  <GuestLayout>
-    <v-card title="Register" max-width="500" class="mx-auto">
+  <AuthLayout>
+    <v-card title="Register" width="350" max-width="100%">
       <v-card-text>
         <v-form v-model="isValid" @submit.prevent="submit">
           <v-text-field
@@ -73,12 +73,13 @@ const submit = () => {
             >
               Register
             </v-btn>
-            <Link :href="route('login')">
-              <v-btn variant="text" color="primary">Already Registered?</v-btn>
-            </Link>
+
+            <v-btn href="/login" @click.prevent.stop="$inertia.get('/login')">
+              Already Registered?
+            </v-btn>
           </div>
         </v-form>
       </v-card-text>
     </v-card>
-  </GuestLayout>
+  </AuthLayout>
 </template>
