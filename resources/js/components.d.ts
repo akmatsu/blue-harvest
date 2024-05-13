@@ -19,6 +19,7 @@ declare module 'vue' {
     DragDropFileInput: typeof import('./Components/Form/DragDropFileInput.vue')['default']
     Dropdown: typeof import('./Components/Dropdown.vue')['default']
     DropdownLink: typeof import('./Components/DropdownLink.vue')['default']
+    GuestLayout: typeof import('./Layouts/GuestLayout.vue')['default']
     Header2: typeof import('./Components/Typography/Header2.vue')['default']
     IArrowUpTray: typeof import('./Components/icons/IArrowUpTray.vue')['default']
     ImageCard: typeof import('./Components/Surfaces/ImageCard/ImageCard.vue')['default']
@@ -42,6 +43,7 @@ declare module 'vue' {
     ThemeToggle: typeof import('./Components/ThemeToggle.vue')['default']
     ThemeToggleBtn: typeof import('./Components/ThemeToggle.vue')['default']
     ToastStack: typeof import('./Components/ToastStack.vue')['default']
+    UploadResultForm: typeof import('./Components/Form/UploadResultForm.vue')['default']
     UserMenu: typeof import('./Components/nav/UserMenu.vue')['default']
   }
 }

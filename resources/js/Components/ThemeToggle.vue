@@ -7,7 +7,6 @@ const theme = useTheme();
 
 const isDark = useDark({
   onChanged(dark: boolean) {
-    console.log(dark);
     theme.global.name.value = dark ? 'dark' : 'light';
   },
 });

@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Image;
-use Illuminate\Http\JsonResponse;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Intervention\Image\Laravel\Facades\Image as ImageFacade;
@@ -18,11 +17,32 @@ class ImageController extends Controller
     $images = Image::all();
     return Inertia::render('Browse', ['images' => $images]);
   }
+
   public function uploadView()
   {
     return Inertia::render('ImageUpload');
   }
-  public function uploadImage(Request $request): JsonResponse
+
+  public function uploadResultsView(Request $request)
+  {
+    $ids = $request->query('ids', []);
+    $images = Image::whereIn('id', $ids)
+      ->with([
+        'optimizedImages' => function ($query) {
+          $query->whereIn('size', ['small', 'medium', 'large']);
+        },
+        'tags',
+      ])
+      ->get();
+    $tags = Tag::all();
+
+    return Inertia::render('ImageUploadResults', [
+      'images' => $images,
+      'tags' => $tags,
+    ]);
+  }
+
+  public function uploadImage(Request $request)
   {
     $request->validate([
       'files' => 'required|array',
@@ -30,7 +50,7 @@ class ImageController extends Controller
     ]);
 
     $files = $request->file('files');
-    $paths = [];
+    $ids = [];
 
     foreach ($files as $file) {
       $dbImage = new Image();
@@ -38,69 +58,28 @@ class ImageController extends Controller
       $uniqueFolder = generateUniqueFolder();
       $path = storeBaseImage($uniqueFolder, $file);
 
-      $dbImage->user_id = Auth::id();
-      $dbImage->name = $file->getClientOriginalName();
-      $dbImage->path = $path;
-      $dbImage->mime_type = Storage::mimeType($path);
-      $dbImage->size = Storage::size($path);
-      $dbImage->url = Storage::url($path);
-      $dbImage->folder_name = $uniqueFolder;
-      $imageDetails = getimagesize($file->getRealPath());
-      $dbImage->width = $imageDetails[0];
-      $dbImage->height = $imageDetails[1];
-
+      $this->populateImageData($dbImage, $file, $path, $uniqueFolder);
       $dbImage->save();
 
-      $storedImage = Storage::get($path);
+      $this->attachRandomTag($dbImage);
 
-      $sizes = [
-        'small' => ['width' => 500, 'height' => 500],
-        'medium' => ['width' => 1000, 'height' => 1000],
-        'large' => ['width' => 1920, 'height' => 1920],
-      ];
+      $this->generateOptimizedImages($dbImage, $path, $uniqueFolder);
 
-      foreach ($sizes as $size => $dims) {
-        $image = ImageFacade::read($storedImage);
-
-        // If original image width or height is greater than width or height of
-        // size, generate a new optimized image.
-        if (
-          $image->width() > $dims['width'] ||
-          $image->height() > $dims['height']
-        ) {
-          $resizedImage = $image->scaleDown($dims['width'], $dims['height']);
-          $filePath = $uniqueFolder . 'optimized_images/';
-          $storePath = storeOptimizedImage($filePath, $resizedImage);
-          $url = Storage::url($storePath);
-          $paths[$size] = $url;
-
-          Log::info($storePath);
-          $dbImage->optimizedImages()->create([
-            'image_id' => $dbImage->id,
-            'size' => $size,
-            'path' => $storePath,
-            'url' => $url,
-            'width' => $resizedImage->size()->width(),
-            'height' => $resizedImage->size()->height(),
-            'file_size' => Storage::size($storePath),
-          ]);
-        }
-      }
-
-      $paths[] = $path;
+      $ids[] = $dbImage->id;
     }
 
-    return response()->json(['uploaded' => true, 'paths' => $paths], 200);
+    return redirect()->route('image-upload-results', ['ids' => $ids]);
   }
 
   public function view($id)
   {
-    $image = Image::findOrFail($id);
-    $optimizedImages = $image->predefinedImages();
-    $imageData = $image->toArray();
-    $imageData['optimizedImages'] = $optimizedImages;
+    $image = Image::with([
+      'optimizedImages' => function ($query) {
+        $query->whereIn('size', ['small', 'medium', 'large']);
+      },
+    ])->findOrFail($id);
 
-    return Inertia::render('Image/View', ['image' => $imageData]);
+    return Inertia::render('Image/View', ['image' => $image]);
   }
 
   public function edit($id)
@@ -116,36 +95,93 @@ class ImageController extends Controller
     if ($user) {
       return Inertia::render('ManageImages', ['images' => $user->images]);
     }
+
+    return redirect()->route('login');
   }
 
   public function delete($id)
   {
-    $user_id = Auth::id();
-    $image = Image::findOrFail($id)->where('user_id', $user_id);
+    $image = Image::where('id', $id)
+      ->where('user_id', Auth::id())
+      ->firstOrFail();
 
-    if ($image) {
-      $image->delete();
-      return response('Image successfully deleted', 202);
-    }
-
-    return response('Image does not exist or has already been deleted', 204);
+    $image->delete();
+    return response('Image successfully deleted', 202);
   }
 
   public function bulkDelete(Request $request)
   {
     $validated = $request->validate([
       'ids' => 'required|array|min:1',
-      'ids.*' => 'integer:exists:images,id',
+      'ids.*' => 'integer|exists:images,id',
     ]);
+
     $user_id = Auth::id();
-    $images = Image::all()
-      ->whereIn('id', $validated['ids'])
-      ->where('user_id', $user_id);
+    $images = Image::whereIn('id', $validated['ids'])
+      ->where('user_id', $user_id)
+      ->get();
 
     foreach ($images as $image) {
       $image->delete();
     }
 
     return response('Images successfully deleted', 202);
+  }
+
+  private function populateImageData($dbImage, $file, $path, $uniqueFolder)
+  {
+    $dbImage->user_id = Auth::id();
+    $dbImage->name = $file->getClientOriginalName();
+    $dbImage->path = $path;
+    $dbImage->mime_type = Storage::mimeType($path);
+    $dbImage->size = Storage::size($path);
+    $dbImage->url = Storage::url($path);
+    $dbImage->folder_name = $uniqueFolder;
+    $imageDetails = getimagesize($file->getRealPath());
+    $dbImage->width = $imageDetails[0];
+    $dbImage->height = $imageDetails[1];
+  }
+
+  private function attachRandomTag($dbImage)
+  {
+    $randomTag = Tag::inRandomOrder()->first();
+    if ($randomTag) {
+      $dbImage->tags()->attach($randomTag->id);
+    }
+  }
+
+  private function generateOptimizedImages($dbImage, $path, $uniqueFolder)
+  {
+    $storedImage = Storage::get($path);
+
+    $sizes = [
+      'small' => ['width' => 500, 'height' => 500],
+      'medium' => ['width' => 1000, 'height' => 1000],
+      'large' => ['width' => 1920, 'height' => 1920],
+    ];
+
+    foreach ($sizes as $size => $dims) {
+      $image = ImageFacade::read($storedImage);
+
+      if (
+        $image->width() > $dims['width'] ||
+        $image->height() > $dims['height']
+      ) {
+        $resizedImage = $image->scaleDown($dims['width'], $dims['height']);
+        $filePath = $uniqueFolder . 'optimized_images/';
+        $storePath = storeOptimizedImage($filePath, $resizedImage);
+        $url = Storage::url($storePath);
+
+        $dbImage->optimizedImages()->create([
+          'image_id' => $dbImage->id,
+          'size' => $size,
+          'path' => $storePath,
+          'url' => $url,
+          'width' => $resizedImage->size()->width(),
+          'height' => $resizedImage->size()->height(),
+          'file_size' => Storage::size($storePath),
+        ]);
+      }
+    }
   }
 }

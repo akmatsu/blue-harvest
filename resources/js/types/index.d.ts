@@ -19,11 +19,8 @@ export interface Image {
   url: string;
   width: number;
   height: number;
-  optimizedImages: {
-    small?: OptimizedImage;
-    medium?: OptimizedImage;
-    large?: OptimizedImage;
-  };
+  optimized_images?: OptimizedImage[];
+  tags?: Tag[];
 }
 
 export interface OptimizedImage {
@@ -37,6 +34,14 @@ export interface OptimizedImage {
   size: string;
   width: number;
   height: number;
+}
+
+export interface Tag {
+  id: number;
+  name: string;
+  description: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export type PageProps<
