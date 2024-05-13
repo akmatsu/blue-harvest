@@ -39,6 +39,8 @@ declare module 'vue' {
     SimpleAutoComplete: typeof import('./Components/Form/SimpleAutoComplete.vue')['default']
     TextField: typeof import('./Components/Form/TextField.vue')['default']
     TextInput: typeof import('./Components/TextInput.vue')['default']
+    ThemeToggle: typeof import('./Components/ThemeToggle.vue')['default']
+    ThemeToggleBtn: typeof import('./Components/ThemeToggle.vue')['default']
     ToastStack: typeof import('./Components/ToastStack.vue')['default']
     UserMenu: typeof import('./Components/nav/UserMenu.vue')['default']
   }

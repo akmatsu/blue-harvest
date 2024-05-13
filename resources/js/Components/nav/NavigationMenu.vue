@@ -1,22 +1,53 @@
 <script lang="ts" setup>
 import { navigation } from '@/configs/navigation';
-import { Link } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+const isAuth = computed(() => !!page.props.auth.user);
 </script>
 
 <template>
   <v-list nav>
-    <Link
+    <div
       v-for="item in navigation.items"
       :key="item.to"
-      :href="item.to"
-      as="div"
+      :class="[{ 'd-none': item.requireAuth && !isAuth }]"
     >
       <v-list-item
+        v-if="!item.requireAuth || isAuth"
         link
+        :href="item.to"
         :prepend-icon="item.icon"
         :active="$page.url.startsWith(item.to)"
         :title="item.title"
+        @click.prevent.stop="$inertia.get(item.to)"
       />
-    </Link>
+    </div>
+    <v-list-item
+      v-if="isAuth"
+      href="/profile"
+      prepend-icon="mdi-account-edit"
+      :active="$page.url === '/profile'"
+      @click.prevent.stop="$inertia.get('/profile')"
+    >
+      <v-list-item-title> View Account </v-list-item-title>
+    </v-list-item>
+
+    <v-list-item
+      v-if="isAuth"
+      prepend-icon="mdi-logout"
+      href="/logout"
+      @click.prevent.stop="$inertia.post('/logout')"
+    >
+      <v-list-item-title> Log out </v-list-item-title>
+    </v-list-item>
+
+    <v-list-item
+      v-else
+      prepend-icon="mdi-account-plus"
+      href="/register"
+      title="Register"
+      @click.prevent.stop="$inertia.get('/register')"
+    />
   </v-list>
 </template>
