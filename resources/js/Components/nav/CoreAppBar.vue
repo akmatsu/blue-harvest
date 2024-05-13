@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { NavTabs, UserMenu } from '@/Components';
 import { usePage } from '@inertiajs/vue3';
+import { RefSymbol } from '@vue/reactivity';
 import { useDark, useToggle } from '@vueuse/core';
 import { useDisplay, useTheme } from 'vuetify';
 
@@ -13,8 +14,7 @@ const theme = useTheme();
 
 const isDark = useDark({
   onChanged(dark: boolean) {
-    console.log(dark);
-    // theme.global.name = dark ? 'light' : 'dark';
+    theme.global.name.value = dark ? 'dark' : 'light';
   },
 });
 
