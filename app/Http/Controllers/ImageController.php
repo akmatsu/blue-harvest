@@ -34,10 +34,10 @@ class ImageController extends Controller
 
     foreach ($files as $file) {
       $dbImage = new Image();
-      
+
       $uniqueFolder = generateUniqueFolder();
       $path = storeBaseImage($uniqueFolder, $file);
-      
+
       $dbImage->user_id = Auth::id();
       $dbImage->name = $file->getClientOriginalName();
       $dbImage->path = $path;
@@ -61,22 +61,30 @@ class ImageController extends Controller
 
       foreach ($sizes as $size => $dims) {
         $image = ImageFacade::read($storedImage);
-        $resizedImage = $image->scaleDown($dims['width'], $dims['height']);
-        $filePath = $uniqueFolder . 'optimized_images/';
-        $storePath = storeOptimizedImage($filePath, $resizedImage);
-        $url = Storage::url($storePath);
-        $paths[$size] = $url;
-        
-        Log::info($storePath);
-        $dbImage->optimizedImages()->create([
-          'image_id' => $dbImage->id,
-          'size' => $size,
-          'path' => $storePath,
-          'url' => $url,
-          'width' => $resizedImage->size()->width(),
-          'height' => $resizedImage->size()->height(),
-          'file_size' => Storage::size($storePath),
-        ]);
+
+        // If original image width or height is greater than width or height of
+        // size, generate a new optimized image.
+        if (
+          $image->width() > $dims['width'] ||
+          $image->height() > $dims['height']
+        ) {
+          $resizedImage = $image->scaleDown($dims['width'], $dims['height']);
+          $filePath = $uniqueFolder . 'optimized_images/';
+          $storePath = storeOptimizedImage($filePath, $resizedImage);
+          $url = Storage::url($storePath);
+          $paths[$size] = $url;
+
+          Log::info($storePath);
+          $dbImage->optimizedImages()->create([
+            'image_id' => $dbImage->id,
+            'size' => $size,
+            'path' => $storePath,
+            'url' => $url,
+            'width' => $resizedImage->size()->width(),
+            'height' => $resizedImage->size()->height(),
+            'file_size' => Storage::size($storePath),
+          ]);
+        }
       }
 
       $paths[] = $path;
