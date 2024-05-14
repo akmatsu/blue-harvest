@@ -19,11 +19,8 @@ export interface Image {
   url: string;
   width: number;
   height: number;
-  optimizedImages: {
-    small?: OptimizedImage;
-    medium?: OptimizedImage;
-    large?: OptimizedImage;
-  };
+  optimized_images?: OptimizedImage[];
+  tags?: Tag[];
 }
 
 export interface OptimizedImage {
@@ -37,6 +34,34 @@ export interface OptimizedImage {
   size: string;
   width: number;
   height: number;
+}
+
+export interface Tag {
+  id: number;
+  name: string;
+  description: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Paginated<T = any> {
+  current_page: 1;
+  data: T[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  links: {
+    url?: string | null;
+    label: string;
+    active?: boolean;
+  }[];
+  next_page_url: string;
+  path: string;
+  per_page: number;
+  prev_page_url?: string | null;
+  to: number;
+  total: number;
 }
 
 export type PageProps<

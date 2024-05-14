@@ -15,7 +15,7 @@ defineProps<{
       </primary-btn>
     </template>
     <v-list>
-      <div v-for="img in image.optimizedImages" :key="image?.id">
+      <div v-for="img in image.optimized_images" :key="image?.id">
         <ViewOptionsListItem v-if="img" :image="img" />
       </div>
       <v-divider></v-divider>

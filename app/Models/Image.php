@@ -65,4 +65,9 @@ class Image extends Model
 
     return $grouped;
   }
+
+  public function tags()
+  {
+    return $this->belongsToMany(Tag::class);
+  }
 }

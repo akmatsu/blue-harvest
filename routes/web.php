@@ -4,9 +4,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [ImageController::class, 'index'])->name(
-  'browse-images'
-);
+Route::get('/', [ImageController::class, 'index'])->name('browse-images');
 
 Route::get('/images/{id}', [ImageController::class, 'view'])->name(
   'image-view'
@@ -20,6 +18,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::get('/upload', [ImageController::class, 'uploadView'])->name(
     'image-upload'
   );
+  Route::get('/upload/results', [
+    ImageController::class,
+    'uploadResultsView',
+  ])->name('image-upload-results');
   Route::get('/images', [ImageController::class, 'manageImages'])->name(
     'image-manage'
   );
@@ -31,6 +33,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
   );
   Route::delete('/images/{id}', [ImageController::class, 'delete'])->name(
     'image-delete'
+  );
+  Route::post('/images/{id}', [ImageController::class, 'updateImage'])->name(
+    'image-update'
   );
 });
 
