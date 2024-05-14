@@ -16,6 +16,7 @@ declare module 'vue' {
     CoreAppBar: typeof import('./Components/nav/CoreAppBar.vue')['default']
     CoreLayout: typeof import('./Layouts/CoreLayout.vue')['default']
     DangerButton: typeof import('./Components/DangerButton.vue')['default']
+    DragAndDropInput: typeof import('./Components/Form/DragAndDropInput.vue')['default']
     DragDropFileInput: typeof import('./Components/Form/DragDropFileInput.vue')['default']
     Dropdown: typeof import('./Components/Dropdown.vue')['default']
     DropdownLink: typeof import('./Components/DropdownLink.vue')['default']
