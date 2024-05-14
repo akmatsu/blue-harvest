@@ -5,6 +5,7 @@ import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { useToasts } from '@/store/toasts';
 import axios from 'axios';
 import { useRequest } from '@/composables';
+import MasonrySimple from 'masonry-simple';
 
 const props = defineProps<{ images: Paginated<Image> }>();
 
@@ -13,7 +14,12 @@ const nextPage = ref(props.images.next_page_url);
 const toast = useToasts();
 
 async function loadMoreImages() {
-  return axios.get<Paginated<Image>>(nextPage.value);
+  const res = await axios.get<Paginated<Image>>(nextPage.value);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(res);
+    }, 2000);
+  });
 }
 
 const { loading, exec } = useRequest(loadMoreImages, {
@@ -29,7 +35,12 @@ const { loading, exec } = useRequest(loadMoreImages, {
       : toast.error('Something went wrong'),
 });
 
+const masonry = new MasonrySimple({
+  container: '.masonry',
+});
+
 onMounted(() => {
+  masonry.init();
   loading.value = false;
   window.addEventListener('scroll', handleScroll);
 });
@@ -48,32 +59,50 @@ function handleScroll() {
 <template>
   <Head title="Browse" />
   <CoreLayout>
-    <div class="masonry-layout">
-      <v-card
+    <div class="masonry">
+      <!-- <v-card
         v-for="image in scrollImages"
         :key="image.id"
         :href="route('image-view', { id: image.id })"
-        class="mb-4"
+        class="mb-4 masonry__item"
         @click.prevent.stop="
           $inertia.get(route('image-view', { id: image.id }))
         "
-      >
-        <v-img :src="image.url" width="100%"></v-img>
-      </v-card>
+      > -->
+      <v-img
+        v-for="image in scrollImages"
+        :key="image.id"
+        class="masonry__item"
+        :src="image.url"
+      ></v-img>
+      <!-- </v-card> -->
+    </div>
+    <div v-if="loading" class="d-flex justify-center">
+      <v-progress-circular indeterminate color="primary" />
     </div>
   </CoreLayout>
 </template>
 
 <style lang="scss" scoped>
-.masonry-layout {
-  column-count: 1;
-  gap: 1rem;
-  @media screen and (min-width: 500px) {
-    column-count: 2;
+.masonry {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-auto-flow: dense;
+  grid-gap: 20px;
+
+  @media (width >= 992px) {
+    grid-template-columns: 0.8fr 1.3fr 0.7fr;
   }
 
-  @media screen and (min-width: 1000px) {
-    column-count: 3;
+  &__item {
+    background-color: hsl(181 43% 77%);
+
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      object-position: center;
+    }
   }
 }
 </style>
