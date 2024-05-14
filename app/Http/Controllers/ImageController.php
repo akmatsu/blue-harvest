@@ -12,9 +12,12 @@ use Intervention\Image\Laravel\Facades\Image as ImageFacade;
 
 class ImageController extends Controller
 {
-  public function index()
+  public function index(Request $request)
   {
-    $images = Image::all();
+    $images = Image::paginate(25); // Fetch 10 images per page
+    if ($request->wantsJson()) {
+      return response()->json($images);
+    }
     return Inertia::render('Browse', ['images' => $images]);
   }
 
