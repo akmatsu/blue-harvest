@@ -34,6 +34,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::delete('/images/{id}', [ImageController::class, 'delete'])->name(
     'image-delete'
   );
+  Route::post('/images/{id}', [ImageController::class, 'updateImage'])->name(
+    'image-update'
+  );
 });
 
 Route::middleware('auth')->group(function () {

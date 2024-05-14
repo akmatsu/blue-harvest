@@ -10,15 +10,11 @@ defineProps<{
 </script>
 <template>
   <CoreLayout title="Upload Results">
-    <div class="d-flex flex-column align-center">
-      <UploadResultCard
-        v-for="image in images"
-        :key="image.id"
-        :image="image"
-        :tags="tags"
-        width="600"
-        max-width="100%"
-      />
-    </div>
+    <v-list>
+      <div v-for="(image, index) in images" :key="image.id">
+        <UploadResultCard :image="image" :tags="tags" />
+        <v-divider v-if="index !== images.length - 1"></v-divider>
+      </div>
+    </v-list>
   </CoreLayout>
 </template>

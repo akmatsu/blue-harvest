@@ -29,14 +29,7 @@ class ImageController extends Controller
   public function uploadResultsView(Request $request)
   {
     $ids = $request->query('ids', []);
-    $images = Image::whereIn('id', $ids)
-      ->with([
-        'optimizedImages' => function ($query) {
-          $query->whereIn('size', ['small', 'medium', 'large']);
-        },
-        'tags',
-      ])
-      ->get();
+    $images = Image::whereIn('id', $ids)->with('tags')->get();
     $tags = Tag::all();
 
     return Inertia::render('ImageUploadResults', [
@@ -72,6 +65,28 @@ class ImageController extends Controller
     }
 
     return redirect()->route('image-upload-results', ['ids' => $ids]);
+  }
+
+  public function updateImage(int $id, Request $request)
+  {
+    $request->validate([
+      'tags' => 'array',
+      'tags.*' => 'integer|exists:tags,id',
+      'name' => 'string',
+    ]);
+
+    $image = Image::findOrFail($id);
+
+    if ($request->has('name')) {
+      $image->name = $request->input('name');
+      $image->save();
+    }
+
+    if ($request->has('tags')) {
+      $image->tags()->sync($request->input('tags'));
+    }
+
+    return back();
   }
 
   public function view($id)
