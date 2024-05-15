@@ -14,7 +14,14 @@ class ImageController extends Controller
 {
   public function index(Request $request)
   {
-    $images = Image::paginate(25); // Fetch 10 images per page
+    $query = $request->input('query');
+    $limit = $request->input('limit', 25);
+
+    if ($query) {
+      $images = Image::search($query)->paginate($limit);
+    } else {
+      $images = Image::paginate($limit);
+    }
     if ($request->wantsJson()) {
       return response()->json($images);
     }

@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Scout\Searchable;
 
 class Image extends Model
 {
-  use HasFactory;
+  use HasFactory, Searchable;
 
   protected $fillable = [
     'user_id',
@@ -69,5 +70,16 @@ class Image extends Model
   public function tags()
   {
     return $this->belongsToMany(Tag::class);
+  }
+
+  public function toSearchableArray()
+  {
+    return array_merge($this->toArray(), [
+      'id' => (string) $this->id,
+      'name' => (string) $this->name,
+      'created_at' => $this->created_at->timestamp,
+      'tags' => $this->tags->pluck('name')->toArray(),
+      'tag_descriptions' => $this->tags->pluck('description')->toArray(),
+    ]);
   }
 }
