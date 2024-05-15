@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <v-menu open-on-hover>
+  <v-menu>
     <template #activator="{ props }">
       <primary-btn v-bind="props" append-icon="mdi-chevron-down">
         Download

@@ -1,7 +1,7 @@
 <script lang="ts" setup></script>
 
 <template>
-  <v-menu open-on-hover>
+  <v-menu>
     <template #activator="{ props }">
       <v-btn
         v-bind="props"
