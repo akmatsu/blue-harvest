@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { NavTabs, SearchBar, ThemeToggle } from '@/Components';
 import { useDisplay } from 'vuetify';
+import Logo from '../Logo.vue';
 
 defineProps<{
   searchable?: boolean;
@@ -17,9 +18,14 @@ const search = defineModel<string>('search');
 
 <template>
   <v-app-bar density="compact">
-    <v-btn href="/" @click.prevent.stop="$inertia.get('/')">
-      <v-app-bar-title>Blue Harvest</v-app-bar-title>
-    </v-btn>
+    <template #prepend>
+      <v-btn icon href="/" @click.prevent.stop="$inertia.get('/')">
+        <Logo style="width: 40px" />
+      </v-btn>
+    </template>
+
+    <v-app-bar-title>Blue Harvest</v-app-bar-title>
+
     <v-form
       v-if="searchable"
       style="width: 100%; max-width: 500px"
@@ -28,8 +34,9 @@ const search = defineModel<string>('search');
     >
       <SearchBar v-model="search" @enter="$emit('searchSubmit')" />
     </v-form>
+    <v-divider v-if="mdAndUp" class="mx-2" vertical></v-divider>
     <template #append>
-      <ThemeToggle />
+      <ThemeToggle v-if="mdAndUp" />
       <v-divider vertical class="mx-2" />
 
       <NavTabs v-if="mdAndUp" class="mr-2" />

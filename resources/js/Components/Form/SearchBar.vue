@@ -40,6 +40,9 @@ onMounted(async () => {
     prepend-inner-icon="mdi-magnify"
     placeholder="Search..."
     hide-details
+    rounded="xl"
+    variant="solo-filled"
+    flat
     @input="exec"
     @keydown.enter.prevent="$emit('enter')"
   >
