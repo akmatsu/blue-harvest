@@ -26,12 +26,6 @@ const icon = computed(() =>
 
 <template>
   <slot name="activator" :props="activatorProps" :isDark="isDark" :icon="icon">
-    <v-switch
-      v-model="isDark"
-      hideDetails
-      :true-icon="icon"
-      :false-icon="icon"
-      inset
-    />
+    <v-btn :icon="icon" @click="handleToggle"></v-btn>
   </slot>
 </template>

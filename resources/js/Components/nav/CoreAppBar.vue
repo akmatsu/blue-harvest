@@ -24,7 +24,7 @@ const search = defineModel<string>('search');
       </v-btn>
     </template>
 
-    <v-app-bar-title>Blue Harvest</v-app-bar-title>
+    <v-app-bar-title v-if="mdAndUp">Blue Harvest</v-app-bar-title>
 
     <v-form
       v-if="searchable"
@@ -35,12 +35,10 @@ const search = defineModel<string>('search');
       <SearchBar v-model="search" @enter="$emit('searchSubmit')" />
     </v-form>
     <v-divider v-if="mdAndUp" class="mx-2" vertical></v-divider>
+    <ThemeToggle v-if="mdAndUp" />
+    <v-divider vertical class="mx-2"></v-divider>
     <template #append>
-      <ThemeToggle v-if="mdAndUp" />
-      <v-divider vertical class="mx-2" />
-
       <NavTabs v-if="mdAndUp" class="mr-2" />
-
       <v-app-bar-nav-icon v-if="!mdAndUp" @click="drawer = !drawer" />
     </template>
   </v-app-bar>
