@@ -6,12 +6,30 @@ use App\Models\Image;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Intervention\Image\Laravel\Facades\Image as ImageFacade;
+use Typesense\Client;
 
 class ImageController extends Controller
 {
+  protected Client $typesense;
+
+  public function __construct()
+  {
+    $this->typesense = new Client([
+      'api_key' => env('TYPESENSE_API_KEY'),
+      'nodes' => [
+        [
+          'host' => env('TYPESENSE_HOST', 'localhost'),
+          'port' => env('TYPESENSE_PORT', '8108'),
+          'protocol' => env('TYPESENSE_PROTOCOL', 'http'),
+        ],
+      ],
+      'connection_timeout_seconds' => 2,
+    ]);
+  }
   public function index(Request $request)
   {
     $query = $request->input('query');
@@ -19,6 +37,9 @@ class ImageController extends Controller
 
     if ($query) {
       $images = Image::search($query)->paginate($limit);
+      if ($images->total() > 0) {
+        $this->logSearchQuery($query);
+      }
     } else {
       $images = Image::paginate($limit);
     }
@@ -207,6 +228,61 @@ class ImageController extends Controller
           'file_size' => Storage::size($storePath),
         ]);
       }
+    }
+  }
+
+  private function logSearchQuery(string $query)
+  {
+    try {
+      $this->createPopularSearchesCollectionIfNotExists();
+
+      // Search for the document with the given query
+      $searchResults = $this->typesense->collections[
+        'popular_searches'
+      ]->documents->search([
+        'q' => $query,
+        'query_by' => 'query',
+        'filter_by' => 'query:=' . $query,
+        'per_page' => 1,
+      ]);
+
+      if (count($searchResults['hits']) > 0) {
+        // If the document exists, increment the count
+        $document = $searchResults['hits'][0]['document'];
+        $updatedCount = $document['count'] + 1;
+        $this->typesense->collections['popular_searches']->documents[
+          $document['id']
+        ]->update([
+          'query' => $query,
+          'count' => $updatedCount,
+          'timestamp' => now()->timestamp,
+        ]);
+      } else {
+        // If the document does not exist, create a new one
+        $this->typesense->collections['popular_searches']->documents->upsert([
+          'query' => $query,
+          'count' => 1,
+          'timestamp' => now()->timestamp,
+        ]);
+      }
+    } catch (\Exception $e) {
+      Log::error('Failed to log search query: ' . $e->getMessage());
+    }
+  }
+
+  private function createPopularSearchesCollectionIfNotExists()
+  {
+    try {
+      $this->typesense->collections['popular_searches']->retrieve();
+    } catch (\Typesense\Exceptions\ObjectNotFound $e) {
+      $this->typesense->collections->create([
+        'name' => 'popular_searches',
+        'fields' => [
+          ['name' => 'query', 'type' => 'string'],
+          ['name' => 'count', 'type' => 'int32'],
+          ['name' => 'timestamp', 'type' => 'int32'],
+        ],
+      ]);
     }
   }
 }

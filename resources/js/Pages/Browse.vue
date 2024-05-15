@@ -15,7 +15,7 @@ const toast = useToasts();
 const search = ref<string>();
 
 async function handleSearch() {
-  return router.get(`/?query=${search.value}`);
+  return router.get(`/?query=${search.value}`, {}, { only: ['images'] });
 }
 
 async function loadMoreImages() {

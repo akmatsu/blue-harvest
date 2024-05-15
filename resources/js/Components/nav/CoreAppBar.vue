@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NavTabs, ThemeToggle } from '@/Components';
+import { NavTabs, SearchBar, ThemeToggle } from '@/Components';
 import { useDisplay } from 'vuetify';
 
 defineProps<{
@@ -21,18 +21,12 @@ const search = defineModel<string>('search');
       <v-app-bar-title>Blue Harvest</v-app-bar-title>
     </v-btn>
     <v-form
+      v-if="searchable"
       style="width: 100%; max-width: 500px"
+      class="d-flex align-center"
       @submit.prevent="$emit('searchSubmit')"
     >
-      <v-text-field
-        v-if="searchable"
-        v-model="search"
-        hide-details
-        density="compact"
-        prepend-inner-icon="mdi-magnify"
-        placeholder="search..."
-        name="search"
-      ></v-text-field>
+      <SearchBar v-model="search" @enter="$emit('searchSubmit')" />
     </v-form>
     <template #append>
       <ThemeToggle />

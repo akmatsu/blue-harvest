@@ -72,3 +72,14 @@ export type PageProps<
   };
   ziggy: Config & { location: string };
 };
+
+export type PopularSearches = {
+  document: {
+    count: number;
+    id: string;
+    query: string;
+    timestamp: number;
+  };
+  highlight: [];
+  highlights: [];
+};
