@@ -1,5 +1,4 @@
 import 'vuetify/styles';
-// import '../../css/vuetifySettings.scss';
 
 import { createVuetify } from 'vuetify';
 import { VBtn } from 'vuetify/components';
@@ -33,6 +32,11 @@ export const vuetify = createVuetify({
       slim: true,
     },
     VTextField: {
+      color: 'primary',
+      variant: 'outlined',
+      density: 'compact',
+    },
+    VCombobox: {
       color: 'primary',
       variant: 'outlined',
       density: 'compact',

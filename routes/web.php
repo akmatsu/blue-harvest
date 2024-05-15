@@ -1,10 +1,15 @@
 <?php
 
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\PopularSearchController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ImageController::class, 'index'])->name('browse-images');
+Route::get('/popular-searches', [
+  PopularSearchController::class,
+  'getPopularSearches',
+]);
 
 Route::get('/images/{id}', [ImageController::class, 'view'])->name(
   'image-view'

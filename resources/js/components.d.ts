@@ -36,6 +36,7 @@ declare module 'vue' {
     PasswordInput: typeof import('./Components/Form/PasswordInput.vue')['default']
     PrimaryButton: typeof import('./Components/PrimaryButton.vue')['default']
     ResponsiveNavLink: typeof import('./Components/ResponsiveNavLink.vue')['default']
+    SearchBar: typeof import('./Components/Form/SearchBar.vue')['default']
     SecondaryButton: typeof import('./Components/SecondaryButton.vue')['default']
     SelectField: typeof import('./Components/Form/SelectField.vue')['default']
     SimpleAutoComplete: typeof import('./Components/Form/SimpleAutoComplete.vue')['default']
