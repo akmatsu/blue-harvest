@@ -26,7 +26,7 @@ declare module 'vue' {
     ImageCard: typeof import('./Components/Surfaces/ImageCard/ImageCard.vue')['default']
     InputError: typeof import('./Components/InputError.vue')['default']
     InputLabel: typeof import('./Components/InputLabel.vue')['default']
-    Logo: typeof import('./Components/Icons/Logo.vue')['default']
+    Logo: typeof import('./Components/Logo.vue')['default']
     MobileDrawer: typeof import('./Components/nav/MobileDrawer.vue')['default']
     Modal: typeof import('./Components/Modal.vue')['default']
     NavigationMenu: typeof import('./Components/nav/NavigationMenu.vue')['default']

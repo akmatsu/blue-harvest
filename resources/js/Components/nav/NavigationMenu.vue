@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { navigation } from '@/configs/navigation';
 import { usePage } from '@inertiajs/vue3';
+import { ThemeToggle } from '@/Components';
 
 const page = usePage();
 const isAuth = computed(() => !!page.props.auth.user);
@@ -49,5 +50,12 @@ const isAuth = computed(() => !!page.props.auth.user);
       title="Register"
       @click.prevent.stop="$inertia.get('/register')"
     />
+    <ThemeToggle>
+      <template #activator="{ props, isDark, icon }">
+        <v-list-item v-bind="props" :prepend-icon="icon">
+          {{ isDark ? 'Switch to light theme' : 'Switch to dark theme' }}
+        </v-list-item>
+      </template>
+    </ThemeToggle>
   </v-list>
 </template>
