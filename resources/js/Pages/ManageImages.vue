@@ -1,19 +1,24 @@
 <script lang="ts" setup>
-import { Head } from '@inertiajs/vue3';
-import { Image } from '@/types';
+import { Head, router } from '@inertiajs/vue3';
+import { Image, Paginated } from '@/types';
 import { formatDate, imageDelete } from '@/utils';
 import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { useRequest } from '@/composables/useRequest';
 import { useToasts } from '@/store/toasts';
 
-defineProps<{ images: Image[] }>();
+defineProps<{ images: Paginated<Image> }>();
 const toast = useToasts();
 
 const selected = ref<number[]>([]);
 const { exec, loading } = useRequest(imageDelete, {
-  onSuccess: () =>
-    toast.show({ text: 'Items successfully deleted.', color: 'error' }),
+  onSuccess: () => toast.success('Items successfully deleted.'),
 });
+
+const search = ref<string>();
+
+function handleSearch() {
+  return router.get(`/images?query=${search.value}`, {}, { only: ['images'] });
+}
 
 const headers = [
   {
@@ -45,18 +50,17 @@ const headers = [
 
 <template>
   <Head title="Manage Images" />
-  <CoreLayout>
+  <CoreLayout v-model="search" searchable @search-submit="handleSearch">
     <v-card>
       <v-data-table
         v-model="selected"
-        :items="images"
+        :items="images.data"
         :headers="headers"
         item-value="id"
         show-select
       >
         <template #top>
           <v-toolbar>
-            <!-- <v-divider inset vertical class="mx-1"></v-divider> -->
             <v-spacer></v-spacer>
             <v-dialog max-width="400px">
               <template #activator="{ props }">

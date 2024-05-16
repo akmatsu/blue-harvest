@@ -204,6 +204,10 @@ return [
               'name' => 'tag_descriptions',
               'type' => 'string[]',
             ],
+            [
+              'name' => 'user_id',
+              'type' => 'int32',
+            ],
           ],
         ],
         'search-parameters' => [
