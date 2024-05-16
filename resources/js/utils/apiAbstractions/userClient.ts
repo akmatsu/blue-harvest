@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { apiV1Instance } from './apiInstance';
+import { router } from '@inertiajs/vue3';
+import { useToasts } from '@/store/toasts';
 
 const api = apiV1Instance;
 
@@ -19,9 +21,19 @@ export function uploadImages(images: File[]) {
 }
 
 export function imageDelete(id: number | number[]) {
+  const toast = useToasts();
   if (Array.isArray(id)) {
-    return axios.delete('/images', { data: { ids: id } });
+    router.delete('/images', {
+      data: {
+        ids: id,
+      },
+      onSuccess: () => toast.success('Successfully deleted images.'),
+      onError: (err) => toast.error(err.message),
+    });
   } else {
-    return axios.delete(`/images/${id}`);
+    router.delete(`/images/${id}`, {
+      onSuccess: () => toast.success('Successfully deleted image.'),
+      onError: (err) => toast.error(err.message),
+    });
   }
 }
