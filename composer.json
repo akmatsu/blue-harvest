@@ -13,6 +13,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.9",
         "laravel/tinker": "^2.9",
+        "spatie/laravel-permission": "^6.7",
         "tightenco/ziggy": "^2.0",
         "typesense/typesense-php": "^4.9"
     },
