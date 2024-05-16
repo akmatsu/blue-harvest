@@ -6,7 +6,7 @@ import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { useRequest } from '@/composables/useRequest';
 import { useToasts } from '@/store/toasts';
 
-defineProps<{ images: Paginated<Image> }>();
+const props = defineProps<{ images: Paginated<Image> }>();
 const toast = useToasts();
 
 const selected = ref<number[]>([]);
@@ -14,10 +14,27 @@ const { exec, loading } = useRequest(imageDelete, {
   onSuccess: () => toast.success('Items successfully deleted.'),
 });
 
+const itemsPerPage = ref(props.images.per_page);
+const page = ref(props.images.current_page);
+
 const search = ref<string>();
 
-function handleSearch() {
-  return router.get(`/images?query=${search.value}`, {}, { only: ['images'] });
+function editImages(ids = selected.value) {
+  router.get('/upload/results', {
+    ids: ids,
+  });
+}
+
+function handleSearch(query = search.value) {
+  return router.get(
+    `/images`,
+    {
+      query,
+      count: itemsPerPage.value,
+      ...(!query && { page: page.value }),
+    },
+    { only: ['images'] },
+  );
 }
 
 const headers = [
@@ -42,6 +59,10 @@ const headers = [
     key: 'updated_at',
   },
   {
+    title: 'Tags',
+    key: 'tags',
+  },
+  {
     title: 'Actions',
     key: 'url',
   },
@@ -50,18 +71,26 @@ const headers = [
 
 <template>
   <Head title="Manage Images" />
-  <CoreLayout v-model="search" searchable @search-submit="handleSearch">
+  <CoreLayout v-model="search" searchable fluid @search-submit="handleSearch">
     <v-card>
-      <v-data-table
+      <v-data-table-server
         v-model="selected"
+        v-model:items-per-page="itemsPerPage"
+        v-model:page="page"
         :items="images.data"
+        :items-length="images.total"
         :headers="headers"
         item-value="id"
         show-select
+        @update:page="handleSearch()"
+        @update:items-per-page="handleSearch()"
       >
         <template #top>
           <v-toolbar>
             <v-spacer></v-spacer>
+            <v-btn color="primary" prepend-icon="$edit" @click="editImages()">
+              Edit Images
+            </v-btn>
             <v-dialog max-width="400px">
               <template #activator="{ props }">
                 <v-btn
@@ -101,25 +130,23 @@ const headers = [
           {{ formatDate(item.updated_at) }}
         </template>
         <template #item.url="{ item }">
-          <v-dialog max-width="800">
-            <template #activator="{ props }">
-              <v-btn v-bind="props" color="primary">View Image</v-btn>
-            </template>
-            <v-card :title="item.name">
-              <v-card-text>
-                <v-img :src="item.url"></v-img>
-                <div class="d-flex">
-                  <p class="text-caption">
-                    Dimensions: {{ item.width }} x {{ item.height }}
-                  </p>
-                  <v-spacer></v-spacer>
-                  <p class="text-caption">Size: {{ item.size }} Bytes</p>
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
+          <v-btn v-bind="props" color="primary" @click="editImages([item.id])">
+            View Image
+          </v-btn>
         </template>
-      </v-data-table>
+        <template #item.tags="{ item }">
+          <v-chip-group>
+            <v-chip
+              v-for="tag in item.tags"
+              density="compact"
+              :href="`/images?query=${tag.name}`"
+              @click.prevent.stop="handleSearch(tag.name)"
+            >
+              {{ tag.name }}
+            </v-chip>
+          </v-chip-group>
+        </template>
+      </v-data-table-server>
     </v-card>
   </CoreLayout>
 </template>
