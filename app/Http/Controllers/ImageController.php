@@ -134,12 +134,29 @@ class ImageController extends Controller
     return Inertia::render('Image/Edit', ['image' => $image]);
   }
 
-  public function manageImages()
+  public function manageImages(Request $request)
   {
+    $query = $request->input('query');
     $user = Auth::user();
 
     if ($user) {
-      return Inertia::render('ManageImages', ['images' => $user->images]);
+      if ($query) {
+        $images = Image::search($query)
+          ->where('user_id', $user->id)
+          ->paginate(25);
+
+        if ($images->total() > 0) {
+          $this->logSearchQuery($query);
+        }
+      } else {
+        $images = Image::paginate(25)->where('user_id', $user->id);
+      }
+
+      if ($request->wantsJson()) {
+        return response()->json($images);
+      }
+
+      return Inertia::render('ManageImages', ['images' => $images]);
     }
 
     return redirect()->route('login');

@@ -34,7 +34,7 @@ const search = defineModel<string>('search');
     >
       <SearchBar v-model="search" @enter="$emit('searchSubmit')" />
     </v-form>
-    <v-divider v-if="mdAndUp" class="mx-2" vertical></v-divider>
+    <v-divider v-if="mdAndUp && searchable" class="mx-2" vertical></v-divider>
     <ThemeToggle v-if="mdAndUp" />
     <v-divider vertical class="mx-2"></v-divider>
     <template #append>
