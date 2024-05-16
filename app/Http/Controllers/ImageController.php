@@ -112,6 +112,7 @@ class ImageController extends Controller
 
     if ($request->has('tags')) {
       $image->tags()->sync($request->input('tags'));
+      $image->save();
     }
 
     return back();
@@ -137,19 +138,27 @@ class ImageController extends Controller
   public function manageImages(Request $request)
   {
     $query = $request->input('query');
+    $count = $request->input('count', 25);
     $user = Auth::user();
 
     if ($user) {
       if ($query) {
-        $images = Image::search($query)
+        $imageIds = Image::search($query)
           ->where('user_id', $user->id)
-          ->paginate(25);
+          ->get()
+          ->pluck('id');
+
+        $images = Image::whereIn('id', $imageIds)
+          ->with('tags')
+          ->paginate($count);
 
         if ($images->total() > 0) {
           $this->logSearchQuery($query);
         }
       } else {
-        $images = Image::paginate(25)->where('user_id', $user->id);
+        $images = Image::where('user_id', $user->id)
+          ->with('tags')
+          ->paginate($count);
       }
 
       if ($request->wantsJson()) {
