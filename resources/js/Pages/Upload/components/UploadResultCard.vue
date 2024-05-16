@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Image, Tag } from '@/types';
 import { useForm } from '@inertiajs/vue3';
-import { formatBytes, imageDelete } from '@/utils';
+import { imageDelete } from '@/utils';
 import { required } from '@/utils';
 import { useToasts } from '@/store/toasts';
 
@@ -64,7 +64,7 @@ function getChangedFields() {
         </v-card>
       </v-dialog>
     </template>
-    <v-form @submit.prevent="handleSubmit" class="mt-2">
+    <v-form class="mt-2" @submit.prevent="handleSubmit">
       <v-text-field
         v-model="form.name"
         label="Name"
@@ -81,6 +81,39 @@ function getChangedFields() {
       />
       <div class="d-flex">
         <v-spacer></v-spacer>
+        <v-dialog max-width="400px">
+          <template #activator="{ props }">
+            <v-btn
+              color="error"
+              variant="text"
+              prepend-icon="mdi-delete"
+              v-bind="props"
+            >
+              Delete
+            </v-btn>
+          </template>
+          <template #default="{ isActive }">
+            <v-card title="Delete Image">
+              <v-card-text>
+                <p>
+                  Are you sure you want to delete this image? This is not
+                  reversible.
+                </p>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn @click="isActive.value = false">Cancel</v-btn>
+                <v-btn
+                  variant="flat"
+                  color="error"
+                  @click="imageDelete(image.id)"
+                >
+                  Delete
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </template>
+        </v-dialog>
         <primary-btn
           type="submit"
           :disabled="!form.isDirty"

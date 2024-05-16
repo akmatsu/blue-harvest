@@ -60,6 +60,10 @@ class ImageController extends Controller
     $images = Image::whereIn('id', $ids)->with('tags')->get();
     $tags = Tag::all();
 
+    if ($images->isEmpty()) {
+      return redirect()->route('image-manage');
+    }
+
     return Inertia::render('ImageUploadResults', [
       'images' => $images,
       'tags' => $tags,
@@ -178,7 +182,7 @@ class ImageController extends Controller
       ->firstOrFail();
 
     $image->delete();
-    return response('Image successfully deleted', 202);
+    return back();
   }
 
   public function bulkDelete(Request $request)
@@ -197,7 +201,7 @@ class ImageController extends Controller
       $image->delete();
     }
 
-    return response('Images successfully deleted', 202);
+    return back();
   }
 
   private function populateImageData($dbImage, $file, $path, $uniqueFolder)

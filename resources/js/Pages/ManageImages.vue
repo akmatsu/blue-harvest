@@ -3,16 +3,10 @@ import { Head, router } from '@inertiajs/vue3';
 import { Image, Paginated } from '@/types';
 import { formatDate, imageDelete } from '@/utils';
 import CoreLayout from '@/Layouts/CoreLayout.vue';
-import { useRequest } from '@/composables/useRequest';
-import { useToasts } from '@/store/toasts';
 
 const props = defineProps<{ images: Paginated<Image> }>();
-const toast = useToasts();
 
 const selected = ref<number[]>([]);
-const { exec, loading } = useRequest(imageDelete, {
-  onSuccess: () => toast.success('Items successfully deleted.'),
-});
 
 const itemsPerPage = ref(props.images.per_page);
 const page = ref(props.images.current_page);
@@ -98,7 +92,6 @@ const headers = [
                   v-bind="props"
                   color="error"
                   :disabled="!selected.length"
-                  :loading="loading"
                 >
                   Delete
                 </v-btn>
@@ -114,7 +107,11 @@ const headers = [
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn @click="isActive.value = false">Cancel</v-btn>
-                    <v-btn variant="flat" color="error" @click="exec(selected)">
+                    <v-btn
+                      variant="flat"
+                      color="error"
+                      @click="imageDelete(selected)"
+                    >
                       Delete
                     </v-btn>
                   </v-card-actions>
