@@ -3,7 +3,6 @@ import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import vuetify from 'vite-plugin-vuetify';
 import AutoImport from 'unplugin-auto-import/vite';
-import Components from 'unplugin-vue-components/vite';
 
 export default defineConfig({
   optimizeDeps: {
@@ -36,13 +35,6 @@ export default defineConfig({
       imports: ['vue', 'pinia'],
       vueTemplate: true,
       dts: './resources/js/auto-imports.d.ts',
-    }),
-
-    Components({
-      dirs: ['./resources/js/Components', './resources/js/Layouts'],
-      extensions: ['vue'],
-      dts: './resources/js/components.d.ts',
-      include: [/\.vue%/, /\.vue\?vue/],
     }),
   ],
 });
