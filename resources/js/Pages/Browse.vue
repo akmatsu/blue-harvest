@@ -3,97 +3,223 @@ import { Head, router } from '@inertiajs/vue3';
 import { Image, Paginated } from '@/types';
 import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { useToasts } from '@/store/toasts';
-import axios from 'axios';
 import { useRequest } from '@/composables';
 
 const props = defineProps<{ images: Paginated<Image> }>();
 
 const scrollImages = ref(props.images.data);
-const nextPage = ref(props.images.next_page_url);
+
 const toast = useToasts();
+const page = ref(props.images.current_page);
 
 const search = ref<string>();
 
 async function handleSearch() {
-  return router.get(`/?query=${search.value}`, {}, { only: ['images'] });
+  return router.get('/', { query: search.value }, { only: ['images'] });
 }
 
-async function loadMoreImages() {
-  return axios.get<Paginated<Image>>(nextPage.value);
-}
-
-const { loading: searchLoading, exec: execSearch } = useRequest(handleSearch, {
+const { exec: execSearch } = useRequest(handleSearch, {
   onError: (err) =>
     err.message
       ? toast.error(err.message)
       : toast.error('Something went wrong.'),
 });
 
-const { loading: pageLoading, exec } = useRequest(loadMoreImages, {
-  onSuccess: (res) => {
-    if (res) {
-      scrollImages.value.push(...res.data.data);
-      nextPage.value = res.data.next_page_url;
-    }
-  },
-  onError: (err) =>
-    err.message
-      ? toast.error(err.message)
-      : toast.error('Something went wrong'),
-});
+// function handlePage(value: number) {}
 
-const loading = computed(() => searchLoading.value || pageLoading.value);
-
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll);
-});
-
-function handleScroll() {
-  const bottomOfWindow =
-    window.innerHeight + window.scrollY >=
-    document.documentElement.scrollHeight - 100; // Add some buffer
-
-  if (bottomOfWindow && !loading.value && nextPage.value) {
-    exec();
-  }
-}
+const totalPages = computed(() =>
+  Math.ceil(props.images.total / props.images.per_page),
+);
 </script>
 
 <template>
   <Head title="Browse" />
   <CoreLayout v-model="search" searchable @search-submit="execSearch">
-    <v-row class="masonry">
-      <v-col
+    <div class="masonry px-lg-12 mb-4">
+      <v-card
         v-for="image in scrollImages"
         :key="image.id"
-        class="masonry__item"
-        cols="12"
-        sm="6"
-        md="4"
+        :href="route('image-view', { id: image.id })"
+        class="mb-4"
+        @click.prevent.stop="
+          $inertia.get(
+            route('image-view', { id: image.id }),
+            {},
+            {
+              preserveScroll: true,
+              preserveState: true,
+            },
+          )
+        "
       >
-        <v-card
-          :href="route('image-view', { id: image.id })"
-          @click.prevent.stop="
-            $inertia.get(
-              route('image-view', { id: image.id }),
-              {},
-              {
-                preserveScroll: true,
-                preserveState: true,
-              },
-            )
-          "
+        <v-img
+          :src="image.url"
+          cover
+          :aspect-ratio="image.width / image.height"
+        ></v-img>
+      </v-card>
+    </div>
+    <div class="d-flex justify-center">
+      <v-pagination
+        v-model="page"
+        :length="totalPages"
+        density="compact"
+        show-first-last-page
+        size="small"
+        total-visible="6"
+      >
+        <template #item="{ isActive, page, props }">
+          <v-btn
+            v-bind="props"
+            variant="text"
+            size="small"
+            density="compact"
+            :disabled="isActive"
+            :active="isActive"
+            :href="route('browse-images', { page, query: search })"
+            @click.prevent="
+              $inertia.get(
+                route('browse-images', {
+                  page: page,
+                  query: search,
+                }),
+              )
+            "
+          >
+            {{ page }}
+          </v-btn>
+        </template>
+        <template
+          #first="{
+            disabled,
+            icon,
+            'aria-label': ariaLabel,
+            'aria-disabled': ariaDisabled,
+          }"
         >
-          <v-img :src="image.url" cover aspect-ratio="1"></v-img>
-        </v-card>
-      </v-col>
-
-      <v-col v-if="!scrollImages.length" cols="12" class="text-center">
-        <p>Unfortunately no results matched search search. Try again.</p>
-      </v-col>
-      <v-col v-if="loading" class="d-flex justify-center" cols="12">
-        <v-progress-circular indeterminate color="primary" />
-      </v-col>
-    </v-row>
+          <v-btn
+            :icon="icon"
+            variant="text"
+            density="compact"
+            size="small"
+            :disabled="disabled"
+            :aria-label="ariaLabel"
+            :aria-disabled="ariaDisabled"
+            :href="route('browse-images', { page: 1 })"
+            @click.prevent="
+              $inertia.get(route('browse-images', { page: 1, query: search }))
+            "
+          ></v-btn>
+        </template>
+        <template
+          #last="{
+            disabled,
+            icon,
+            'aria-label': ariaLabel,
+            'aria-disabled': ariaDisabled,
+          }"
+        >
+          <v-btn
+            :icon="icon"
+            variant="text"
+            density="compact"
+            size="small"
+            :disabled="disabled"
+            :aria-label="ariaLabel"
+            :aria-disabled="ariaDisabled"
+            :href="
+              route('browse-images', { page: images.last_page, query: search })
+            "
+            @click.prevent="
+              $inertia.get(
+                route('browse-images', {
+                  page: images.last_page,
+                  query: search,
+                }),
+              )
+            "
+          ></v-btn>
+        </template>
+        <template
+          #next="{
+            disabled,
+            icon,
+            'aria-label': ariaLabel,
+            'aria-disabled': ariaDisabled,
+          }"
+        >
+          <v-btn
+            :icon="icon"
+            variant="text"
+            density="compact"
+            size="small"
+            :disabled="disabled"
+            :aria-label="ariaLabel"
+            :aria-disabled="ariaDisabled"
+            :href="
+              route('browse-images', {
+                page: images.current_page + 1,
+                query: search,
+              })
+            "
+            @click.prevent="
+              $inertia.get(
+                route('browse-images', {
+                  page: images.current_page + 1,
+                  query: search,
+                }),
+              )
+            "
+          ></v-btn>
+        </template>
+        <template
+          #prev="{
+            disabled,
+            icon,
+            'aria-label': ariaLabel,
+            'aria-disabled': ariaDisabled,
+          }"
+        >
+          <v-btn
+            :icon="icon"
+            variant="text"
+            density="compact"
+            size="small"
+            :disabled="disabled"
+            :aria-label="ariaLabel"
+            :aria-disabled="ariaDisabled"
+            :href="
+              route('browse-images', {
+                page: images.current_page - 1,
+                query: search,
+              })
+            "
+            @click.prevent="
+              $inertia.get(
+                route('browse-images', {
+                  page: images.current_page - 1,
+                  query: search,
+                }),
+              )
+            "
+          ></v-btn>
+        </template>
+      </v-pagination>
+    </div>
   </CoreLayout>
 </template>
+
+<style lang="scss" scoped>
+.masonry {
+  column-count: 1;
+  column-gap: 1rem;
+
+  @media screen and (min-width: 600px) {
+    column-count: 2;
+  }
+
+  @media screen and (min-width: 960px) {
+    column-count: 3;
+  }
+}
+</style>
