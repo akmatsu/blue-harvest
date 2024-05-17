@@ -20,20 +20,22 @@ export function uploadImages(images: File[]) {
   return axios.post('/images', formData);
 }
 
-export function imageDelete(id: number | number[]) {
-  const toast = useToasts();
-  if (Array.isArray(id)) {
-    router.delete('/images', {
-      data: {
-        ids: id,
-      },
-      onSuccess: () => toast.success('Successfully deleted images.'),
-      onError: (err) => toast.error(err.message),
-    });
-  } else {
-    router.delete(`/images/${id}`, {
-      onSuccess: () => toast.success('Successfully deleted image.'),
-      onError: (err) => toast.error(err.message),
-    });
+export function imageDelete(id?: number | number[]): void {
+  if (id) {
+    const toast = useToasts();
+    if (Array.isArray(id)) {
+      router.delete('/images', {
+        data: {
+          ids: id,
+        },
+        onSuccess: () => toast.success('Successfully deleted images.'),
+        onError: (err) => toast.error(err.message),
+      });
+    } else {
+      router.delete(`/images/${id}`, {
+        onSuccess: () => toast.success('Successfully deleted image.'),
+        onError: (err) => toast.error(err.message),
+      });
+    }
   }
 }

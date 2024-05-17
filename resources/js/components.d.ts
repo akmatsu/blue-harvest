@@ -24,6 +24,7 @@ declare module 'vue' {
     Header2: typeof import('./Components/Typography/Header2.vue')['default']
     IArrowUpTray: typeof import('./Components/icons/IArrowUpTray.vue')['default']
     ImageCard: typeof import('./Components/Surfaces/ImageCard/ImageCard.vue')['default']
+    ImageTable: typeof import('./Components/dataDisplays/ImageTable.vue')['default']
     InputError: typeof import('./Components/InputError.vue')['default']
     InputLabel: typeof import('./Components/InputLabel.vue')['default']
     Logo: typeof import('./Components/Logo.vue')['default']
