@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { Image, Tag } from '@/types';
 import { useForm } from '@inertiajs/vue3';
-import { imageDelete } from '@/utils';
-import { required } from '@/utils';
+import { imageDelete, required } from '@/utils';
 import { useToasts } from '@/store/toasts';
 
 const props = defineProps<{

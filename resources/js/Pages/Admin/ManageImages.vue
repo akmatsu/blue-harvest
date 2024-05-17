@@ -13,7 +13,7 @@ const itemsPerPage = ref(props.images.per_page);
 const page = ref(props.images.current_page);
 
 function editImages(ids = selected.value) {
-  router.get('/upload/results', {
+  router.get('/admin/images/edit', {
     ids: ids,
   });
 }

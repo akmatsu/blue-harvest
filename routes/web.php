@@ -55,6 +55,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ->middleware('can:edit images')
     ->name('admin-image-update');
 
+  Route::get('/admin/images/edit', [
+    ImageController::class,
+    'adminImageEditView',
+  ])
+    ->middleware('can:edit images')
+    ->name('admin-image-update');
+
   Route::delete('/admin/images', [
     ImageController::class,
     'adminBulkDelete',
