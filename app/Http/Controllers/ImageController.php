@@ -70,6 +70,22 @@ class ImageController extends Controller
     ]);
   }
 
+  public function adminImageEditView(Request $request)
+  {
+    $ids = $request->query('ids', []);
+    $images = Image::whereIn('id', $ids)->with('tags')->get();
+    $tags = Tag::all();
+
+    if ($images->isEmpty()) {
+      return redirect()->route('image-manage');
+    }
+
+    return Inertia::render('Admin/EditImages', [
+      'images' => $images,
+      'tags' => $tags,
+    ]);
+  }
+
   public function uploadImage(Request $request)
   {
     $request->validate([
