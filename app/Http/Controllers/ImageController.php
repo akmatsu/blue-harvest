@@ -204,6 +204,28 @@ class ImageController extends Controller
     return back();
   }
 
+  public function adminManageImages(Request $request)
+  {
+    $query = $request->input('query');
+    $count = $request->input('count', 25);
+
+    if ($query) {
+      $imageIds = Image::search($query)->get()->pluck('id');
+      $images = Image::whereIn('id', $imageIds)->with('tags')->paginate($count);
+      if ($images->total() > 0) {
+        $this->logSearchQuery($query);
+      }
+    } else {
+      $images = Image::with('tags')->paginate($count);
+    }
+
+    if ($request->wantsJson()) {
+      return response()->json($images);
+    }
+
+    return Inertia::render('Admin/ManageImages', ['images' => $images]);
+  }
+
   private function populateImageData($dbImage, $file, $path, $uniqueFolder)
   {
     $dbImage->user_id = Auth::id();

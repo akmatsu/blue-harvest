@@ -1,18 +1,16 @@
 <script lang="ts" setup>
 import { Head, router } from '@inertiajs/vue3';
+import { CoreLayout } from '@/Layouts';
 import { Image, Paginated } from '@/types';
-import { imageDelete } from '@/utils';
-import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { ImageTable } from '@/Components';
-
-const props = defineProps<{ images: Paginated<Image> }>();
-
-const selected = ref<number[]>([]);
-
-const itemsPerPage = ref(props.images.per_page);
-const page = ref(props.images.current_page);
+import { imageDelete } from '@/utils';
 
 const search = ref<string>();
+const props = defineProps<{ images: Paginated<Image> }>();
+
+const selected = ref<number[]>();
+const itemsPerPage = ref(props.images.per_page);
+const page = ref(props.images.current_page);
 
 function editImages(ids = selected.value) {
   router.get('/upload/results', {
@@ -22,7 +20,7 @@ function editImages(ids = selected.value) {
 
 function handleSearch(query = search.value) {
   return router.get(
-    `/images`,
+    `/admin/images`,
     {
       query,
       count: itemsPerPage.value,
@@ -34,19 +32,17 @@ function handleSearch(query = search.value) {
 </script>
 
 <template>
-  <Head title="Manage Images" />
+  <Head title="Admin Manage Images" />
   <CoreLayout v-model="search" searchable fluid @search-submit="handleSearch">
-    <v-card>
-      <ImageTable
-        v-model="selected"
-        v-model:page="page"
-        v-model:items-per-page="itemsPerPage"
-        :images="images.data"
-        :items-length="images.total"
-        @search="handleSearch"
-        @edit-images="editImages"
-        @delete-image="imageDelete"
-      />
-    </v-card>
+    <ImageTable
+      v-model="selected"
+      v-model:page="page"
+      v-model:items-per-page="itemsPerPage"
+      :images="props.images.data"
+      :items-length="images.total"
+      @search="handleSearch"
+      @edit-images="editImages"
+      @delete-image="imageDelete"
+    />
   </CoreLayout>
 </template>

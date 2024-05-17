@@ -4,6 +4,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PopularSearchController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Nette\Utils\ImageColor;
 
 Route::get('/', [ImageController::class, 'index'])->name('browse-images');
 Route::get('/popular-searches', [
@@ -42,6 +43,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::post('/images/{id}', [ImageController::class, 'updateImage'])->name(
     'image-update'
   );
+
+  Route::get('/admin/images', [ImageController::class, 'adminManageImages'])
+    ->middleware('can:edit images')
+    ->name('admin-image-manage');
+
+  Route::patch('/admin/images/{id}', [
+    ImageController::class,
+    'adminUpdateImage',
+  ])
+    ->middleware('can:edit images')
+    ->name('admin-image-update');
+
+  Route::delete('/admin/images', [
+    ImageController::class,
+    'adminBulkDelete',
+  ])->middleware('can:delete images');
+
+  Route::delete('/admin/images/{id}', [
+    ImageColor::class,
+    'adminDelete',
+  ])->middleware('can:delete images');
 });
 
 Route::middleware('auth')->group(function () {
