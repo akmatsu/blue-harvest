@@ -41,28 +41,6 @@ const { exec: execSearch } = useRequest(handleSearch, {
           :aspect-ratio="image.width / image.height"
         ></v-img>
       </LinkCard>
-      <!-- <v-card
-        v-for="image in scrollImages"
-        :key="image.id"
-        :href="route('image-view', { id: image.id })"
-        class="mb-4"
-        @click.prevent.stop="
-          $inertia.get(
-            route('image-view', { id: image.id }),
-            {},
-            {
-              preserveScroll: true,
-              preserveState: true,
-            },
-          )
-        "
-      >
-        <v-img
-          :src="image.url"
-          cover
-          :aspect-ratio="image.width / image.height"
-        ></v-img>
-      </v-card> -->
     </MasonryGrid>
     <div class="d-flex justify-center">
       <CorePagination :pagination="images" />
