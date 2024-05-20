@@ -44,4 +44,13 @@ class User extends Authenticatable
   {
     return $this->hasMany('App\Models\Image');
   }
+
+  public function toSearchableArray()
+  {
+    return array_merge($this->toArray(), [
+      'id' => (string) $this->id,
+      'created_at' => $this->created_at->timestamp(),
+      'roles' => $this->roles->pluck('name')->toArray(),
+    ]);
+  }
 }
