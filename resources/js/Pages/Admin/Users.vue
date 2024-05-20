@@ -1,23 +1,42 @@
 <script lang="ts" setup>
-import { LinkBtn } from '@/Components';
+import { UserTable } from '@/Components';
+import { usePagination } from '@/composables/usePagination';
+import { CoreLayout } from '@/Layouts';
 import { Paginated, User } from '@/types';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps<{
   users: Paginated<User>;
 }>();
+
+const search = ref<string>();
+const selected = ref<number[]>([]);
+const { itemsPerPage, page } = usePagination(props.users);
+
+function handleSearch(query = search.value) {
+  router.get(
+    route('admin.users'),
+    {
+      query,
+      count: itemsPerPage.value,
+      ...(!query && { page: page.value }),
+    },
+    {
+      only: ['users'],
+    },
+  );
+}
 </script>
 
 <template>
-  <v-list>
-    <v-list-item v-for="user in users.data">
-      <v-list-item-title>{{ user.name }}</v-list-item-title>
-      <LinkBtn
-        color="primary"
-        link="admin.users.view"
-        :params="{ id: user.id }"
-      >
-        View User
-      </LinkBtn>
-    </v-list-item>
-  </v-list>
+  <CoreLayout fluid searchable @search-submit="handleSearch">
+    <UserTable
+      v-model="selected"
+      v-model:items-per-page="itemsPerPage"
+      v-model:page="page"
+      :users="users.data"
+      :items-length="users.total"
+      @search="handleSearch"
+    />
+  </CoreLayout>
 </template>
