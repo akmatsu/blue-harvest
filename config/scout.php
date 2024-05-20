@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Image;
+use App\Models\User;
 
 return [
   /*
@@ -213,6 +214,18 @@ return [
         'search-parameters' => [
           'query_by' => 'name,tags,tag_descriptions',
         ],
+      ],
+      User::class => [
+        'collection-schema' => [
+          'fields' => [
+            ['name' => 'id', 'type' => 'string'],
+            ['name' => 'name', 'type' => 'string'],
+            ['name' => 'email', 'type' => 'string'],
+            ['name' => 'created_at', 'type' => 'int64'],
+            ['name' => 'roles', 'type' => 'string[]'],
+          ],
+        ],
+        'search-parameters' => [],
       ],
     ],
   ],
