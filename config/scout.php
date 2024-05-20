@@ -225,7 +225,9 @@ return [
             ['name' => 'roles', 'type' => 'string[]'],
           ],
         ],
-        'search-parameters' => [],
+        'search-parameters' => [
+          'query_by' => 'name,email,roles',
+        ],
       ],
     ],
   ],

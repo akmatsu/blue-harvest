@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Scout\Searchable;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-  use HasFactory, Notifiable, HasApiTokens, HasRoles;
+  use HasFactory, Notifiable, HasApiTokens, HasRoles, Searchable;
 
   /**
    * The attributes that are mass assignable.
@@ -49,7 +50,7 @@ class User extends Authenticatable
   {
     return array_merge($this->toArray(), [
       'id' => (string) $this->id,
-      'created_at' => $this->created_at->timestamp(),
+      'created_at' => $this->created_at->timestamp,
       'roles' => $this->roles->pluck('name')->toArray(),
     ]);
   }

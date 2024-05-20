@@ -33,7 +33,7 @@ class ImageController extends Controller
   public function index(Request $request)
   {
     $query = $request->input('query');
-    $limit = $request->input('limit', 25);
+    $limit = $request->input('count', 25);
 
     if ($query) {
       $images = Image::search($query)->paginate($limit);
