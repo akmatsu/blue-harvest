@@ -3,8 +3,8 @@
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PopularSearchController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use Nette\Utils\ImageColor;
 
 Route::get('/', [ImageController::class, 'index'])->name('browse-images');
 Route::get('/popular-searches', [
@@ -68,9 +68,33 @@ Route::middleware(['auth', 'verified'])->group(function () {
   ])->middleware('can:delete images');
 
   Route::delete('/admin/images/{id}', [
-    ImageColor::class,
+    ImageController::class,
     'adminDelete',
   ])->middleware('can:delete images');
+
+  Route::get('/admin/users', [UserController::class, 'index'])
+    ->middleware('can:view users')
+    ->name('admin.users');
+
+  Route::get('/admin/users/{id}', [UserController::class, 'view'])
+    ->middleware('can:view users')
+    ->name('admin.users.view');
+
+  Route::patch('/admin/users/{id}', [UserController::class, 'update'])
+    ->middleware('can:edit users')
+    ->name('admin.users.edit');
+
+  Route::post('/admin/users/', [UserController::class, 'create'])
+    ->middleware('can:edit users')
+    ->name('admin.users.create');
+
+  route::delete('/admin/users/{id}', [UserController::class, 'delete'])
+    ->middleware('can:delete users')
+    ->name('admin.users.delete');
+
+  route::delete('/admin/users', [UserController::class, 'deleteBulk'])
+    ->middleware('can:delete users')
+    ->name('admin.users.delete.bulk');
 });
 
 Route::middleware('auth')->group(function () {
