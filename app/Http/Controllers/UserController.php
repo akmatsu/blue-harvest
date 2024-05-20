@@ -3,13 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class UserController extends Controller
 {
-  public function index()
+  public function index(Request $request)
   {
-    $users = User::all();
+    $query = $request->input('query');
+    $limit = $request->input('count', 25);
+
+    if ($query) {
+      $users = User::search($query)->paginate($limit);
+    } else {
+      $users = User::paginate($limit);
+    }
+
     return Inertia::render('Admin/Users', ['users' => $users]);
   }
 

@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import { LinkBtn } from '@/Components';
-import { User } from '@/types';
+import { Paginated, User } from '@/types';
 
-defineProps<{
-  users: User[];
+const props = defineProps<{
+  users: Paginated<User>;
 }>();
 </script>
 
 <template>
   <v-list>
-    <v-list-item v-for="user in users">
+    <v-list-item v-for="user in users.data">
       <v-list-item-title>{{ user.name }}</v-list-item-title>
       <LinkBtn
         color="primary"
