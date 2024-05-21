@@ -1,4 +1,16 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+
+onMounted(() => {
+  console.log(page.props.auth.user);
+});
+
+const isAdmin = computed(
+  () => !!page.props.auth.user?.roles?.find((role) => role.name === 'admin'),
+);
+</script>
 
 <template>
   <v-menu>
@@ -20,6 +32,15 @@
         @click.prevent.stop="$inertia.get('/profile')"
       >
         <v-list-item-title> View Account </v-list-item-title>
+      </v-list-item>
+
+      <v-list-item
+        v-if="isAdmin"
+        href="/admin/images"
+        prepend-icon="mdi-shield-account"
+        @click.prevent.stop="$inertia.get('/admin/images')"
+      >
+        Admin View
       </v-list-item>
 
       <v-list-item

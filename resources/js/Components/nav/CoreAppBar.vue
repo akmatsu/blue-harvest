@@ -2,9 +2,11 @@
 import { NavTabs, SearchBar, ThemeToggle } from '@/Components';
 import { useDisplay } from 'vuetify';
 import Logo from '../Logo.vue';
+import { NavItem } from '@/configs/navigation';
 
 defineProps<{
   searchable?: boolean;
+  navItems: NavItem[];
 }>();
 
 defineEmits<{
@@ -38,7 +40,7 @@ const search = defineModel<string>('search');
     <ThemeToggle v-if="mdAndUp" />
     <v-divider vertical class="mx-2"></v-divider>
     <template #append>
-      <NavTabs v-if="mdAndUp" class="mr-2" />
+      <NavTabs v-if="mdAndUp" class="mr-2" :items="navItems" />
       <v-app-bar-nav-icon v-if="!mdAndUp" @click="drawer = !drawer" />
     </template>
   </v-app-bar>

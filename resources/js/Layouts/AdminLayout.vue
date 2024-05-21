@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { ToastStack, MobileDrawer, CoreAppBar } from '@/Components';
-import { navigation } from '@/configs/navigation';
+import { CoreAppBar, MobileDrawer, ToastStack } from '@/Components';
+import { adminNav } from '@/configs/navigation';
 
 defineProps<{
   fluid?: boolean;
   searchable?: boolean;
 }>();
-
 defineEmits<{
   (e: 'searchSubmit'): void;
 }>();
@@ -18,13 +17,13 @@ const drawer = ref(false);
 <template>
   <v-app>
     <CoreAppBar
-      :nav-items="navigation"
       v-model="drawer"
       v-model:search="search"
       :searchable="searchable"
+      :nav-items="adminNav"
       @search-submit="$emit('searchSubmit')"
     />
-    <MobileDrawer v-model="drawer" :nav-items="navigation" />
+    <MobileDrawer :nav-items="adminNav" v-model="drawer" />
     <v-main>
       <v-container :fluid="fluid">
         <slot />

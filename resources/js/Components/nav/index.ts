@@ -5,3 +5,4 @@ export { default as CoreAppBar } from './CoreAppBar.vue';
 export { default as UserMenu } from './UserMenu.vue';
 export { default as PaginationBtn } from './PaginationBtn.vue';
 export { default as CorePagination } from './CorePagination.vue';
+export { default as AdminMobileDrawer } from './AdminMobileDrawer.vue';

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { UserTable } from '@/Components';
 import { usePagination } from '@/composables/usePagination';
-import { CoreLayout } from '@/Layouts';
+import { AdminLayout } from '@/Layouts';
 import { Paginated, User } from '@/types';
 import { router } from '@inertiajs/vue3';
 
@@ -29,7 +29,7 @@ function handleSearch(query = search.value) {
 </script>
 
 <template>
-  <CoreLayout fluid searchable @search-submit="handleSearch">
+  <AdminLayout fluid searchable @search-submit="handleSearch">
     <UserTable
       v-model="selected"
       v-model:items-per-page="itemsPerPage"
@@ -38,5 +38,5 @@ function handleSearch(query = search.value) {
       :items-length="users.total"
       @search="handleSearch"
     />
-  </CoreLayout>
+  </AdminLayout>
 </template>
