@@ -43,8 +43,15 @@ class UserController extends Controller
     return redirect()->route('admin.users');
   }
 
-  public function deleteBulk()
+  public function deleteBulk(Request $request)
   {
+    $validated = $request->validate([
+      'ids' => 'required|array|min:1',
+      'ids.*' => 'integer|exists:users,id',
+    ]);
+
+    User::destroy($validated['ids']);
+
     return back();
   }
 }

@@ -10,8 +10,7 @@ defineProps<{
 
 const emits = defineEmits<{
   (e: 'search', value?: string): void;
-  (e: 'edit', value?: number[]): void;
-  (e: 'delete', value?: number | number[]): void;
+  (e: 'delete', value?: number[]): void;
 }>();
 
 const selected = defineModel<number[]>();
@@ -92,7 +91,10 @@ const headers = [
                 <v-btn
                   variant="flat"
                   color="error"
-                  @click="$emit('delete', selected)"
+                  @click="
+                    isActive.value = false;
+                    $emit('delete', selected);
+                  "
                 >
                   Delete
                 </v-btn>
