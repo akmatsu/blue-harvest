@@ -3,10 +3,6 @@ import { usePage } from '@inertiajs/vue3';
 
 const page = usePage();
 
-onMounted(() => {
-  console.log(page.props.auth.user);
-});
-
 const isAdmin = computed(
   () => !!page.props.auth.user?.roles?.find((role) => role.name === 'admin'),
 );

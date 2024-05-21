@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -25,11 +27,35 @@ class UserController extends Controller
   public function view(string $id)
   {
     $user = User::findOrFail($id);
-    return Inertia::render('Admin/User', ['user' => $user]);
+    $roles = Role::all();
+    return Inertia::render('Admin/User', ['user' => $user, 'roles' => $roles]);
   }
 
-  public function update()
+  public function update(int $id, Request $request)
   {
+    $validated = $request->validate([
+      'name' => 'nullable|string|min:3',
+      'email' => 'nullable|email',
+      'password' => ['nullable', Password::default(), 'confirmed'],
+      'password_confirmation' => 'required_with:password|same:password',
+      'roles' => 'nullable|array',
+      'roles.*' => 'integer|exists:roles,id',
+    ]);
+
+    $user = User::findOrFail($id);
+
+    $user->fill(array_filter($validated, fn($value) => $value !== null));
+
+    if (isset($validated['password'])) {
+      $user->password = bcrypt($validated['password']);
+    }
+
+    $user->save();
+
+    if (isset($validated['roles'])) {
+      $user->roles()->sync($validated['roles']);
+    }
+
     return back();
   }
 
@@ -38,8 +64,9 @@ class UserController extends Controller
     return redirect()->route('admin.users.view', ['id' => 1]);
   }
 
-  public function delete()
+  public function delete($id)
   {
+    User::destroy($id);
     return redirect()->route('admin.users');
   }
 
