@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
@@ -47,7 +48,7 @@ class UserController extends Controller
     $user->fill(array_filter($validated, fn($value) => $value !== null));
 
     if (isset($validated['password'])) {
-      $user->password = bcrypt($validated['password']);
+      $user->password = Hash::make($validated['password']);
     }
 
     $user->save();
@@ -59,9 +60,21 @@ class UserController extends Controller
     return back();
   }
 
-  public function create()
+  public function create(Request $request)
   {
-    return redirect()->route('admin.users.view', ['id' => 1]);
+    $validated = $request->validate([
+      'name' => 'required|string|min:3',
+      'email' => 'required|email',
+      'password' => ['required', Password::default(), 'confirmed'],
+      'password_confirmation' => 'same:password',
+    ]);
+
+    $user = new User();
+    $user->fill($validated);
+    $user->password = Hash::make($validated['password']);
+    $user->save();
+
+    return redirect()->route('admin.users.view', ['id' => $user->id]);
   }
 
   public function delete($id)
