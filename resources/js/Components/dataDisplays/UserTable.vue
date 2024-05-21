@@ -2,6 +2,7 @@
 import { User } from '@/types';
 import { formatDate } from '@/utils';
 import { LinkBtn } from '@/Components';
+import UserCreate from '@/Pages/Admin/userComponents/UserCreate.vue';
 
 defineProps<{
   users: User[];
@@ -76,6 +77,18 @@ const headers = [
             >
               Delete
             </v-btn>
+            <v-dialog max-width="500">
+              <template #activator="{ props }">
+                <v-btn color="primary" prepend-icon="mdi-plus" v-bind="props">
+                  Create New User
+                </v-btn>
+              </template>
+              <v-card title="Create new User">
+                <v-card-text>
+                  <UserCreate />
+                </v-card-text>
+              </v-card>
+            </v-dialog>
           </template>
           <template #default="{ isActive }">
             <v-card title="Delete Images">
