@@ -66,8 +66,7 @@ const headers = [
     @update:items-per-page="$emit('search')"
   >
     <template #top>
-      <v-toolbar>
-        <v-spacer></v-spacer>
+      <v-toolbar class="px-3">
         <v-dialog max-width="400px">
           <template #activator="{ props }">
             <v-btn

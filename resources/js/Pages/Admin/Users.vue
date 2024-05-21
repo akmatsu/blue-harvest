@@ -30,13 +30,15 @@ function handleSearch(query = search.value) {
 
 <template>
   <AdminLayout fluid searchable @search-submit="handleSearch">
-    <UserTable
-      v-model="selected"
-      v-model:items-per-page="itemsPerPage"
-      v-model:page="page"
-      :users="users.data"
-      :items-length="users.total"
-      @search="handleSearch"
-    />
+    <v-card title="Users">
+      <UserTable
+        v-model="selected"
+        v-model:items-per-page="itemsPerPage"
+        v-model:page="page"
+        :users="users.data"
+        :items-length="users.total"
+        @search="handleSearch"
+      />
+    </v-card>
   </AdminLayout>
 </template>
