@@ -1,16 +1,22 @@
 <script lang="ts" setup>
-import { navigation } from '@/configs/navigation';
+import { navigation, NavItem } from '@/configs/navigation';
 import { usePage } from '@inertiajs/vue3';
 import { ThemeToggle } from '@/Components';
 
+defineProps<{
+  items: NavItem[];
+}>();
 const page = usePage();
 const isAuth = computed(() => !!page.props.auth.user);
+const isAdmin = computed(
+  () => !!page.props.auth.user?.roles?.find((role) => role.name === 'admin'),
+);
 </script>
 
 <template>
   <v-list nav>
     <div
-      v-for="item in navigation.items"
+      v-for="item in items"
       :key="item.to"
       :class="[{ 'd-none': item.requireAuth && !isAuth }]"
     >
@@ -35,12 +41,22 @@ const isAuth = computed(() => !!page.props.auth.user);
     </v-list-item>
 
     <v-list-item
+      v-if="isAuth && isAdmin"
+      href="/profile"
+      prepend-icon="mdi-account-edit"
+      :active="$page.url === '/profile'"
+      @click.prevent.stop="$inertia.get('/profile')"
+    >
+      <v-list-item-title> Admin View</v-list-item-title>
+    </v-list-item>
+
+    <v-list-item
       v-if="isAuth"
       prepend-icon="mdi-logout"
       href="/logout"
       @click.prevent.stop="$inertia.post('/logout')"
     >
-      <v-list-item-title> Log out </v-list-item-title>
+      <v-list-item-title>Log out</v-list-item-title>
     </v-list-item>
 
     <v-list-item

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Head, router } from '@inertiajs/vue3';
-import { CoreLayout } from '@/Layouts';
+import { AdminLayout, CoreLayout } from '@/Layouts';
 import { Image, Paginated } from '@/types';
 import { ImageTable } from '@/Components';
 import { imageDelete } from '@/utils';
@@ -33,7 +33,7 @@ function handleSearch(query = search.value) {
 
 <template>
   <Head title="Admin Manage Images" />
-  <CoreLayout v-model="search" searchable fluid @search-submit="handleSearch">
+  <AdminLayout v-model="search" searchable fluid @search-submit="handleSearch">
     <ImageTable
       v-model="selected"
       v-model:page="page"
@@ -44,5 +44,5 @@ function handleSearch(query = search.value) {
       @edit-images="editImages"
       @delete-image="imageDelete"
     />
-  </CoreLayout>
+  </AdminLayout>
 </template>

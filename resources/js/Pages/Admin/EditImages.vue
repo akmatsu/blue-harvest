@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Image, Tag } from '@/types';
 import { UploadResultCard } from '../Upload/components';
-import { CoreLayout } from '@/Layouts';
+import { AdminLayout } from '@/Layouts';
 
 defineProps<{
   images: Image[];
@@ -10,12 +10,12 @@ defineProps<{
 </script>
 
 <template>
-  <CoreLayout title="Edit Images">
+  <AdminLayout>
     <v-list>
       <div v-for="(image, index) in images" :key="image.id">
         <UploadResultCard :image :tags />
         <v-divider v-if="index !== images.length - 1"></v-divider>
       </div>
     </v-list>
-  </CoreLayout>
+  </AdminLayout>
 </template>
