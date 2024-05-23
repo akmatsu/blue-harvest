@@ -33,9 +33,9 @@ onMounted(() => {
           <v-chip-group>
             <v-chip
               v-for="tag in image.tags"
-              :href="route('browse-images', { query: tag.name })"
+              :href="route('images', { query: tag.name })"
               @click.prevent.stop="
-                $inertia.get(route('browse-images', { query: tag.name }))
+                $inertia.get(route('images', { query: tag.name }))
               "
             >
               {{ tag.name }}

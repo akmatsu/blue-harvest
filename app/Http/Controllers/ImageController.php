@@ -61,7 +61,7 @@ class ImageController extends Controller
     $tags = Tag::all();
 
     if ($images->isEmpty()) {
-      return redirect()->route('image-manage');
+      return redirect()->route('images.manage');
     }
 
     return Inertia::render('ImageUploadResults', [
@@ -77,7 +77,7 @@ class ImageController extends Controller
     $tags = Tag::all();
 
     if ($images->isEmpty()) {
-      return redirect()->route('image-manage');
+      return redirect()->route('images.manage');
     }
 
     return Inertia::render('Admin/EditImages', [
@@ -112,7 +112,7 @@ class ImageController extends Controller
       $ids[] = $dbImage->id;
     }
 
-    return redirect()->route('image-upload-results', ['ids' => $ids]);
+    return redirect()->route('images.upload.results', ['ids' => $ids]);
   }
 
   public function updateImage(int $id, Request $request)

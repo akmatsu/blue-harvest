@@ -15,5 +15,5 @@ test('new users can register', function () {
   ]);
 
   $this->assertAuthenticated();
-  $response->assertRedirect(route('browse-images', absolute: false));
+  $response->assertRedirect(route('images', absolute: false));
 });
