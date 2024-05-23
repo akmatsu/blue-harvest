@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import { Image } from '@/types';
 import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { ViewOptions } from './components';
-import { ImageCard, MasonryGrid } from '@/Components';
+import { ImageCard, MasonryGrid, ReportDialog } from '@/Components';
 
 const props = defineProps<{
   image: Image;
@@ -23,7 +23,8 @@ onMounted(() => {
       <v-card width="100%">
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn prepend-icon="mdi-flag" variant="outlined">Flag</v-btn>
+          <!-- <v-btn prepend-icon="mdi-flag" variant="outlined">Flag</v-btn> -->
+          <ReportDialog :item-id="image.id" item-type="image" />
           <ViewOptions :image="image" />
         </v-card-actions>
 

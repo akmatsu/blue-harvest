@@ -59,14 +59,14 @@ async function handleDownload() {
         class="mr-2"
         size="small"
         prepend-icon="mdi-content-copy"
-        @click="handleCopy(image.url)"
+        @click="handleCopy"
       >
         Copy URL
       </v-btn>
       <primary-btn
         size="small"
         prepend-icon="mdi-download"
-        @click="handleDownload(image.url)"
+        @click="handleDownload"
       >
         Download
       </primary-btn>
