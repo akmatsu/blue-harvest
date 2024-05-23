@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <LinkCard link="image-view" :params="{ id: image.id }" preserve-state>
+  <LinkCard link="images.view" :params="{ id: image.id }" preserve-state>
     <v-img
       :src="image.url"
       cover
@@ -19,10 +19,8 @@ defineProps<{
         <v-chip
           size="small"
           v-for="tag in image.tags"
-          :href="route('browse-images', { query: tag.name })"
-          @click.prevent="
-            $inertia.get(route('browse-images', { query: tag.name }))
-          "
+          :href="route('images', { query: tag.name })"
+          @click.prevent="$inertia.get(route('images', { query: tag.name }))"
         >
           {{ tag.name }}
         </v-chip>
