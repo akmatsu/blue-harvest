@@ -16,5 +16,9 @@
   @media screen and (min-width: 960px) {
     column-count: 3;
   }
+
+  > * {
+    margin-bottom: 16px;
+  }
 }
 </style>
