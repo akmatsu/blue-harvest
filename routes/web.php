@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FlagController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PopularSearchController;
 use App\Http\Controllers\ProfileController;
@@ -43,6 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::post('/images/{id}', [ImageController::class, 'updateImage'])->name(
     'image-update'
   );
+  Route::post('/flags', [FlagController::class, 'store'])->name('flags.store');
 
   Route::get('/admin/images', [ImageController::class, 'adminManageImages'])
     ->middleware('can:edit images')

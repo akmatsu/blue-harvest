@@ -144,9 +144,22 @@ class ImageController extends Controller
       'optimizedImages' => function ($query) {
         $query->whereIn('size', ['small', 'medium', 'large']);
       },
+      'tags',
     ])->findOrFail($id);
 
-    return Inertia::render('Image/View', ['image' => $image]);
+    $tagIds = $image->tags->pluck('id');
+
+    $similarImages = Image::whereHas('tags', function ($query) use ($tagIds) {
+      $query->whereIn('tags.id', $tagIds);
+    })
+      ->where('id', '!=', $id)
+      ->take(15)
+      ->get();
+
+    return Inertia::render('Image/View', [
+      'image' => $image,
+      'similarImages' => $similarImages,
+    ]);
   }
 
   public function edit($id)

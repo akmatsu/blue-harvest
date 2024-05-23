@@ -4,7 +4,7 @@ import { Image, Paginated } from '@/types';
 import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { useToasts } from '@/store/toasts';
 import { useRequest } from '@/composables';
-import { CorePagination, LinkCard, MasonryGrid } from '@/Components';
+import { CorePagination, ImageCard, LinkCard, MasonryGrid } from '@/Components';
 
 const props = defineProps<{ images: Paginated<Image> }>();
 const scrollImages = ref(props.images.data);
@@ -27,20 +27,7 @@ const { exec: execSearch } = useRequest(handleSearch, {
   <Head title="Browse" />
   <CoreLayout v-model="search" searchable @search-submit="execSearch">
     <MasonryGrid class="mb-4">
-      <LinkCard
-        v-for="image in scrollImages"
-        :key="image.id"
-        class="mb-4"
-        link="image-view"
-        :params="{ id: image.id }"
-        preserve-state
-      >
-        <v-img
-          :src="image.url"
-          cover
-          :aspect-ratio="image.width / image.height"
-        ></v-img>
-      </LinkCard>
+      <ImageCard v-for="image in scrollImages" :key="image.id" :image="image" />
     </MasonryGrid>
     <div class="d-flex justify-center">
       <CorePagination :pagination="images" />

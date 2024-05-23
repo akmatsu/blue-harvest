@@ -3,10 +3,16 @@ import { Head } from '@inertiajs/vue3';
 import { Image } from '@/types';
 import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { ViewOptions } from './components';
+import { ImageCard, MasonryGrid } from '@/Components';
 
-defineProps<{
+const props = defineProps<{
   image: Image;
+  similarImages: Image[];
 }>();
+
+onMounted(() => {
+  console.log(props.similarImages);
+});
 </script>
 
 <template>
@@ -17,21 +23,29 @@ defineProps<{
       <v-card width="100%">
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            :href="route('image-edit', { id: image.id })"
-            @click.prevent.stop="
-              $inertia.get(route('image-edit', { id: image.id }))
-            "
-          >
-            Customize
-          </v-btn>
+          <v-btn prepend-icon="mdi-flag" variant="outlined">Flag</v-btn>
           <ViewOptions :image="image" />
         </v-card-actions>
 
         <v-img :src="image.url" max-width="100%" max-height="700px" />
-        <v-card-title class="d-flex justify-space-between" style="width: 100%">
-          {{ image.name }}
-        </v-card-title>
+        <v-card-text>
+          <v-chip-group>
+            <v-chip
+              v-for="tag in image.tags"
+              :href="route('browse-images', { query: tag.name })"
+              @click.prevent.stop="
+                $inertia.get(route('browse-images', { query: tag.name }))
+              "
+            >
+              {{ tag.name }}
+            </v-chip>
+          </v-chip-group>
+
+          <h5 class="text-h5 my-4">Similar Images</h5>
+          <MasonryGrid>
+            <ImageCard v-for="img in similarImages" :image="img" />
+          </MasonryGrid>
+        </v-card-text>
       </v-card>
     </v-container>
   </CoreLayout>

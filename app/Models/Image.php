@@ -23,6 +23,8 @@ class Image extends Model
     'folder_name',
   ];
 
+  protected $with = ['tags'];
+
   public function user()
   {
     return $this->belongsTo('App\Models\User');
