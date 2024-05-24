@@ -39,10 +39,7 @@ class Image extends Model
 
     static::deleting(function ($image) {
       $image->deleteFiles();
-
-      $image->flags()->each(function ($flag) {
-        $flag->delete();
-      });
+      $image->deleteFlags();
     });
   }
 
@@ -57,6 +54,13 @@ class Image extends Model
         Storage::delete($optimizedImage->path);
       }
     }
+  }
+
+  public function deleteFlags()
+  {
+    $this->flags()->each(function ($flag) {
+      $flag->delete();
+    });
   }
 
   public function optimizedImages()
@@ -111,5 +115,7 @@ class Image extends Model
       'is_restricted' => false,
       'restriction_reason' => null,
     ]);
+
+    $this->deleteFlags();
   }
 }

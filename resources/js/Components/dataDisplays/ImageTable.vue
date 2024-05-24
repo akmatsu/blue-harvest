@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Image } from '@/types';
 import { formatDate } from '@/utils';
+import { LinkBtn } from '../buttons';
 
 defineProps<{
   images: Image[];
@@ -115,9 +116,13 @@ const headers = [
       {{ formatDate(item.updated_at) }}
     </template>
     <template #item.url="{ item }">
-      <v-btn color="primary" @click="$emit('editImages', [item.id])">
+      <LinkBtn
+        link="admin.images.show"
+        :params="{ id: item.id }"
+        color="primary"
+      >
         View Image
-      </v-btn>
+      </LinkBtn>
     </template>
     <template #item.tags="{ item }">
       <v-chip-group>
