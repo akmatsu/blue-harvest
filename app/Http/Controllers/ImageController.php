@@ -233,6 +233,12 @@ class ImageController extends Controller
     return back();
   }
 
+  public function adminShow(int $id)
+  {
+    $image = Image::findOrFail($id);
+    return Inertia::render('Admin/Image', ['image' => $image]);
+  }
+
   public function adminManageImages(Request $request)
   {
     $query = $request->input('query');
@@ -253,6 +259,27 @@ class ImageController extends Controller
     }
 
     return Inertia::render('Admin/ManageImages', ['images' => $images]);
+  }
+
+  public function adminRestrictImage(int $id, Request $request)
+  {
+    $validated = $request->validate([
+      'restriction_reason' => 'required|string|max:255',
+    ]);
+    $image = Image::findOrFail($id);
+
+    $image->restrict($validated['restriction_reason']);
+
+    return back();
+  }
+
+  public function adminLiftImageRestriction(int $id)
+  {
+    $image = Image::findOrFail($id);
+
+    $image->liftRestriction();
+
+    return back();
   }
 
   private function populateImageData($dbImage, $file, $path, $uniqueFolder)

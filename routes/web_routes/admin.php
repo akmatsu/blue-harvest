@@ -18,12 +18,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
           Route::delete('/', [ImageController::class, 'adminBulkDelete'])
             ->middleware('can:delete images')
             ->name('delete.bulk');
+          Route::get('/{id}', [ImageController::class, 'adminShow'])
+            ->middleware('can:edit images')
+            ->name('show');
           Route::patch('/{id}', [ImageController::class, 'adminUpdateImage'])
             ->middleware('can:edit images')
             ->name('view');
           Route::delete('/{id}', [ImageController::class, 'adminDelete'])
             ->middleware('can:delete images')
             ->name('delete');
+          Route::post('/{id}/restrict', [
+            ImageController::class,
+            'adminRestrictImage',
+          ])
+            ->middleware('can:edit images')
+            ->name('restrict');
+          Route::post('/{id}/lift-restriction', [
+            ImageController::class,
+            'adminLiftImageRestriction',
+          ])
+            ->middleware('can:edit images')
+            ->name('lift');
           Route::get('/edit', [ImageController::class, 'adminImageEditView'])
             ->middleware('can:edit images')
             ->name('edit');
