@@ -11,7 +11,7 @@ Route::get('/popular-searches', [
 ])->name('searches');
 
 Route::post('/flags', [FlagController::class, 'store'])
-  ->middleware(['auth, verified'])
+  ->middleware(['auth', 'verified'])
   ->name('flags.store');
 
 require __DIR__ . '/auth.php';

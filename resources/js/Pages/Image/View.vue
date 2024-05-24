@@ -23,8 +23,7 @@ onMounted(() => {
       <v-card width="100%">
         <v-card-actions>
           <v-spacer></v-spacer>
-          <!-- <v-btn prepend-icon="mdi-flag" variant="outlined">Flag</v-btn> -->
-          <ReportDialog :item-id="image.id" item-type="image" />
+          <ReportDialog :item-id="image.id" item-type="App\Models\Image" />
           <ViewOptions :image="image" />
         </v-card-actions>
 

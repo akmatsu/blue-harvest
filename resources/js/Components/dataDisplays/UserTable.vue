@@ -2,7 +2,7 @@
 import { User } from '@/types';
 import { formatDate } from '@/utils';
 import { LinkBtn } from '@/Components';
-import UserCreate from '@/Pages/Admin/userComponents/UserCreate.vue';
+import UserCreate from '@/Pages/Admin/components/user/UserCreate.vue';
 
 defineProps<{
   users: User[];
@@ -16,7 +16,7 @@ const emits = defineEmits<{
 
 const selected = defineModel<number[]>();
 const page = defineModel<string | number>('page');
-const itemsPerPage = defineModel<string | number>('items-per-page', {
+const itemsPerPage = defineModel<string | number>('itemsPerPage', {
   default: 25,
 });
 

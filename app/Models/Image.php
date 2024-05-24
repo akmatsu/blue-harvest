@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Scout\Searchable;
 
@@ -36,6 +37,10 @@ class Image extends Model
 
     static::deleting(function ($image) {
       $image->deleteFiles();
+
+      $image->flags()->each(function ($flag) {
+        $flag->delete();
+      });
     });
   }
 
@@ -83,5 +88,10 @@ class Image extends Model
       'tags' => $this->tags->pluck('name')->toArray(),
       'tag_descriptions' => $this->tags->pluck('description')->toArray(),
     ]);
+  }
+
+  public function flags(): MorphMany
+  {
+    return $this->morphMany(Flag::class, 'flaggable');
   }
 }
