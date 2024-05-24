@@ -19,8 +19,8 @@ defineProps<{
         <v-chip
           size="small"
           v-for="tag in image.tags"
-          :href="route('images', { query: tag.name })"
-          @click.prevent="$inertia.get(route('images', { query: tag.name }))"
+          :href="route('index', { query: tag.name })"
+          @click.prevent="$inertia.get(route('index', { query: tag.name }))"
         >
           {{ tag.name }}
         </v-chip>

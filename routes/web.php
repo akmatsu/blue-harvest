@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\FlagController;
-use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PopularSearchController;
 
 use Illuminate\Support\Facades\Route;

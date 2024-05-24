@@ -16,7 +16,7 @@ class VerifyEmailController extends Controller
   {
     if ($request->user()->hasVerifiedEmail()) {
       return redirect()->intended(
-        route('images', absolute: false) . '?verified=1'
+        route('index', absolute: false) . '?verified=1'
       );
     }
 
@@ -25,7 +25,7 @@ class VerifyEmailController extends Controller
     }
 
     return redirect()->intended(
-      route('images', absolute: false) . '?verified=1'
+      route('index', absolute: false) . '?verified=1'
     );
   }
 }

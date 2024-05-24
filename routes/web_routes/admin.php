@@ -5,53 +5,49 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->group(function () {
-  Route::get('/admin/images', [ImageController::class, 'adminManageImages'])
-    ->middleware('can:edit images')
-    ->name('admin.images');
-
-  Route::patch('/admin/images/{id}', [
-    ImageController::class,
-    'adminUpdateImage',
-  ])
-    ->middleware('can:edit images')
-    ->name('admin.images.view');
-
-  Route::get('/admin/images/edit', [
-    ImageController::class,
-    'adminImageEditView',
-  ])
-    ->middleware('can:edit images')
-    ->name('admin.images.edit');
-
-  Route::delete('/admin/images', [ImageController::class, 'adminBulkDelete'])
-    ->middleware('can:delete images')
-    ->name('admin.images.delete.bulk');
-
-  Route::delete('/admin/images/{id}', [ImageController::class, 'adminDelete'])
-    ->middleware('can:delete images')
-    ->name('admin.images.delete');
-
-  Route::get('/admin/users', [UserController::class, 'index'])
-    ->middleware('can:view users')
-    ->name('admin.users');
-
-  Route::get('/admin/users/{id}', [UserController::class, 'view'])
-    ->middleware('can:view users')
-    ->name('admin.users.view');
-
-  Route::patch('/admin/users/{id}', [UserController::class, 'update'])
-    ->middleware('can:edit users')
-    ->name('admin.users.edit');
-
-  Route::post('/admin/users/', [UserController::class, 'create'])
-    ->middleware('can:edit users')
-    ->name('admin.users.create');
-
-  route::delete('/admin/users/{id}', [UserController::class, 'delete'])
-    ->middleware('can:delete users')
-    ->name('admin.users.delete');
-
-  route::delete('/admin/users', [UserController::class, 'deleteBulk'])
-    ->middleware('can:delete users')
-    ->name('admin.users.delete.bulk');
+  Route::prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+      Route::prefix('images')
+        ->name('images.')
+        ->group(function () {
+          Route::get('/', [ImageController::class, 'adminManageImages'])
+            ->middleware('can:edit images')
+            ->name('index');
+          Route::delete('/', [ImageController::class, 'adminBulkDelete'])
+            ->middleware('can:delete images')
+            ->name('delete.bulk');
+          Route::patch('/{id}', [ImageController::class, 'adminUpdateImage'])
+            ->middleware('can:edit images')
+            ->name('view');
+          Route::delete('/{id}', [ImageController::class, 'adminDelete'])
+            ->middleware('can:delete images')
+            ->name('delete');
+          Route::get('/edit', [ImageController::class, 'adminImageEditView'])
+            ->middleware('can:edit images')
+            ->name('edit');
+        });
+      Route::prefix('users')
+        ->name('users.')
+        ->group(function () {
+          Route::get('/', [UserController::class, 'index'])
+            ->middleware('can:view users')
+            ->name('index');
+          Route::post('/', [UserController::class, 'create'])
+            ->middleware('can:edit users')
+            ->name('create');
+          Route::delete('/', [UserController::class, 'deleteBulk'])
+            ->middleware('can:delete users')
+            ->name('delete.bulk');
+          Route::get('/{id}', [UserController::class, 'view'])
+            ->middleware('can:view users')
+            ->name('view');
+          Route::patch('/{id}', [UserController::class, 'update'])
+            ->middleware('can:edit users')
+            ->name('edit');
+          route::delete('/{id}', [UserController::class, 'delete'])
+            ->middleware('can:delete users')
+            ->name('delete');
+        });
+    });
 });
