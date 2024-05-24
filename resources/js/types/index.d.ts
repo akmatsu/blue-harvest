@@ -13,6 +13,17 @@ export interface Role {
   };
 }
 
+export interface Flag {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  user_id?: number | null;
+  flaggable_type: string;
+  flaggable_id: number;
+  reason: string;
+  flaggable?: Image;
+}
+
 export interface User {
   id: number;
   name: string;

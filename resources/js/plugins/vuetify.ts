@@ -10,6 +10,7 @@ export const vuetify = createVuetify({
   aliases: {
     PrimaryBtn: VBtn,
     SecondaryBtn: VBtn,
+    DangerBtn: VBtn,
   },
   defaults: {
     global: {},
@@ -21,6 +22,11 @@ export const vuetify = createVuetify({
       flat: true,
       slim: true,
       color: 'primary',
+    },
+    DangerBtn: {
+      flat: true,
+      slim: true,
+      color: 'error',
     },
     SecondaryBtn: {
       flat: true,

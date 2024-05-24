@@ -37,4 +37,9 @@ export const adminNav: NavItem[] = [
     to: 'admin.users.index',
     icon: 'mdi-account-group',
   },
+  {
+    title: 'View Flags',
+    to: 'admin.flags.index',
+    icon: 'mdi-flag',
+  },
 ];

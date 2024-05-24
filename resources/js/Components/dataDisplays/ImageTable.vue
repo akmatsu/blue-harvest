@@ -14,7 +14,7 @@ defineEmits<{
 
 const selected = defineModel<number[]>();
 const page = defineModel<number | string>('page');
-const itemsPerPage = defineModel<string | number>('items-per-page', {
+const itemsPerPage = defineModel<string | number>('itemsPerPage', {
   default: 25,
 });
 

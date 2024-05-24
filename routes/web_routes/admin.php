@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FlagController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
           route::delete('/{id}', [UserController::class, 'delete'])
             ->middleware('can:delete users')
             ->name('delete');
+        });
+      Route::prefix('flags')
+        ->name('flags.')
+        ->group(function () {
+          Route::get('/', [FlagController::class, 'index'])
+            ->middleware('can:view flags')
+            ->name('index');
+          Route::get('/{id}', [FlagController::class, 'show'])
+            ->middleware('can:view flags')
+            ->name('show');
+          Route::delete('/{id}', [FlagController::class, 'dismiss'])
+            ->middleware('can:delete flags')
+            ->name('dismiss');
+          Route::delete('/{id}/flaggable', [
+            FlagController::class,
+            'deleteFlaggable',
+          ])
+            ->middleware('can:edit flags')
+            ->name('delete');
+          Route::patch('/{id}/flaggable', [
+            FlagController::class,
+            'restrictFlaggable',
+          ])
+            ->middleware('can:edit flags')
+            ->name('restrict');
         });
     });
 });

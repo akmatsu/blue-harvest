@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Flag extends Model
 {
   protected $fillable = ['user_id', 'flaggable_id', 'flaggable_type', 'reason'];
+  protected $with = ['flaggable'];
 
   public function user()
   {
