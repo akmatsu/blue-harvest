@@ -74,6 +74,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
           ])
             ->middleware('can:edit flags')
             ->name('restrict');
+          Route::post('/{id}/restrict', [
+            FlagController::class,
+            'restrictFlaggable',
+          ])
+            ->middleware('can:edit flags')
+            ->name('restrict');
+          Route::post('/{id}/lift-restriction', [
+            FlagController::class,
+            'liftFlaggableRestriction',
+          ])
+            ->middleware('can:edit flags')
+            ->name('lift');
         });
     });
 });
