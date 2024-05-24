@@ -20,10 +20,10 @@ const isAuth = computed(() => !!page.props.auth.user);
     >
       <v-btn
         v-if="!item.requireAuth || isAuth"
-        :href="item.to"
-        :active="page.url === item.to"
+        :href="route(item.to)"
+        :active="page.url === route(item.to)"
         :prepend-icon="item.icon"
-        @click.prevent.stop="$inertia.get(item.to)"
+        @click.prevent.stop="$inertia.get(route(item.to))"
       >
         {{ item.title }}
       </v-btn>
