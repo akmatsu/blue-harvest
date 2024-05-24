@@ -22,6 +22,8 @@ class Image extends Model
     'width',
     'height',
     'folder_name',
+    'is_restricted',
+    'restriction_reason',
   ];
 
   protected $with = ['tags'];
@@ -93,5 +95,21 @@ class Image extends Model
   public function flags(): MorphMany
   {
     return $this->morphMany(Flag::class, 'flaggable');
+  }
+
+  public function restrict(string $reason)
+  {
+    return $this->update([
+      'is_restricted' => true,
+      'restriction_reason' => $reason,
+    ]);
+  }
+
+  public function liftRestriction()
+  {
+    $this->update([
+      'is_restricted' => false,
+      'restriction_reason' => null,
+    ]);
   }
 }

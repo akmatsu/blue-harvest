@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Flag;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -61,10 +62,34 @@ class FlagController extends Controller
       ->with('message', 'Flagged item deleted.');
   }
 
-  public function restrictFlaggable(int $id)
+  public function restrictFlaggable(int $id, Request $request)
   {
+    $validated = $request->validate([
+      'restriction_reason' => 'required|string|max:255',
+    ]);
+    $flag = Flag::findOrFail($id);
+    $flaggable = $flag->flaggable;
+
+    if ($flaggable) {
+      $flaggable->restrict($validated['restriction_reason']);
+    }
+
     return redirect()
       ->route('admin.flags.index')
       ->with('message', 'Flagged item has been restricted');
+  }
+
+  public function liftFlaggableRestriction(int $id)
+  {
+    $flag = Flag::findOrFail($id);
+    $flaggable = $flag->flaggable;
+
+    if ($flaggable) {
+      $flaggable->liftRestriction();
+    }
+
+    return redirect()
+      ->route('admin.flags.index')
+      ->with('message', 'Successfully lifted restriction.');
   }
 }
