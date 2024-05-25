@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Image;
+use App\Models\Restriction;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -236,7 +237,14 @@ class ImageController extends Controller
   public function adminShow(int $id)
   {
     $image = Image::findOrFail($id);
-    return Inertia::render('Admin/Image', ['image' => $image]);
+    $restrictions = Restriction::all();
+    $tags = Tag::all();
+
+    return Inertia::render('Admin/Image', [
+      'image' => $image,
+      'restrictions' => $restrictions,
+      'tags' => $tags,
+    ]);
   }
 
   public function adminManageImages(Request $request)
@@ -264,7 +272,8 @@ class ImageController extends Controller
   public function adminRestrictImage(int $id, Request $request)
   {
     $validated = $request->validate([
-      'restriction_reason' => 'required|string|max:255',
+      'restrictions_ids' => 'required|array',
+      'restriction_ids.*' => 'int|exists:restrictions,id',
     ]);
     $image = Image::findOrFail($id);
 
@@ -273,11 +282,15 @@ class ImageController extends Controller
     return back();
   }
 
-  public function adminLiftImageRestriction(int $id)
+  public function adminLiftImageRestriction(int $id, Request $request)
   {
+    $valid = $request->validate([
+      'restriction_ids' => 'required|Array',
+      'restriction_ids.*' => 'int|exists:restrictions,id',
+    ]);
     $image = Image::findOrFail($id);
 
-    $image->liftRestriction();
+    $image->liftRestriction($valid['restriction_ids']);
 
     return back();
   }
