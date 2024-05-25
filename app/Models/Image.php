@@ -23,10 +23,9 @@ class Image extends Model
     'height',
     'folder_name',
     'is_restricted',
-    'restriction_reason',
   ];
 
-  protected $with = ['tags'];
+  protected $with = ['tags', 'restrictions'];
 
   public function user()
   {
@@ -85,6 +84,11 @@ class Image extends Model
     return $this->belongsToMany(Tag::class);
   }
 
+  public function restrictions()
+  {
+    return $this->belongsToMany(Restriction::class);
+  }
+
   public function toSearchableArray()
   {
     return array_merge($this->toArray(), [
@@ -101,21 +105,22 @@ class Image extends Model
     return $this->morphMany(Flag::class, 'flaggable');
   }
 
-  public function restrict(string $reason)
+  public function restrict(array $restrictionIds)
   {
-    return $this->update([
+    $this->restrictions()->sync($restrictionIds);
+    $this->update([
       'is_restricted' => true,
-      'restriction_reason' => $reason,
     ]);
+    $this->deleteFlags();
   }
 
-  public function liftRestriction()
+  public function liftRestriction(array $restrictionIds)
   {
-    $this->update([
-      'is_restricted' => false,
-      'restriction_reason' => null,
-    ]);
-
-    $this->deleteFlags();
+    $this->restrictions()->sync($restrictionIds);
+    if ($this->restrictions()->count() == 0) {
+      $this->update([
+        'is_restricted' => false,
+      ]);
+    }
   }
 }

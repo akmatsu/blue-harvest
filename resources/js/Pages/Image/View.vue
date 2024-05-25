@@ -18,35 +18,33 @@ onMounted(() => {
 <template>
   <Head title="Dashboard" />
 
-  <CoreLayout fluid>
-    <v-container class="d-flex justify-center align-center">
-      <v-card width="100%">
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <ReportDialog :item-id="image.id" item-type="App\Models\Image" />
-          <ViewOptions :image="image" />
-        </v-card-actions>
+  <CoreLayout>
+    <v-card>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <ReportDialog :item-id="image.id" item-type="App\Models\Image" />
+        <ViewOptions :image="image" />
+      </v-card-actions>
 
-        <v-img :src="image.url" max-width="100%" max-height="700px" />
-        <v-card-text>
-          <v-chip-group>
-            <v-chip
-              v-for="tag in image.tags"
-              :href="route('index', { query: tag.name })"
-              @click.prevent.stop="
-                $inertia.get(route('index', { query: tag.name }))
-              "
-            >
-              {{ tag.name }}
-            </v-chip>
-          </v-chip-group>
-
-          <h5 class="text-h5 my-4">Similar Images</h5>
-          <MasonryGrid>
-            <ImageCard v-for="img in similarImages" :image="img" />
-          </MasonryGrid>
-        </v-card-text>
-      </v-card>
-    </v-container>
+      <v-img :src="image.url" max-width="100%" max-height="700px" />
+      <v-card-text>
+        <v-chip-group>
+          <v-chip
+            v-for="tag in image.tags"
+            :href="route('index', { query: tag.name })"
+            @click.prevent.stop="
+              $inertia.get(route('index', { query: tag.name }))
+            "
+          >
+            {{ tag.name }}
+          </v-chip>
+        </v-chip-group>
+        <v-divider></v-divider>
+        <h5 class="text-h5 my-4">Similar Images</h5>
+        <MasonryGrid>
+          <ImageCard v-for="img in similarImages" :image="img" />
+        </MasonryGrid>
+      </v-card-text>
+    </v-card>
   </CoreLayout>
 </template>

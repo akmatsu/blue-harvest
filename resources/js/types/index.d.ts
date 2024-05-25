@@ -24,6 +24,14 @@ export interface Flag {
   flaggable?: Image;
 }
 
+export interface Restriction {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  name: string;
+  description: string;
+}
+
 export interface User {
   id: number;
   name: string;

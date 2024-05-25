@@ -54,6 +54,22 @@ CREATE TABLE `flags` (
   KEY `flags_flaggable_type_flaggable_id_index` (`flaggable_type`,`flaggable_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `image_restriction`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `image_restriction` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `image_id` bigint unsigned NOT NULL,
+  `restriction_id` bigint unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `image_restriction_image_id_foreign` (`image_id`),
+  KEY `image_restriction_restriction_id_foreign` (`restriction_id`),
+  CONSTRAINT `image_restriction_image_id_foreign` FOREIGN KEY (`image_id`) REFERENCES `images` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `image_restriction_restriction_id_foreign` FOREIGN KEY (`restriction_id`) REFERENCES `restrictions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `image_tag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -83,7 +99,6 @@ CREATE TABLE `images` (
   `height` int DEFAULT NULL,
   `folder_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_restricted` tinyint(1) NOT NULL DEFAULT '0',
-  `restriction_reason` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `images_user_id_foreign` (`user_id`),
   CONSTRAINT `images_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
@@ -216,6 +231,18 @@ CREATE TABLE `personal_access_tokens` (
   KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `restrictions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `restrictions` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `role_has_permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -306,3 +333,4 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (23,'2024_05_13_181
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (24,'2024_05_16_185118_create_permission_tables',5);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (25,'2024_05_23_171458_create_flags_table',6);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (28,'2024_05_24_211826_add_restriction_to_images_table',7);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (29,'2024_05_24_224853_create_restrictions_table',8);

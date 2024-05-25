@@ -63,14 +63,15 @@ class FlagController extends Controller
 
   public function restrictFlaggable(int $id, Request $request)
   {
-    $validated = $request->validate([
-      'restriction_reason' => 'required|string|max:255',
+    $valid = $request->validate([
+      'restriction_ids' => 'required|array',
+      'restriction_ids' => 'int|exists:restrictions,id',
     ]);
     $flag = Flag::findOrFail($id);
     $flaggable = $flag->flaggable;
 
     if ($flaggable) {
-      $flaggable->restrict($validated['restriction_reason']);
+      $flaggable->restrict($valid['restriction_ids']);
     }
 
     return redirect()
@@ -78,13 +79,17 @@ class FlagController extends Controller
       ->with('message', 'Flagged item has been restricted');
   }
 
-  public function liftFlaggableRestriction(int $id)
+  public function liftFlaggableRestriction(int $id, Request $request)
   {
+    $valid = $request->validate([
+      'restriction_ids' => 'required|array',
+      'restriction_ids' => 'int|exists:restrictions,id',
+    ]);
     $flag = Flag::findOrFail($id);
     $flaggable = $flag->flaggable;
 
     if ($flaggable) {
-      $flaggable->liftRestriction();
+      $flaggable->liftRestriction($valid['restriction_ids']);
     }
 
     return redirect()
