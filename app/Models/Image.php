@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Scout\Searchable;
 
@@ -21,7 +22,10 @@ class Image extends Model
     'width',
     'height',
     'folder_name',
+    'is_restricted',
   ];
+
+  protected $with = ['tags', 'restrictions'];
 
   public function user()
   {
@@ -34,6 +38,7 @@ class Image extends Model
 
     static::deleting(function ($image) {
       $image->deleteFiles();
+      $image->deleteFlags();
     });
   }
 
@@ -48,6 +53,13 @@ class Image extends Model
         Storage::delete($optimizedImage->path);
       }
     }
+  }
+
+  public function deleteFlags()
+  {
+    $this->flags()->each(function ($flag) {
+      $flag->delete();
+    });
   }
 
   public function optimizedImages()
@@ -72,6 +84,11 @@ class Image extends Model
     return $this->belongsToMany(Tag::class);
   }
 
+  public function restrictions()
+  {
+    return $this->belongsToMany(Restriction::class);
+  }
+
   public function toSearchableArray()
   {
     return array_merge($this->toArray(), [
@@ -81,5 +98,29 @@ class Image extends Model
       'tags' => $this->tags->pluck('name')->toArray(),
       'tag_descriptions' => $this->tags->pluck('description')->toArray(),
     ]);
+  }
+
+  public function flags(): MorphMany
+  {
+    return $this->morphMany(Flag::class, 'flaggable');
+  }
+
+  public function restrict(array $restrictionIds)
+  {
+    $this->restrictions()->sync($restrictionIds);
+    $this->update([
+      'is_restricted' => true,
+    ]);
+    $this->deleteFlags();
+  }
+
+  public function liftRestriction(array $restrictionIds)
+  {
+    $this->restrictions()->sync($restrictionIds);
+    if ($this->restrictions()->count() == 0) {
+      $this->update([
+        'is_restricted' => false,
+      ]);
+    }
   }
 }

@@ -15,7 +15,7 @@ class RoleSeeder extends Seeder
   public function run(): void
   {
     // Create roles
-    $adminRole = Role::create(['name' => 'admin']);
+    $adminRole = Role::updateOrCreate(['name' => 'admin']);
 
     // Define permissions
     $permissions = [
@@ -24,11 +24,14 @@ class RoleSeeder extends Seeder
       'delete users',
       'edit images',
       'delete images',
+      'view flags',
+      'edit flags',
+      'delete flags',
     ];
 
     // Create and assign permissions to the admin role
     foreach ($permissions as $permission) {
-      $perm = Permission::create(['name' => $permission]);
+      $perm = Permission::updateOrCreate(['name' => $permission]);
       $adminRole->givePermissionTo($perm);
     }
 

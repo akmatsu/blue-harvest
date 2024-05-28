@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Image;
+use App\Models\Restriction;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,18 +35,26 @@ class ImageController extends Controller
   {
     $query = $request->input('query');
     $limit = $request->input('count', 25);
+    $imagesQuery = Image::query();
 
     if ($query) {
-      $images = Image::search($query)->paginate($limit);
-      if ($images->total() > 0) {
-        $this->logSearchQuery($query);
-      }
-    } else {
-      $images = Image::paginate($limit);
+      $imagesQuery->search($query);
     }
+
+    if (!Auth::check()) {
+      $imagesQuery->where('is_restricted', false);
+    }
+
+    $images = $imagesQuery->paginate($limit);
+
+    if ($query && $images->total() > 0) {
+      $this->logSearchQuery($query);
+    }
+
     if ($request->wantsJson()) {
       return response()->json($images);
     }
+
     return Inertia::render('Browse', ['images' => $images]);
   }
 
@@ -61,7 +70,7 @@ class ImageController extends Controller
     $tags = Tag::all();
 
     if ($images->isEmpty()) {
-      return redirect()->route('image-manage');
+      return redirect()->route('images.manage');
     }
 
     return Inertia::render('ImageUploadResults', [
@@ -77,7 +86,7 @@ class ImageController extends Controller
     $tags = Tag::all();
 
     if ($images->isEmpty()) {
-      return redirect()->route('image-manage');
+      return redirect()->route('images.manage');
     }
 
     return Inertia::render('Admin/EditImages', [
@@ -112,7 +121,7 @@ class ImageController extends Controller
       $ids[] = $dbImage->id;
     }
 
-    return redirect()->route('image-upload-results', ['ids' => $ids]);
+    return redirect()->route('images.upload.results', ['ids' => $ids]);
   }
 
   public function updateImage(int $id, Request $request)
@@ -144,9 +153,22 @@ class ImageController extends Controller
       'optimizedImages' => function ($query) {
         $query->whereIn('size', ['small', 'medium', 'large']);
       },
+      'tags',
     ])->findOrFail($id);
 
-    return Inertia::render('Image/View', ['image' => $image]);
+    $tagIds = $image->tags->pluck('id');
+
+    $similarImages = Image::whereHas('tags', function ($query) use ($tagIds) {
+      $query->whereIn('tags.id', $tagIds);
+    })
+      ->where('id', '!=', $id)
+      ->take(15)
+      ->get();
+
+    return Inertia::render('Image/View', [
+      'image' => $image,
+      'similarImages' => $similarImages,
+    ]);
   }
 
   public function edit($id)
@@ -220,6 +242,19 @@ class ImageController extends Controller
     return back();
   }
 
+  public function adminShow(int $id)
+  {
+    $image = Image::findOrFail($id);
+    $restrictions = Restriction::all();
+    $tags = Tag::all();
+
+    return Inertia::render('Admin/Image', [
+      'image' => $image,
+      'restrictions' => $restrictions,
+      'tags' => $tags,
+    ]);
+  }
+
   public function adminManageImages(Request $request)
   {
     $query = $request->input('query');
@@ -240,6 +275,32 @@ class ImageController extends Controller
     }
 
     return Inertia::render('Admin/ManageImages', ['images' => $images]);
+  }
+
+  public function adminRestrictImage(int $id, Request $request)
+  {
+    $validated = $request->validate([
+      'restriction_ids' => 'required|array',
+      'restriction_ids.*' => 'int|exists:restrictions,id',
+    ]);
+    $image = Image::findOrFail($id);
+
+    $image->restrict($validated['restriction_ids']);
+
+    return back();
+  }
+
+  public function adminLiftImageRestriction(int $id, Request $request)
+  {
+    $valid = $request->validate([
+      'restriction_ids' => 'required|Array',
+      'restriction_ids.*' => 'int|exists:restrictions,id',
+    ]);
+    $image = Image::findOrFail($id);
+
+    $image->liftRestriction($valid['restriction_ids']);
+
+    return back();
   }
 
   private function populateImageData($dbImage, $file, $path, $uniqueFolder)
