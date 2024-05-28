@@ -41,6 +41,14 @@ const headers = [
     key: 'updated_at',
   },
   {
+    title: 'Restricted',
+    key: 'is_restricted',
+  },
+  {
+    title: 'Restrictions',
+    key: 'restrictions',
+  },
+  {
     title: 'Tags',
     key: 'tags',
   },
@@ -115,6 +123,9 @@ const headers = [
     <template #item.updated_at="{ item }">
       {{ formatDate(item.updated_at) }}
     </template>
+    <template #item.is_restricted="{ item }">
+      {{ !!item.is_restricted }}
+    </template>
     <template #item.url="{ item }">
       <LinkBtn
         link="admin.images.show"
@@ -123,6 +134,13 @@ const headers = [
       >
         View Image
       </LinkBtn>
+    </template>
+    <template #item.restrictions="{ item }">
+      <v-chip-group>
+        <v-chip v-for="r in item.restrictions" density="compact">
+          {{ r.name }}
+        </v-chip>
+      </v-chip-group>
     </template>
     <template #item.tags="{ item }">
       <v-chip-group>

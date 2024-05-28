@@ -21,9 +21,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
           Route::get('/{id}', [ImageController::class, 'adminShow'])
             ->middleware('can:edit images')
             ->name('show');
-          Route::patch('/{id}', [ImageController::class, 'adminUpdateImage'])
+          Route::patch('/{id}', [ImageController::class, 'updateImage'])
             ->middleware('can:edit images')
-            ->name('view');
+            ->name('update');
           Route::delete('/{id}', [ImageController::class, 'adminDelete'])
             ->middleware('can:delete images')
             ->name('delete');
@@ -83,12 +83,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
           ])
             ->middleware('can:edit flags')
             ->name('delete');
-          Route::patch('/{id}/flaggable', [
-            FlagController::class,
-            'restrictFlaggable',
-          ])
-            ->middleware('can:edit flags')
-            ->name('restrict');
           Route::post('/{id}/restrict', [
             FlagController::class,
             'restrictFlaggable',

@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import { AdminLayout } from '@/Layouts';
-import { Flag } from '@/types';
+import { Flag, Restriction } from '@/types';
 import { formatDate } from '@/utils';
 import DismissDialog from './components/flag/DismissDialog.vue';
 import RestrictDialog from './components/flag/RestrictDialog.vue';
 import DeleteDialog from './components/flag/DeleteDialog.vue';
 
-defineProps<{
+const props = defineProps<{
   flag: Flag;
+  restrictions: Restriction[];
 }>();
 </script>
 <template>
@@ -21,7 +22,11 @@ defineProps<{
 
         <v-card-actions>
           <DismissDialog :flag-id="flag.id" />
-          <RestrictDialog :flag-id="flag.id" />
+          <RestrictDialog
+            :flag-id="flag.id"
+            :restrictions
+            :image="flag.flaggable"
+          />
           <DeleteDialog :flag-id="flag.id" />
         </v-card-actions>
         <div

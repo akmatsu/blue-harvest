@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Flag;
+use App\Models\Restriction;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -18,7 +19,11 @@ class FlagController extends Controller
   public function show(int $id)
   {
     $flag = Flag::findOrFail($id);
-    return Inertia::render('Admin/Flag', ['flag' => $flag]);
+    $restrictions = Restriction::all();
+    return Inertia::render('Admin/Flag', [
+      'flag' => $flag,
+      'restrictions' => $restrictions,
+    ]);
   }
 
   public function store(Request $request)
@@ -65,7 +70,7 @@ class FlagController extends Controller
   {
     $valid = $request->validate([
       'restriction_ids' => 'required|array',
-      'restriction_ids' => 'int|exists:restrictions,id',
+      'restriction_ids.*' => 'int|exists:restrictions,id',
     ]);
     $flag = Flag::findOrFail($id);
     $flaggable = $flag->flaggable;
@@ -83,7 +88,7 @@ class FlagController extends Controller
   {
     $valid = $request->validate([
       'restriction_ids' => 'required|array',
-      'restriction_ids' => 'int|exists:restrictions,id',
+      'restriction_ids.*' => 'int|exists:restrictions,id',
     ]);
     $flag = Flag::findOrFail($id);
     $flaggable = $flag->flaggable;
