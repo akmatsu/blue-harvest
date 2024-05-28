@@ -57,6 +57,8 @@ export interface Image {
   height: number;
   optimized_images?: OptimizedImage[];
   tags?: Tag[];
+  restrictions?: Restriction[];
+  is_restricted: boolean;
 }
 
 export interface OptimizedImage {

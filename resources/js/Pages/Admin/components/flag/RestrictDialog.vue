@@ -1,9 +1,12 @@
 <script lang="ts" setup>
 import { useToasts } from '@/store/toasts';
-import { router, useForm } from '@inertiajs/vue3';
+import { Image, Restriction } from '@/types';
+import { useForm } from '@inertiajs/vue3';
 
 const props = defineProps<{
   flagId: number | string;
+  restrictions: Restriction[];
+  image?: Image;
 }>();
 const dialog = ref(false);
 
@@ -11,7 +14,7 @@ const toast = useToasts();
 const isValid = ref(false);
 
 const form = useForm({
-  restriction_reason: '',
+  restriction_ids: props.image?.restrictions?.map((r) => r.id) || [],
 });
 
 function handleSubmit() {
@@ -50,7 +53,15 @@ function handleSubmit() {
           contact before using it.
         </p>
         <v-form @submit.prevent="handleSubmit" v-model="isValid">
-          <v-textarea counter v-model="form.restriction_reason"></v-textarea>
+          <v-autocomplete
+            counter
+            v-model="form.restriction_ids"
+            :items="restrictions"
+            item-title="name"
+            item-value="id"
+            multiple
+            chips
+          ></v-autocomplete>
           <div class="d-flex justify-end">
             <v-btn
               @click="dialog = false"

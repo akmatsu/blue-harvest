@@ -5,14 +5,10 @@ import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { ViewOptions } from './components';
 import { ImageCard, MasonryGrid, ReportDialog } from '@/Components';
 
-const props = defineProps<{
+defineProps<{
   image: Image;
   similarImages: Image[];
 }>();
-
-onMounted(() => {
-  console.log(props.similarImages);
-});
 </script>
 
 <template>
@@ -25,7 +21,15 @@ onMounted(() => {
         <ReportDialog :item-id="image.id" item-type="App\Models\Image" />
         <ViewOptions :image="image" />
       </v-card-actions>
-
+      <div class="d-flex flex-column px-2 mb-4" style="gap: 8px">
+        <v-alert
+          v-for="r in image.restrictions"
+          color="warning"
+          density="compact"
+        >
+          {{ r.description }}
+        </v-alert>
+      </div>
       <v-img :src="image.url" max-width="100%" max-height="700px" />
       <v-card-text>
         <v-chip-group>

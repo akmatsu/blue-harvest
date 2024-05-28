@@ -35,18 +35,26 @@ class ImageController extends Controller
   {
     $query = $request->input('query');
     $limit = $request->input('count', 25);
+    $imagesQuery = Image::query();
 
     if ($query) {
-      $images = Image::search($query)->paginate($limit);
-      if ($images->total() > 0) {
-        $this->logSearchQuery($query);
-      }
-    } else {
-      $images = Image::paginate($limit);
+      $imagesQuery->search($query);
     }
+
+    if (!Auth::check()) {
+      $imagesQuery->where('is_restricted', false);
+    }
+
+    $images = $imagesQuery->paginate($limit);
+
+    if ($query && $images->total() > 0) {
+      $this->logSearchQuery($query);
+    }
+
     if ($request->wantsJson()) {
       return response()->json($images);
     }
+
     return Inertia::render('Browse', ['images' => $images]);
   }
 
@@ -272,12 +280,12 @@ class ImageController extends Controller
   public function adminRestrictImage(int $id, Request $request)
   {
     $validated = $request->validate([
-      'restrictions_ids' => 'required|array',
+      'restriction_ids' => 'required|array',
       'restriction_ids.*' => 'int|exists:restrictions,id',
     ]);
     $image = Image::findOrFail($id);
 
-    $image->restrict($validated['restriction_reason']);
+    $image->restrict($validated['restriction_ids']);
 
     return back();
   }
