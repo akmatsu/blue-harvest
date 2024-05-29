@@ -7,6 +7,8 @@ import { DragAndDropInput } from '@/Components';
 
 const isFormValid = ref(false);
 const toast = useToasts();
+const dialog = ref(false);
+const progress = ref(0);
 
 const form = useForm({
   files: undefined,
@@ -15,10 +17,24 @@ const form = useForm({
 async function handleSubmit() {
   if (isFormValid.value)
     form.post('/images', {
+      onStart: () => (dialog.value = true),
       onSuccess: () => toast.success('Successfully uploaded images!'),
-      onError: (err) => toast.error(err.message),
+      onError: (err) => {
+        for (const key in err) toast.error(err[key]);
+      },
+      onProgress: (p) => {
+        progress.value = p?.percentage || progress.value;
+      },
+      onFinish: () => {
+        dialog.value = false;
+        progress.value = 0;
+      },
     });
 }
+
+const processText = computed(() =>
+  progress.value < 100 ? 'Uploading Images...' : 'Processing Images...',
+);
 </script>
 
 <template>
@@ -43,5 +59,16 @@ async function handleSubmit() {
         </v-form>
       </v-card-text>
     </v-card>
+    <v-dialog v-model="dialog" max-width="400px" :persistent="dialog">
+      <v-card :title="processText">
+        <v-card-text>
+          <v-progress-linear
+            :model-value="progress"
+            color="primary"
+            :indeterminate="progress === 100"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </CoreLayout>
 </template>
