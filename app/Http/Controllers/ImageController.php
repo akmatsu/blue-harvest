@@ -45,7 +45,13 @@ class ImageController extends Controller
       $imagesQuery->where('is_restricted', false);
     }
 
-    $images = $imagesQuery->paginate($limit);
+    $images = $imagesQuery
+      ->with([
+        'optimizedImages' => function ($query) {
+          $query->whereIn('size', ['small', 'medium', 'large']);
+        },
+      ])
+      ->paginate($limit);
 
     if ($query && $images->total() > 0) {
       $this->logSearchQuery($query);

@@ -5,10 +5,18 @@ import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { ViewOptions } from './components';
 import { ImageCard, MasonryGrid, ReportDialog } from '@/Components';
 
-defineProps<{
+const props = defineProps<{
   image: Image;
   similarImages: Image[];
 }>();
+
+const url = computed(() => {
+  if (props.image.optimized_images) {
+    const img = props.image.optimized_images.find((im) => im.size === 'large');
+    if (img) return img?.url;
+  }
+  return props.image.url;
+});
 </script>
 
 <template>
@@ -30,7 +38,7 @@ defineProps<{
           {{ r.description }}
         </v-alert>
       </div>
-      <v-img :src="image.url" max-width="100%" max-height="700px" />
+      <v-img :src="url" max-width="100%" max-height="700px" />
       <v-card-text>
         <v-chip-group>
           <v-chip
