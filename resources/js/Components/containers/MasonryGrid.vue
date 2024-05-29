@@ -17,6 +17,10 @@
     column-count: 3;
   }
 
+  @media screen and (min-width: 2000px) {
+    column-count: 4;
+  }
+
   > * {
     margin-bottom: 16px;
   }
