@@ -1,6 +1,10 @@
 <script lang="ts" setup>
+import { required } from '@/utils';
+import { MasonryGrid } from '../containers';
+
 const files = defineModel<File[]>();
 const previews = ref<string[]>([]);
+const max = 25;
 
 watch(
   files,
@@ -27,6 +31,12 @@ watch(
 function removeFile(index: number) {
   files.value?.splice(index, 1);
 }
+
+function maxFiles(val: File[]) {
+  return (
+    val.length <= max || `You can only upload up to ${max} images at a time.`
+  );
+}
 </script>
 
 <template>
@@ -38,23 +48,26 @@ function removeFile(index: number) {
       multiple
       chips
       accept="image/png,image/jpeg,image/jpg,image/webp"
+      :rules="[required, maxFiles]"
     ></v-file-input>
-    <v-row>
-      <v-col v-for="(preview, index) in previews" cols="3">
-        <v-card>
-          <v-img :src="preview">
-            <v-card-actions>
-              <v-btn
-                icon="mdi-close"
-                variant="elevated"
-                size="x-small"
-                @click="removeFile(index)"
-              ></v-btn>
-            </v-card-actions>
-          </v-img>
-        </v-card>
-      </v-col>
-    </v-row>
+    <!-- <v-row> -->
+    <!-- <v-col v-for="(preview, index) in previews" cols="3"> -->
+    <MasonryGrid>
+      <v-card v-for="(preview, index) in previews">
+        <v-img :src="preview">
+          <v-card-actions>
+            <v-btn
+              icon="mdi-close"
+              variant="elevated"
+              size="x-small"
+              @click="removeFile(index)"
+            ></v-btn>
+          </v-card-actions>
+        </v-img>
+      </v-card>
+    </MasonryGrid>
+    <!-- </v-col> -->
+    <!-- </v-row> -->
   </div>
 </template>
 

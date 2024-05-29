@@ -60,7 +60,6 @@ class ImageController extends Controller
 
   public function uploadView()
   {
-    Log::info('UPLOAD VIEW!');
     return Inertia::render('ImageUpload');
   }
 
@@ -99,8 +98,8 @@ class ImageController extends Controller
   public function uploadImage(Request $request)
   {
     $request->validate([
-      'files' => 'required|array',
-      'files.*' => 'file',
+      'files' => 'required|array|max:25',
+      'files.*' => 'file|mimes:jpg,jpeg,png,webp|max:102400',
     ]);
 
     $files = $request->file('files');
