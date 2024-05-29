@@ -60,6 +60,7 @@ class ImageController extends Controller
 
   public function uploadView()
   {
+    Log::info('UPLOAD VIEW!');
     return Inertia::render('ImageUpload');
   }
 
@@ -121,7 +122,7 @@ class ImageController extends Controller
       $ids[] = $dbImage->id;
     }
 
-    return redirect()->route('images.upload.results', ['ids' => $ids]);
+    return redirect()->route('upload.results', ['ids' => $ids]);
   }
 
   public function updateImage(int $id, Request $request)

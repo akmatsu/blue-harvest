@@ -22,17 +22,15 @@ Route::prefix('images')
       Route::post('/{id}', [ImageController::class, 'updateImage'])->name(
         'update'
       );
-
-      Route::prefix('upload')
-        ->name('upload.')
-        ->group(function () {
-          Route::get('/', [ImageController::class, 'uploadView'])->name(
-            'index'
-          );
-          Route::get('/results', [
-            ImageController::class,
-            'uploadResultsView',
-          ])->name('results');
-        });
     });
+  });
+
+Route::middleware(['auth', 'verified'])
+  ->prefix('upload')
+  ->name('upload.')
+  ->group(function () {
+    Route::get('/', [ImageController::class, 'uploadView'])->name('index');
+    Route::get('/results', [ImageController::class, 'uploadResultsView'])->name(
+      'results'
+    );
   });

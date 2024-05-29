@@ -21,7 +21,7 @@ export const navigation: NavItem[] = [
   {
     title: 'Upload a new Image',
     icon: 'mdi-upload',
-    to: 'images.upload.index',
+    to: 'upload.index',
     requireAuth: true,
   },
 ];
