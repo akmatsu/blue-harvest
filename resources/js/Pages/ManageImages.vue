@@ -34,7 +34,7 @@ function handleSearch(query = search.value) {
 </script>
 
 <template>
-  <Head title="Manage Images" />
+  <Head title="Manage Your Images" />
   <CoreLayout v-model="search" searchable fluid @search-submit="handleSearch">
     <v-card>
       <ImageTable
