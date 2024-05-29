@@ -2,6 +2,7 @@
 import { FlagTable } from '@/Components';
 import { AdminLayout } from '@/Layouts';
 import { Flag, Paginated } from '@/types';
+import { Head } from '@inertiajs/vue3';
 
 defineProps<{
   flags: Paginated<Flag>;
@@ -9,6 +10,7 @@ defineProps<{
 </script>
 
 <template>
+  <Head title="Flags - Admin" />
   <AdminLayout fluid>
     <v-card>
       <v-card-text>

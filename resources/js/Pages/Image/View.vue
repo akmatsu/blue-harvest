@@ -20,7 +20,7 @@ const url = computed(() => {
 </script>
 
 <template>
-  <Head title="Dashboard" />
+  <Head :title="image.name" />
 
   <CoreLayout>
     <v-card>

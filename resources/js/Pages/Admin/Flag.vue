@@ -2,6 +2,7 @@
 import { AdminLayout } from '@/Layouts';
 import { Flag, Restriction } from '@/types';
 import { formatDate } from '@/utils';
+import { Head } from '@inertiajs/vue3';
 import DismissDialog from './components/flag/DismissDialog.vue';
 import RestrictDialog from './components/flag/RestrictDialog.vue';
 import DeleteDialog from './components/flag/DeleteDialog.vue';
@@ -12,6 +13,7 @@ const props = defineProps<{
 }>();
 </script>
 <template>
+  <Head :title="`Flag ${flag.id} - Admin`" />
   <AdminLayout>
     <v-card title="Review Flagged Item">
       <v-card-text>

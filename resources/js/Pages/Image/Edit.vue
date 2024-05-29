@@ -116,7 +116,7 @@ const lockIcon = computed(() =>
 </script>
 
 <template>
-  <Head title="Dashboard" />
+  <Head title="Edit Image" />
 
   <CoreLayout fluid>
     <VNavigationDrawer location="right" width="600">

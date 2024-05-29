@@ -2,7 +2,7 @@
 import { AdminLayout } from '@/Layouts';
 import { useToasts } from '@/store/toasts';
 import { Image, Restriction, Tag } from '@/types';
-import { useForm } from '@inertiajs/vue3';
+import { useForm, Head } from '@inertiajs/vue3';
 
 const props = defineProps<{
   image: Image;
@@ -55,6 +55,7 @@ function handleRestrict() {
 </script>
 
 <template>
+  <Head :title="`Image ${image.name} - Admin`" />
   <AdminLayout>
     <v-card :title="image.name">
       <v-img :src="image.url" max-width="100%" max-height="700px"></v-img>
