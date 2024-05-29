@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { Image } from '@/types';
 import { LinkCard } from './containers';
-import { useDisplay } from 'vuetify';
 
 const props = defineProps<{
   image: Image;

@@ -38,7 +38,8 @@ class ImageController extends Controller
     $imagesQuery = Image::query();
 
     if ($query) {
-      $imagesQuery->search($query);
+      $imageIds = Image::search($query)->get()->pluck('id');
+      $imagesQuery->whereIn('id', $imageIds);
     }
 
     if (!Auth::check()) {
