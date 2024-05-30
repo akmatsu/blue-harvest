@@ -3,6 +3,7 @@ import AuthLayout from '@/Layouts/AuthLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { required } from '@/utils';
 import { useToasts } from '@/store/toasts';
+import { LinkBtn } from '@/Components';
 
 defineProps<{
   canResetPassword?: boolean;
@@ -84,13 +85,8 @@ const submit = () => {
             >
               Log in
             </PrimaryBtn>
-            <v-btn
-              v-if="canResetPassword"
-              href="/register"
-              @click.prevent.stop="$inertia.get('/register')"
-            >
-              Don't have an account?
-            </v-btn>
+            <LinkBtn link="login.microsoft">Sign in with Microsoft</LinkBtn>
+            <!-- <LinkBtn link="register">Don't have an account?</LinkBtn> -->
           </div>
         </v-form>
       </v-card-text>
