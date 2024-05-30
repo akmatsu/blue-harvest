@@ -9,6 +9,10 @@ defineProps<{
 }>();
 const page = usePage();
 const isAuth = computed(() => !!page.props.auth.user);
+
+onMounted(() => {
+  console.log(page.props.ziggy.location);
+});
 </script>
 
 <template>
@@ -21,7 +25,7 @@ const isAuth = computed(() => !!page.props.auth.user);
       <v-btn
         v-if="!item.requireAuth || isAuth"
         :href="route(item.to)"
-        :active="page.url === route(item.to)"
+        :active="route(item.to) === page.props.ziggy.location"
         :prepend-icon="item.icon"
         @click.prevent.stop="$inertia.get(route(item.to))"
       >
