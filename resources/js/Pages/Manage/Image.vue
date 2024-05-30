@@ -85,7 +85,7 @@ function handleDelete() {
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn @click="isActive.value = false"></v-btn>
+                <v-btn @click="isActive.value = false">Cancel</v-btn>
                 <danger-btn @click="handleDelete" :loading="deleteLoading">
                   Delete Image
                 </danger-btn>

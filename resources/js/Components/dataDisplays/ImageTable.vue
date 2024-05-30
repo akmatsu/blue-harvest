@@ -10,7 +10,6 @@ defineProps<{
 }>();
 defineEmits<{
   (e: 'search', value?: string): void;
-  (e: 'editImages', value?: number[]): void;
   (e: 'deleteImage', value?: number | number[]): void;
 }>();
 
@@ -75,14 +74,6 @@ const headers = [
   >
     <template #top>
       <v-toolbar>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          prepend-icon="$edit"
-          @click="$emit('editImages', selected)"
-        >
-          Edit Images
-        </v-btn>
         <v-dialog max-width="400px">
           <template #activator="{ props }">
             <v-btn

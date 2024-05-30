@@ -14,12 +14,6 @@ const page = ref(props.images.current_page);
 
 const search = ref<string>();
 
-function editImages(ids = selected.value) {
-  router.get('/upload/results', {
-    ids: ids,
-  });
-}
-
 function handleSearch(query = search.value) {
   return router.get(
     `/images`,
@@ -45,7 +39,6 @@ function handleSearch(query = search.value) {
         :items-length="images.total"
         to="images.manageImage"
         @search="handleSearch"
-        @edit-images="editImages"
         @delete-image="imageDelete"
       />
     </v-card>

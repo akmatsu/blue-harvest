@@ -2,7 +2,7 @@
 import { AdminLayout } from '@/Layouts';
 import { useToasts } from '@/store/toasts';
 import { Image, Restriction, Tag } from '@/types';
-import { useForm, Head } from '@inertiajs/vue3';
+import { useForm, Head, router } from '@inertiajs/vue3';
 
 const props = defineProps<{
   image: Image;
@@ -11,6 +11,7 @@ const props = defineProps<{
 }>();
 
 const toast = useToasts();
+const deleteLoading = ref(false);
 
 const updateForm = useForm({
   name: props.image.name,
@@ -50,6 +51,19 @@ function handleRestrict() {
         toast.error(err[key]);
       }
     },
+  });
+}
+
+function handleDelete() {
+  router.delete(route('admin.images.delete', { id: props.image.id }), {
+    onStart: () => (deleteLoading.value = true),
+    onSuccess: () => toast.success('Image was successfully deleted.'),
+    onError(e) {
+      for (const k in e) {
+        toast.success(e[k]);
+      }
+    },
+    onFinish: () => (deleteLoading.value = false),
   });
 }
 </script>
@@ -101,6 +115,26 @@ function handleRestrict() {
             Restrict Image
           </v-btn>
         </v-form>
+        <v-dialog max-width="400" :persistent="deleteLoading">
+          <template #activator="{ props }">
+            <danger-btn v-bind="props">Delete Image</danger-btn>
+          </template>
+          <template #default="{ isActive }">
+            <v-card title="Delete Image">
+              <v-card-text>
+                Are you sure you want to delete this image? This action is
+                permanent and cannot be reversed.
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn @click="isActive.value = false">Cancel</v-btn>
+                <danger-btn @click="handleDelete" :loading="deleteLoading">
+                  Delete Image
+                </danger-btn>
+              </v-card-actions>
+            </v-card>
+          </template>
+        </v-dialog>
       </v-card-text>
     </v-card>
   </AdminLayout>

@@ -292,7 +292,7 @@ class ImageController extends Controller
       return response()->json($images);
     }
 
-    return Inertia::render('Admin/manage', ['images' => $images]);
+    return Inertia::render('Admin/Manage', ['images' => $images]);
   }
 
   public function adminRestrictImage(int $id, Request $request)
@@ -317,6 +317,25 @@ class ImageController extends Controller
     $image = Image::findOrFail($id);
 
     $image->liftRestriction($valid['restriction_ids']);
+
+    return back();
+  }
+
+  public function adminDelete(int $id)
+  {
+    Image::destroy($id);
+
+    return redirect()->route('admin.images.index');
+  }
+
+  public function adminBulkDelete(Request $request)
+  {
+    $validated = $request->validate([
+      'ids' => 'required|array|min:1',
+      'ids.*' => 'integer|exists:images,id',
+    ]);
+
+    Image::destroy($validated['ids']);
 
     return back();
   }
