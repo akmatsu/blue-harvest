@@ -102,7 +102,7 @@ class ImageController extends Controller
     ]);
   }
 
-  public function uploadImage(Request $request)
+  public function upload(Request $request)
   {
     $request->validate([
       'files' => 'required|array|max:25',

@@ -12,7 +12,7 @@ Route::prefix('images')
 
     Route::middleware(['auth', 'verified'])->group(function () {
       Route::get('/', [ImageController::class, 'manageImages'])->name('manage');
-      Route::post('/', [ImageController::class, 'uploadImage'])->name('upload');
+      Route::post('/', [ImageController::class, 'upload'])->name('upload');
       Route::delete('/', [ImageController::class, 'bulkDelete'])->name(
         'delete.bulk'
       );
