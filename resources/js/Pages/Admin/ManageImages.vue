@@ -40,6 +40,7 @@ function handleSearch(query = search.value) {
       v-model:items-per-page="itemsPerPage"
       :images="props.images.data"
       :items-length="images.total"
+      to="admin.images.manage"
       @search="handleSearch"
       @edit-images="editImages"
       @delete-image="imageDelete"

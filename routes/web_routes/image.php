@@ -11,7 +11,10 @@ Route::prefix('images')
     Route::get('/{id}', [ImageController::class, 'view'])->name('view');
 
     Route::middleware(['auth', 'verified'])->group(function () {
-      Route::get('/', [ImageController::class, 'manageImages'])->name('manage');
+      Route::get('/', [ImageController::class, 'manage'])->name('manage');
+      Route::get('/manage/{id}', [ImageController::class, 'manageImage'])->name(
+        'manageImage'
+      );
       Route::post('/', [ImageController::class, 'upload'])->name('upload');
       Route::delete('/', [ImageController::class, 'bulkDelete'])->name(
         'delete.bulk'
@@ -19,7 +22,7 @@ Route::prefix('images')
       Route::delete('/{id}', [ImageController::class, 'delete'])->name(
         'delete'
       );
-      Route::post('/{id}', [ImageController::class, 'updateImage'])->name(
+      Route::patch('/{id}', [ImageController::class, 'updateImage'])->name(
         'update'
       );
     });

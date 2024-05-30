@@ -184,7 +184,18 @@ class ImageController extends Controller
     return Inertia::render('Image/Edit', ['image' => $image]);
   }
 
-  public function manageImages(Request $request)
+  public function manageImage(int $id)
+  {
+    $image = Image::findOrFail($id);
+    $tags = Tag::all();
+
+    return Inertia::render('Manage/Image', [
+      'image' => $image,
+      'tags' => $tags,
+    ]);
+  }
+
+  public function manage(Request $request)
   {
     $query = $request->input('query');
     $count = $request->input('count', 25);
@@ -214,7 +225,7 @@ class ImageController extends Controller
         return response()->json($images);
       }
 
-      return Inertia::render('ManageImages', ['images' => $images]);
+      return Inertia::render('Manage/Images', ['images' => $images]);
     }
 
     return redirect()->route('login');
@@ -227,7 +238,7 @@ class ImageController extends Controller
       ->firstOrFail();
 
     $image->delete();
-    return back();
+    return redirect()->route('images.manage');
   }
 
   public function bulkDelete(Request $request)
@@ -281,7 +292,7 @@ class ImageController extends Controller
       return response()->json($images);
     }
 
-    return Inertia::render('Admin/ManageImages', ['images' => $images]);
+    return Inertia::render('Admin/manage', ['images' => $images]);
   }
 
   public function adminRestrictImage(int $id, Request $request)
