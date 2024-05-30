@@ -33,7 +33,6 @@ onMounted(() => {
       </v-btn>
     </div>
     <UserMenu v-if="isAuth" />
-
-    <LinkBtn link="login" color="primary" variant="flat">log in</LinkBtn>
+    <LinkBtn v-else link="login" color="primary" variant="flat">log in</LinkBtn>
   </div>
 </template>
