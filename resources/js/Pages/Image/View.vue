@@ -36,7 +36,11 @@ const userIsAdmin = computed(
     <v-card>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <LinkBtn link="admin.images.show" :params="{ id: image.id }">
+        <LinkBtn
+          v-if="userIsAdmin"
+          link="admin.images.show"
+          :params="{ id: image.id }"
+        >
           Admin View
         </LinkBtn>
         <LinkBtn
