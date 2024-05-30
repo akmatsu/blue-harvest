@@ -24,7 +24,9 @@ const url = computed(() => {
           size="small"
           v-for="tag in image.tags"
           :href="route('index', { query: tag.name })"
-          @click.prevent="$inertia.get(route('index', { query: tag.name }))"
+          @click.prevent.stop="
+            $inertia.get(route('index', { query: tag.name }))
+          "
         >
           {{ tag.name }}
         </v-chip>
