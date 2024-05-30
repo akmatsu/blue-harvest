@@ -1,6 +1,6 @@
 <?php
 
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\AzureBlobStorageServiceProvider::class,
+  App\Providers\AppServiceProvider::class,
+  App\Providers\AzureBlobStorageServiceProvider::class,
 ];
