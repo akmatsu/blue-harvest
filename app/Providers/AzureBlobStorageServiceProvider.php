@@ -37,13 +37,13 @@ class AzureBlobStorageServiceProvider extends ServiceProvider
         )
       );
 
-      return new Filesystem(
-        new AzureBlobStorageAdapter(
-          $client,
-          $config['container'],
-          $config['prefix'] ?? null
-        )
+      $adapter = new AzureBlobStorageAdapter(
+        $client,
+        $config['container'],
+        $config['prefix'] ?? ''
       );
+
+      return new Filesystem($adapter);
     });
   }
 }
