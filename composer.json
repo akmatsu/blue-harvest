@@ -12,9 +12,11 @@
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.9",
+        "laravel/socialite": "^5.14",
         "laravel/tinker": "^2.9",
         "league/flysystem-azure-blob-storage": "^3.28",
         "microsoft/azure-storage-blob": "^1.5",
+        "socialiteproviders/microsoft": "^4.3",
         "spatie/laravel-permission": "^6.7",
         "tightenco/ziggy": "^2.0",
         "typesense/typesense-php": "^4.9"

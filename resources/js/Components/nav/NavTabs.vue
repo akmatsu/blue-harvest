@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UserMenu } from '@/Components';
+import { LinkBtn, UserMenu } from '@/Components';
 import { NavItem } from '@/configs/navigation';
 
 import { usePage } from '@inertiajs/vue3';
@@ -29,13 +29,7 @@ const isAuth = computed(() => !!page.props.auth.user);
       </v-btn>
     </div>
     <UserMenu v-if="isAuth" />
-    <primary-btn
-      v-else
-      prepend-icon="mdi-account-plus"
-      href="/register"
-      @click.prevent.stop="$inertia.get('/register')"
-    >
-      Register
-    </primary-btn>
+
+    <LinkBtn link="login" color="primary" variant="flat">log in</LinkBtn>
   </div>
 </template>
