@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { Head, useForm } from '@inertiajs/vue3';
-// import { uploadImages } from '@/utils';
 import CoreLayout from '@/Layouts/CoreLayout.vue';
-// import { useRequest } from '@/composables/useRequest';
 import { required } from '@/utils';
 import { useToasts } from '@/store/toasts';
 import { DragAndDropInput } from '@/Components';
 
 const isFormValid = ref(false);
 const toast = useToasts();
+const dialog = ref(false);
+const progress = ref(0);
 
 const form = useForm({
   files: undefined,
@@ -17,10 +17,24 @@ const form = useForm({
 async function handleSubmit() {
   if (isFormValid.value)
     form.post('/images', {
+      onStart: () => (dialog.value = true),
       onSuccess: () => toast.success('Successfully uploaded images!'),
-      onError: (err) => toast.error(err.message),
+      onError: (err) => {
+        for (const key in err) toast.error(err[key]);
+      },
+      onProgress: (p) => {
+        progress.value = p?.percentage || progress.value;
+      },
+      onFinish: () => {
+        dialog.value = false;
+        progress.value = 0;
+      },
     });
 }
+
+const processText = computed(() =>
+  progress.value < 100 ? 'Uploading Images...' : 'Processing Images...',
+);
 </script>
 
 <template>
@@ -30,14 +44,7 @@ async function handleSubmit() {
       <v-card-text>
         <v-form v-model="isFormValid" @submit.prevent="handleSubmit">
           <DragAndDropInput v-model="form.files" :rules="required" />
-          <!-- <v-file-input
-            v-model="form.files"
-            label="Images"
-            multiple
-            chips
-            accept="image/png,image/jpeg,image/jpg,image/webp"
-            :rules="[required]"
-          ></v-file-input> -->
+
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
@@ -52,5 +59,16 @@ async function handleSubmit() {
         </v-form>
       </v-card-text>
     </v-card>
+    <v-dialog v-model="dialog" max-width="400px" :persistent="dialog">
+      <v-card :title="processText">
+        <v-card-text>
+          <v-progress-linear
+            :model-value="progress"
+            color="primary"
+            :indeterminate="progress === 100"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </CoreLayout>
 </template>

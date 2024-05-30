@@ -4,7 +4,7 @@ import { usePagination } from '@/composables/usePagination';
 import { AdminLayout } from '@/Layouts';
 import { useToasts } from '@/store/toasts';
 import { Paginated, User } from '@/types';
-import { router } from '@inertiajs/vue3';
+import { router, Head } from '@inertiajs/vue3';
 
 const props = defineProps<{
   users: Paginated<User>;
@@ -46,6 +46,7 @@ function handleSearch(query = search.value) {
 </script>
 
 <template>
+  <Head title="Users - Admin" />
   <AdminLayout fluid searchable @search-submit="handleSearch">
     <v-card title="Users">
       <UserTable

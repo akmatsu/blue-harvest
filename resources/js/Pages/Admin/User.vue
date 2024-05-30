@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { AdminLayout } from '@/Layouts';
 import { Role, User } from '@/types';
-import UserInfo from './userComponents/UserInfo.vue';
-import UserRole from './userComponents/UserRole.vue';
-import UserPassword from './userComponents/UserPassword.vue';
+import UserInfo from './components/user/UserInfo.vue';
+import UserRole from './components/user/UserRole.vue';
+import UserPassword from './components/user/UserPassword.vue';
 import { router } from '@inertiajs/vue3';
 import { useToasts } from '@/store/toasts';
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps<{
   user: User;
@@ -35,6 +36,7 @@ function deleteUser() {
 </script>
 
 <template>
+  <Head :title="`${user.name} - Admin`" />
   <AdminLayout>
     <v-row>
       <v-col cols="12">

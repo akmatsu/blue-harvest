@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Image } from '@/types';
 import { formatDate } from '@/utils';
+import { LinkBtn } from '../buttons';
 
 defineProps<{
   images: Image[];
@@ -14,7 +15,7 @@ defineEmits<{
 
 const selected = defineModel<number[]>();
 const page = defineModel<number | string>('page');
-const itemsPerPage = defineModel<string | number>('items-per-page', {
+const itemsPerPage = defineModel<string | number>('itemsPerPage', {
   default: 25,
 });
 
@@ -38,6 +39,14 @@ const headers = [
   {
     title: 'Updated',
     key: 'updated_at',
+  },
+  {
+    title: 'Restricted',
+    key: 'is_restricted',
+  },
+  {
+    title: 'Restrictions',
+    key: 'restrictions',
   },
   {
     title: 'Tags',
@@ -114,10 +123,24 @@ const headers = [
     <template #item.updated_at="{ item }">
       {{ formatDate(item.updated_at) }}
     </template>
+    <template #item.is_restricted="{ item }">
+      {{ !!item.is_restricted }}
+    </template>
     <template #item.url="{ item }">
-      <v-btn color="primary" @click="$emit('editImages', [item.id])">
+      <LinkBtn
+        link="admin.images.show"
+        :params="{ id: item.id }"
+        color="primary"
+      >
         View Image
-      </v-btn>
+      </LinkBtn>
+    </template>
+    <template #item.restrictions="{ item }">
+      <v-chip-group>
+        <v-chip v-for="r in item.restrictions" density="compact">
+          {{ r.name }}
+        </v-chip>
+      </v-chip-group>
     </template>
     <template #item.tags="{ item }">
       <v-chip-group>
