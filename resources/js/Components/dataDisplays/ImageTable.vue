@@ -6,6 +6,7 @@ import { LinkBtn } from '../buttons';
 defineProps<{
   images: Image[];
   itemsLength: number;
+  to: string;
 }>();
 defineEmits<{
   (e: 'search', value?: string): void;
@@ -127,11 +128,7 @@ const headers = [
       {{ !!item.is_restricted }}
     </template>
     <template #item.url="{ item }">
-      <LinkBtn
-        link="admin.images.show"
-        :params="{ id: item.id }"
-        color="primary"
-      >
+      <LinkBtn :link="to" :params="{ id: item.id }" color="primary">
         View Image
       </LinkBtn>
     </template>
