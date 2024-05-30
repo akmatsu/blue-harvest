@@ -29,6 +29,7 @@ watch(
 );
 
 function removeFile(index: number) {
+  console.log(index);
   files.value?.splice(index, 1);
 }
 
@@ -50,8 +51,6 @@ function maxFiles(val: File[]) {
       accept="image/png,image/jpeg,image/jpg,image/webp"
       :rules="[required, maxFiles]"
     ></v-file-input>
-    <!-- <v-row> -->
-    <!-- <v-col v-for="(preview, index) in previews" cols="3"> -->
     <MasonryGrid>
       <v-card v-for="(preview, index) in previews">
         <v-img :src="preview">
@@ -66,8 +65,6 @@ function maxFiles(val: File[]) {
         </v-img>
       </v-card>
     </MasonryGrid>
-    <!-- </v-col> -->
-    <!-- </v-row> -->
   </div>
 </template>
 

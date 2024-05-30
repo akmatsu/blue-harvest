@@ -12,7 +12,6 @@ class OauthController extends Controller
 {
   public function redirectToMicrosoft()
   {
-    Log::info('Yeehaw');
     return Socialite::driver('microsoft')->redirect();
   }
 

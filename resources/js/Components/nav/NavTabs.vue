@@ -9,10 +9,6 @@ defineProps<{
 }>();
 const page = usePage();
 const isAuth = computed(() => !!page.props.auth.user);
-
-onMounted(() => {
-  console.log(page.props.ziggy.location);
-});
 </script>
 
 <template>
