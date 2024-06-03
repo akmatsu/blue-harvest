@@ -7,10 +7,13 @@ use App\Models\Restriction;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Intervention\Image\Laravel\Facades\Image as ImageFacade;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 use Typesense\Client;
 
 class ImageController extends Controller
@@ -120,10 +123,9 @@ class ImageController extends Controller
 
       $this->populateImageData($dbImage, $file, $path, $uniqueFolder);
       $dbImage->save();
+      $this->generateOptimizedImages($dbImage, $path, $uniqueFolder);
 
       $this->attachRandomTag($dbImage);
-
-      $this->generateOptimizedImages($dbImage, $path, $uniqueFolder);
 
       $ids[] = $dbImage->id;
     }
@@ -356,9 +358,26 @@ class ImageController extends Controller
 
   private function attachRandomTag($dbImage)
   {
-    $randomTag = Tag::inRandomOrder()->first();
-    if ($randomTag) {
-      $dbImage->tags()->attach($randomTag->id);
+    try {
+      $tags = Tag::all()->pluck('name')->toArray();
+      $res = Http::timeout(60)->post('http://localhost:9001', [
+        'tags' => $tags,
+      ]);
+      $resTags = $res->json()['tags'];
+      $tagIds = Tag::whereIn('name', $resTags)->pluck('id')->toArray();
+      $dbImage->tags()->syncWithoutDetaching($tagIds);
+    } catch (ProcessFailedException $exception) {
+      Log::error('Process failed', [
+        'message' => $exception->getMessage(),
+        'output' => $exception->getProcess()->getErrorOutput(),
+      ]);
+      throw $exception;
+    } catch (\Exception $e) {
+      Log::error('An unexpected error occurred', [
+        'message' => $e->getMessage(),
+        'trace' => $e->getTraceAsString(),
+      ]);
+      throw $e;
     }
   }
 
