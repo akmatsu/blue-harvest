@@ -206,13 +206,28 @@ return [
               'type' => 'string[]',
             ],
             [
+              'name' => 'image',
+              'type' => 'image',
+              'store' => false,
+            ],
+            [
+              'name' => 'embedding',
+              'type' => 'float[]',
+              'embed' => [
+                'from' => ['image'],
+                'model_config' => [
+                  'model_name' => 'ts/clip-vit-b-p32',
+                ],
+              ],
+            ],
+            [
               'name' => 'user_id',
               'type' => 'int32',
             ],
           ],
         ],
         'search-parameters' => [
-          'query_by' => 'name,tags,tag_descriptions',
+          'query_by' => 'name,tags,tag_descriptions,embedding',
         ],
       ],
       User::class => [

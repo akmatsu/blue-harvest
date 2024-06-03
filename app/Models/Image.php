@@ -1,10 +1,9 @@
-<?php
-
-namespace App\Models;
+<?php namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Scout\Searchable;
 
@@ -91,13 +90,24 @@ class Image extends Model
 
   public function toSearchableArray()
   {
+    $base64String = $this->getBase64Data();
+
     return array_merge($this->toArray(), [
       'id' => (string) $this->id,
       'name' => (string) $this->name,
       'created_at' => $this->created_at->timestamp,
       'tags' => $this->tags->pluck('name')->toArray(),
       'tag_descriptions' => $this->tags->pluck('description')->toArray(),
+      'image' => $base64String,
     ]);
+  }
+
+  public function getBase64Data()
+  {
+    $largeImage = $this->predefinedImages()['large'];
+    $path = $largeImage ? $largeImage->path : $this->path;
+    $contents = Storage::get($path);
+    return base64_encode($contents);
   }
 
   public function flags(): MorphMany
