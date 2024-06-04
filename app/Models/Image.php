@@ -97,17 +97,27 @@ class Image extends Model
       'name' => (string) $this->name,
       'created_at' => $this->created_at->timestamp,
       'tags' => $this->tags->pluck('name')->toArray(),
-      'tag_descriptions' => $this->tags->pluck('description')->toArray(),
       'image' => $base64String,
     ]);
   }
 
   public function getBase64Data()
   {
-    $largeImage = $this->predefinedImages()['large'];
-    $path = $largeImage ? $largeImage->path : $this->path;
-    $contents = Storage::get($path);
+    $contents = $this->getFileContents('large');
     return base64_encode($contents);
+  }
+
+  public function getFilePath(string $imageSize)
+  {
+    $image = $this->predefinedImages()[$imageSize];
+    $path = $image ? $image->path : $this->path;
+    return $path;
+  }
+
+  public function getFileContents(string $imageSize)
+  {
+    $path = $this->getFilePath($imageSize);
+    return Storage::get($path);
   }
 
   public function flags(): MorphMany

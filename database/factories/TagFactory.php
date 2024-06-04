@@ -18,7 +18,6 @@ class TagFactory extends Factory
   {
     return [
       'name' => $this->faker->unique()->word,
-      'description' => $this->faker->sentence,
     ];
   }
 
@@ -27,12 +26,14 @@ class TagFactory extends Factory
    *
    * @return Factory
    */
-  public function customTag($name, $description = null)
+  public function customTag($name)
   {
-    return $this->state(function (array $attributes) use ($name, $description) {
+    return $this->state(function (array $attributes) use ($name) {
+      if (Tag::where('name', $name)->exists()) {
+        return [];
+      }
       return [
         'name' => $name,
-        'description' => $description,
       ];
     });
   }

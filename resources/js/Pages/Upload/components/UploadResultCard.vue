@@ -1,23 +1,23 @@
 <script lang="ts" setup>
-import { Image, Tag } from '@/types';
-import { useForm } from '@inertiajs/vue3';
-import { imageDelete, required } from '@/utils';
 import { useToasts } from '@/store/toasts';
+import { Image, Tag } from '@/types';
+import { imageDelete, required } from '@/utils';
+import { useForm } from '@inertiajs/vue3';
 
 const props = defineProps<{
   image: Image;
-  tags: Tag[];
+  tags: Partial<Tag>[];
 }>();
 
 const form = useForm({
   name: props.image.name,
-  tags: props.image.tags?.map((tag) => tag.id),
+  tags: props.image.tags?.map((tag) => tag.name),
 });
 
 const toast = useToasts();
 
 function handleSubmit() {
-  form.post(`/images/${props.image.id}`, {
+  form.patch(`/images/${props.image.id}`, {
     data: getChangedFields(),
     preserveScroll: true,
     onSuccess: () => toast.success('Successfully updated the image.'),
@@ -26,12 +26,12 @@ function handleSubmit() {
 }
 
 function getChangedFields() {
-  const changedFields: { name?: string; tags?: number[] } = {};
+  const changedFields: { name?: string; tags?: string[] } = {};
   if (form.name !== props.image.name) {
     changedFields.name = form.name;
   }
 
-  if (form.tags !== props.tags.map((tag) => tag.id)) {
+  if (form.tags !== props.tags.map((tag) => tag.name)) {
     changedFields.tags = form.tags;
   }
 
@@ -72,9 +72,10 @@ function getChangedFields() {
       <v-autocomplete
         v-model="form.tags"
         label="tags"
+        auto-select-first
         multiple
         chips
-        item-value="id"
+        item-value="name"
         item-title="name"
         :items="tags"
       />
