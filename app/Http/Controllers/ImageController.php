@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Intervention\Image\Laravel\Facades\Image as ImageFacade;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 use Typesense\Client;
 
 class ImageController extends Controller
@@ -125,7 +124,7 @@ class ImageController extends Controller
       $dbImage->save();
       $this->generateOptimizedImages($dbImage, $path, $uniqueFolder);
 
-      $this->attachRandomTag($dbImage);
+      $this->autoTag($dbImage, $file);
 
       $ids[] = $dbImage->id;
     }
@@ -137,7 +136,7 @@ class ImageController extends Controller
   {
     $request->validate([
       'tags' => 'array',
-      'tags.*' => 'integer|exists:tags,id',
+      'tags.*' => 'string',
       'name' => 'string',
     ]);
 
@@ -149,7 +148,13 @@ class ImageController extends Controller
     }
 
     if ($request->has('tags')) {
-      $image->tags()->sync($request->input('tags'));
+      $tagIds = [];
+      foreach ($request->input('tags') as $tagName) {
+        $tag = Tag::firstOrCreate(['name' => $tagName]);
+        $tagIds[] = $tag->id;
+      }
+
+      $image->tags()->sync($tagIds);
       $image->save();
     }
 
@@ -356,15 +361,23 @@ class ImageController extends Controller
     $dbImage->height = $imageDetails[1];
   }
 
-  private function attachRandomTag($dbImage)
+  private function autoTag($dbImage, $file)
   {
     try {
-      $tags = Tag::all()->pluck('name')->toArray();
-      $res = Http::timeout(60)->post('http://localhost:9001', [
-        'tags' => $tags,
-      ]);
+      $contents = file_get_contents($file->getRealPath());
+
+      $res = Http::attach('file', $contents, $file->getClientOriginalName())
+        ->timeout(60)
+        ->post('http://localhost:9001');
+
       $resTags = $res->json()['tags'];
-      $tagIds = Tag::whereIn('name', $resTags)->pluck('id')->toArray();
+
+      $tagIds = [];
+      foreach ($resTags as $tagName) {
+        $tag = Tag::firstOrCreate(['name' => $tagName]);
+        $tagIds[] = $tag->id;
+      }
+
       $dbImage->tags()->syncWithoutDetaching($tagIds);
     } catch (ProcessFailedException $exception) {
       Log::error('Process failed', [

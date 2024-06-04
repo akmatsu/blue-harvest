@@ -202,10 +202,6 @@ return [
               'type' => 'string[]',
             ],
             [
-              'name' => 'tag_descriptions',
-              'type' => 'string[]',
-            ],
-            [
               'name' => 'image',
               'type' => 'image',
               'store' => false,
@@ -227,7 +223,7 @@ return [
           ],
         ],
         'search-parameters' => [
-          'query_by' => 'name,tags,tag_descriptions,embedding',
+          'query_by' => 'name,tags,embedding',
         ],
       ],
       User::class => [
