@@ -370,7 +370,10 @@ class ImageController extends Controller
         ->timeout(60)
         ->post('http://localhost:9001');
 
-      $resTags = $res->json()['tags'];
+      $resJson = $res->json();
+      $resTags = $resJson['tags'];
+      $resFlag = $resJson['flag'];
+      Log::info($resJson);
 
       $tagIds = [];
       foreach ($resTags as $tagName) {
@@ -390,7 +393,6 @@ class ImageController extends Controller
         'message' => $e->getMessage(),
         'trace' => $e->getTraceAsString(),
       ]);
-      throw $e;
     }
   }
 
