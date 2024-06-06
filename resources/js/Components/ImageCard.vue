@@ -18,7 +18,7 @@ const url = computed(() => {
 <template>
   <LinkCard link="images.view" :params="{ id: image.id }" preserve-state>
     <v-img :src="url" cover :aspect-ratio="image.width / image.height"></v-img>
-    <v-card-text v-if="image.tags" class="px-2 py-0">
+    <v-card-text v-if="image.tags?.length" class="px-2 py-0">
       <v-chip-group column>
         <v-chip
           size="small"
