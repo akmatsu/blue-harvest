@@ -1,0 +1,115 @@
+# Use an official PHP runtime as a parent image
+FROM php:8.3-fpm
+
+# Install system dependencies
+# RUN apt-get update && apt-get install -y \
+#     libzip-dev \
+#     unzip \
+#     git \
+#     curl \
+#     libpng-dev \
+#     libonig-dev \
+#     libxml2-dev \
+#     zip \
+#     libcurl4-openssl-dev \
+#     pkg-config \
+#     libssl-dev \
+#     libpq-dev \
+#     libsqlite3-dev \
+#     libfreetype6-dev \
+#     libjpeg62-turbo-dev \
+#     libpng-dev \
+#     libxpm-dev \
+#     libvpx-dev \
+#     libmagickwand-dev --no-install-recommends \
+#     libxslt-dev \
+#     libedit-dev \
+#     libreadline-dev \
+#     libffi-dev
+
+# # Install PHP extensions
+# RUN docker-php-ext-install -j$(nproc) bcmath calendar ctype curl dom exif ffi fileinfo filter ftp gd gettext hash iconv \
+#     json mbstring mysqli opcache pcntl pcre pdo pdo_mysql pdo_pgsql pdo_sqlite pgsql phar posix \
+#     readline shmop simplexml sockets sodium spl sqlite3 standard sysvmsg sysvsem sysvshm tokenizer xml xmlreader \
+#     xmlwriter xsl zip
+
+RUN apt-get update && apt-get install -y \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libzip-dev \
+    zip \
+    libxml2-dev \
+    libonig-dev \
+    libcurl4-openssl-dev \
+    pkg-config \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install -j$(nproc) bcmath \
+    && docker-php-ext-install -j$(nproc) calendar \
+    && docker-php-ext-install -j$(nproc) ctype \
+    && docker-php-ext-install -j$(nproc) curl \
+    && docker-php-ext-install -j$(nproc) dom \
+    && docker-php-ext-install -j$(nproc) exif \
+    && docker-php-ext-install -j$(nproc) ffi \
+    && docker-php-ext-install -j$(nproc) fileinfo \
+    && docker-php-ext-install -j$(nproc) filter \
+    && docker-php-ext-install -j$(nproc) ftp \
+    && docker-php-ext-install -j$(nproc) gettext \
+    && docker-php-ext-install -j$(nproc) hash \
+    && docker-php-ext-install -j$(nproc) iconv \
+    && docker-php-ext-install -j$(nproc) json \
+    && docker-php-ext-install -j$(nproc) mbstring \
+    && docker-php-ext-install -j$(nproc) mysqli \
+    && docker-php-ext-install -j$(nproc) opcache \
+    && docker-php-ext-install -j$(nproc) pcntl \
+    && docker-php-ext-install -j$(nproc) pdo \
+    && docker-php-ext-install -j$(nproc) pdo_mysql \
+    && docker-php-ext-install -j$(nproc) pdo_pgsql \
+    && docker-php-ext-install -j$(nproc) pdo_sqlite \
+    && docker-php-ext-install -j$(nproc) pgsql \
+    && docker-php-ext-install -j$(nproc) phar \
+    && docker-php-ext-install -j$(nproc) posix \
+    && docker-php-ext-install -j$(nproc) readline \
+    && docker-php-ext-install -j$(nproc) shmop \
+    && docker-php-ext-install -j$(nproc) simplexml \
+    && docker-php-ext-install -j$(nproc) sockets \
+    && docker-php-ext-install -j$(nproc) sodium \
+    && docker-php-ext-install -j$(nproc) spl \
+    && docker-php-ext-install -j$(nproc) sqlite3 \
+    && docker-php-ext-install -j$(nproc) sysvmsg \
+    && docker-php-ext-install -j$(nproc) sysvsem \
+    && docker-php-ext-install -j$(nproc) sysvshm \
+    && docker-php-ext-install -j$(nproc) tokenizer \
+    && docker-php-ext-install -j$(nproc) xml \
+    && docker-php-ext-install -j$(nproc) xmlreader \
+    && docker-php-ext-install -j$(nproc) xmlwriter \
+    && docker-php-ext-install -j$(nproc) xsl \
+    && docker-php-ext-install -j$(nproc) zip
+
+# Install PECL extensions
+RUN pecl install igbinary imagick redis \
+    && docker-php-ext-enable igbinary imagick redis
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www
+
+# Copy existing application directory contents
+COPY ./laravel /var/www
+
+# Install PHP dependencies
+RUN composer install --prefer-dist --no-interaction --no-dev --optimize-autoloader
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 755 /var/www/storage
+
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]

@@ -1,9 +1,68 @@
+version: '3.8'
+
 services:
   typesense:
     image: typesense/typesense:26.0
     restart: on-failure
     ports:
-      - "8108:8108"
+      - '8108:8108'
     volumes:
       - ./typesense-data:/data
-    command: "--data-dir /data --api-key=xyz --enable-cors"
+    command: '--data-dir /data --api-key=xyz --enable-cors'
+
+  laravel:
+    build:
+      context: .
+      dockerfile: laravel/dockerfile
+    volumes:
+      - ./laravel:/var/www
+      - ./laravel/vendor:/var/www/vendor
+      - ./laravel/storage:/var/www/storage
+    environment:
+      - APP_ENV=production
+      - APP_KEY=base64:your_app_key
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=your_database
+      - DB_USERNAME=your_username
+      - DB_PASSWORD=your_password
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  # clip_api:
+  #   build:
+  #     context: ./clip_api
+  #     dockerfile: dockerfile
+  #   volumes:
+  #     - ./clip_api/src:/app/src
+  #   environment:
+  #     - SOME_ENV_VAR=some_value
+  #   depends_on:
+  #     - mysql
+  #   networks:
+  #     - app-network
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=your_database
+      - MYSQL_USER=your_username
+      - MYSQL_PASSWORD=your_password
+    ports:
+      - '3306:3306'
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  typesense-data:
+  mysql-data:
