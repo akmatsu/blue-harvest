@@ -1,0 +1,26 @@
+# Ignore node_modules
+node_modules/
+
+# Ignore build directories
+dist/
+build/
+
+# Ignore specific files
+*.min.js
+*.bundle.js
+
+# Ignore configuration files
+.vscode/
+.eslintrc.js
+.eslintrc.json
+.prettierrc
+.prettierignore
+
+# Ignore other miscellaneous files
+coverage/
+public/
+vendor/
+
+# Ignore specific files in the Laravel directory
+laravel/vendor/
+laravel/storage/
