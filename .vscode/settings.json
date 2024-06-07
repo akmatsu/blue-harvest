@@ -1,0 +1,7 @@
+{
+  "eslint.experimental.useFlatConfig": true,
+  "cSpell.words": ["smartcrop", "VITE"],
+  "files.associations": {
+    "*.php": "php"
+  }
+}
