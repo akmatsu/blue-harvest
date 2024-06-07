@@ -7,10 +7,12 @@ use App\Models\Restriction;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Intervention\Image\Laravel\Facades\Image as ImageFacade;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Typesense\Client;
 
 class ImageController extends Controller
@@ -102,7 +104,7 @@ class ImageController extends Controller
     ]);
   }
 
-  public function uploadImage(Request $request)
+  public function upload(Request $request)
   {
     $request->validate([
       'files' => 'required|array|max:25',
@@ -120,10 +122,9 @@ class ImageController extends Controller
 
       $this->populateImageData($dbImage, $file, $path, $uniqueFolder);
       $dbImage->save();
-
-      $this->attachRandomTag($dbImage);
-
       $this->generateOptimizedImages($dbImage, $path, $uniqueFolder);
+
+      $this->autoTag($dbImage, $file);
 
       $ids[] = $dbImage->id;
     }
@@ -135,7 +136,7 @@ class ImageController extends Controller
   {
     $request->validate([
       'tags' => 'array',
-      'tags.*' => 'integer|exists:tags,id',
+      'tags.*' => 'string',
       'name' => 'string',
     ]);
 
@@ -147,7 +148,13 @@ class ImageController extends Controller
     }
 
     if ($request->has('tags')) {
-      $image->tags()->sync($request->input('tags'));
+      $tagIds = [];
+      foreach ($request->input('tags') as $tagName) {
+        $tag = Tag::firstOrCreate(['name' => $tagName]);
+        $tagIds[] = $tag->id;
+      }
+
+      $image->tags()->sync($tagIds);
       $image->save();
     }
 
@@ -184,7 +191,18 @@ class ImageController extends Controller
     return Inertia::render('Image/Edit', ['image' => $image]);
   }
 
-  public function manageImages(Request $request)
+  public function manageImage(int $id)
+  {
+    $image = Image::findOrFail($id);
+    $tags = Tag::all();
+
+    return Inertia::render('Manage/Image', [
+      'image' => $image,
+      'tags' => $tags,
+    ]);
+  }
+
+  public function manage(Request $request)
   {
     $query = $request->input('query');
     $count = $request->input('count', 25);
@@ -214,7 +232,7 @@ class ImageController extends Controller
         return response()->json($images);
       }
 
-      return Inertia::render('ManageImages', ['images' => $images]);
+      return Inertia::render('Manage/Images', ['images' => $images]);
     }
 
     return redirect()->route('login');
@@ -227,7 +245,7 @@ class ImageController extends Controller
       ->firstOrFail();
 
     $image->delete();
-    return back();
+    return redirect()->route('images.manage');
   }
 
   public function bulkDelete(Request $request)
@@ -281,7 +299,7 @@ class ImageController extends Controller
       return response()->json($images);
     }
 
-    return Inertia::render('Admin/ManageImages', ['images' => $images]);
+    return Inertia::render('Admin/Manage', ['images' => $images]);
   }
 
   public function adminRestrictImage(int $id, Request $request)
@@ -310,6 +328,25 @@ class ImageController extends Controller
     return back();
   }
 
+  public function adminDelete(int $id)
+  {
+    Image::destroy($id);
+
+    return redirect()->route('admin.images.index');
+  }
+
+  public function adminBulkDelete(Request $request)
+  {
+    $validated = $request->validate([
+      'ids' => 'required|array|min:1',
+      'ids.*' => 'integer|exists:images,id',
+    ]);
+
+    Image::destroy($validated['ids']);
+
+    return back();
+  }
+
   private function populateImageData($dbImage, $file, $path, $uniqueFolder)
   {
     $dbImage->user_id = Auth::id();
@@ -324,11 +361,38 @@ class ImageController extends Controller
     $dbImage->height = $imageDetails[1];
   }
 
-  private function attachRandomTag($dbImage)
+  private function autoTag($dbImage, $file)
   {
-    $randomTag = Tag::inRandomOrder()->first();
-    if ($randomTag) {
-      $dbImage->tags()->attach($randomTag->id);
+    try {
+      $contents = file_get_contents($file->getRealPath());
+
+      $res = Http::attach('file', $contents, $file->getClientOriginalName())
+        ->timeout(60)
+        ->post('http://localhost:9001');
+
+      $resJson = $res->json();
+      $resTags = $resJson['tags'];
+      $resFlag = $resJson['flag'];
+      Log::info($resJson);
+
+      $tagIds = [];
+      foreach ($resTags as $tagName) {
+        $tag = Tag::firstOrCreate(['name' => $tagName]);
+        $tagIds[] = $tag->id;
+      }
+
+      $dbImage->tags()->syncWithoutDetaching($tagIds);
+    } catch (ProcessFailedException $exception) {
+      Log::error('Process failed', [
+        'message' => $exception->getMessage(),
+        'output' => $exception->getProcess()->getErrorOutput(),
+      ]);
+      throw $exception;
+    } catch (\Exception $e) {
+      Log::error('An unexpected error occurred', [
+        'message' => $e->getMessage(),
+        'trace' => $e->getTraceAsString(),
+      ]);
     }
   }
 

@@ -12,12 +12,6 @@ const selected = ref<number[]>();
 const itemsPerPage = ref(props.images.per_page);
 const page = ref(props.images.current_page);
 
-function editImages(ids = selected.value) {
-  router.get('/admin/images/edit', {
-    ids: ids,
-  });
-}
-
 function handleSearch(query = search.value) {
   return router.get(
     `/admin/images`,
@@ -40,8 +34,8 @@ function handleSearch(query = search.value) {
       v-model:items-per-page="itemsPerPage"
       :images="props.images.data"
       :items-length="images.total"
+      to="admin.images.show"
       @search="handleSearch"
-      @edit-images="editImages"
       @delete-image="imageDelete"
     />
   </AdminLayout>

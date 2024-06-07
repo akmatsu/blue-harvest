@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { AdminLayout } from '@/Layouts';
+import { CoreLayout } from '@/Layouts';
 import { useToasts } from '@/store/toasts';
 import { Image, Restriction, Tag } from '@/types';
 import { useForm, Head, router } from '@inertiajs/vue3';
 
 const props = defineProps<{
   image: Image;
-  restrictions: Restriction[];
   tags: Tag[];
 }>();
 
@@ -18,12 +17,8 @@ const updateForm = useForm({
   tags: props.image.tags?.map((t) => t.id) || [],
 });
 
-const restrictionForm = useForm({
-  restriction_ids: props.image.restrictions?.map((r) => r.id) || [],
-});
-
 function handleUpdate() {
-  updateForm.patch(route('admin.images.update', { id: props.image.id }), {
+  updateForm.patch(route('images.update', { id: props.image.id }), {
     preserveScroll: true,
     preserveState: true,
     onSuccess() {
@@ -38,24 +33,8 @@ function handleUpdate() {
   });
 }
 
-function handleRestrict() {
-  restrictionForm.post(route('admin.images.restrict', { id: props.image.id }), {
-    preserveScroll: true,
-    preserveState: true,
-    onSuccess() {
-      toast.success('Successfully restricted image.');
-    },
-
-    onError(err) {
-      for (const key in err) {
-        toast.error(err[key]);
-      }
-    },
-  });
-}
-
 function handleDelete() {
-  router.delete(route('admin.images.delete', { id: props.image.id }), {
+  router.delete(route('images.delete', { id: props.image.id }), {
     onStart: () => (deleteLoading.value = true),
     onSuccess: () => toast.success('Image was successfully deleted.'),
     onError(e) {
@@ -69,8 +48,8 @@ function handleDelete() {
 </script>
 
 <template>
-  <Head :title="`Image ${image.name} - Admin`" />
-  <AdminLayout>
+  <Head :title="`Image ${image.name}`" />
+  <CoreLayout>
     <v-card :title="image.name">
       <v-img :src="image.url" max-width="100%" max-height="700px"></v-img>
       <v-card-text>
@@ -94,27 +73,6 @@ function handleDelete() {
             Update Image
           </primary-btn>
         </v-form>
-        <h6 class="text-h6 mb-4">Image Restrictions</h6>
-        <v-form @submit.prevent="handleRestrict">
-          <v-autocomplete
-            label="Restrictions"
-            v-model="restrictionForm.restriction_ids"
-            :items="restrictions"
-            item-title="name"
-            item-value="id"
-            multiple
-            chips
-          ></v-autocomplete>
-          <v-btn
-            variant="flat"
-            color="warning"
-            type="submit"
-            :disabled="!restrictionForm.isDirty"
-            :loading="restrictionForm.processing"
-          >
-            Restrict Image
-          </v-btn>
-        </v-form>
         <v-dialog max-width="400" :persistent="deleteLoading">
           <template #activator="{ props }">
             <danger-btn v-bind="props">Delete Image</danger-btn>
@@ -137,5 +95,5 @@ function handleDelete() {
         </v-dialog>
       </v-card-text>
     </v-card>
-  </AdminLayout>
+  </CoreLayout>
 </template>

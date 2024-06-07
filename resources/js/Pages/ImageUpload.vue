@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { Head, useForm } from '@inertiajs/vue3';
-import CoreLayout from '@/Layouts/CoreLayout.vue';
-import { required } from '@/utils';
-import { useToasts } from '@/store/toasts';
 import { DragAndDropInput } from '@/Components';
+import CoreLayout from '@/Layouts/CoreLayout.vue';
+import { useToasts } from '@/store/toasts';
+import { required } from '@/utils';
+import { Head, useForm } from '@inertiajs/vue3';
 
 const isFormValid = ref(false);
 const toast = useToasts();
@@ -60,7 +60,10 @@ const processText = computed(() =>
       </v-card-text>
     </v-card>
     <v-dialog v-model="dialog" max-width="400px" :persistent="dialog">
-      <v-card :title="processText">
+      <v-card
+        :title="processText"
+        subtitle="This can take a while. Please do not leave this page."
+      >
         <v-card-text>
           <v-progress-linear
             :model-value="progress"
