@@ -1,6 +1,6 @@
 {
   "eslint.experimental.useFlatConfig": true,
-  "cSpell.words": ["smartcrop", "VITE"],
+  "cSpell.words": ["smartcrop", "tseslint", "VITE"],
   "files.associations": {
     "*.php": "php"
   }

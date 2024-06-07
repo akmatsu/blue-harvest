@@ -1,10 +1,11 @@
-import f3veEslintConfig from '@f3ve/eslint-config';
+import pluginJs from '@eslint/js';
+import pluginVue from 'eslint-plugin-vue';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
 export default [
-  ...f3veEslintConfig({
-    vue: true,
-    typescript: true,
-    browser: true,
-    prettier: true,
-  }),
+  { languageOptions: { globals: globals.browser } },
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
+  ...pluginVue.configs['flat/essential'],
 ];
