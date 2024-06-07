@@ -23,7 +23,6 @@ createInertiaApp({
       .use(plugin)
       .use(createPinia())
       .use(ZiggyVue)
-      // .use(VueMasonryPlugin)
       .use(vuetify)
       .mount(el);
   },
