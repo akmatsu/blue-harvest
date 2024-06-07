@@ -1,13 +1,4 @@
 services:
-  typesense:
-    image: typesense/typesense:26.0
-    restart: on-failure
-    ports:
-      - '8108:8108'
-    volumes:
-      - ./typesense-data:/data
-    command: '--data-dir /data --api-key=xyz --enable-cors'
-
   app:
     build:
       context: .
@@ -25,42 +16,13 @@ services:
       - ./scripts:/scripts
     networks:
       - app-network
-    depends_on:
-      - mysql
     entrypoint: ['/scripts/entrypoint.sh']
 
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    restart: unless-stopped
+  typesense:
+    image: typesense/typesense:26.0
+    restart: on-failure
     ports:
-      - '8080:80'
+      - '8108:8108'
     volumes:
-      - ./:/var/www
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - app-network
-    depends_on:
-      - app
-
-  mysql:
-    image: mysql:5.7
-    container_name: blueharvest-mysql
-    restart: unless-stopped
-    tty: true
-    ports:
-      - '3306:3306'
-    env_file:
-      - .env
-    volumes:
-      - mysql-data:/var/lib/mysql
-    networks:
-      - app-network
-
-volumes:
-  mysql-data:
-    driver: local
-
-networks:
-  app-network:
-    driver: bridge
+      - ./typesense-data:/data
+    command: '--data-dir /data --api-key=xyz --enable-cors'
