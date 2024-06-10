@@ -29,10 +29,19 @@ jobs:
         run: |
           echo ${{env.DOCKER_PASSWORD}} | docker login -u ${{ env.DOCKER_USERNAME }} --password-stdin
 
-      - name: Build and push Docker image
+      - name: Build Docker image
         run: |
           docker build -t freedomsmb/blueharvest .
+
+      - name: Push Docker image
+        run: |
           docker push freedomsmb/blueharvest
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assue: ${{ env.AWS_DEPLOYER_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Install Elastic Beanstalk CLI
         run: |
@@ -40,7 +49,7 @@ jobs:
 
       - name: Initialize Elastic Beanstalk
         run: |
-          eb init -p docker "${{ env.EB_APP_NAME }}" --region ${{ env.AWS_REGION }}
+          eb init -p docker ${{ env.EB_APP_NAME }}" --region ${{ env.AWS_REGION }}
 
       - name: Deploy to Elastic Beanstalk
         run: |
