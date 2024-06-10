@@ -26,8 +26,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: $AWS_DEPLOYER_ROLE_ARN
-          aws-region: $AWS_REGION
+          role-to-assume: ${{ env.AWS_DEPLOYER_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Install Elastic Beanstalk CLI
         run: |
@@ -35,9 +35,9 @@ jobs:
 
       - name: Initialize Elastic Beanstalk
         run: |
-          eb init -p docker $EB_APP_NAME --region $AWS_REGION --platform "Docker running on 64bit Amazon Linux"
+          eb init -p docker ${{ env.EB_APP_NAME }} --region ${{ env.AWS_REGION }} --platform "Docker running on 64bit Amazon Linux"
 
       - name: Deploy to Elastic Beanstalk
         run: |
-          eb use $EB_ENV_NAME
+          eb use ${{ env.EB_ENV_NAME }}
           eb deploy
