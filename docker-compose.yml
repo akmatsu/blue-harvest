@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
     image: blueharvest
+    ports:
+      - '80:80'
     container_name: blueharvest
     restart: unless-stopped
     tty: true
@@ -14,8 +16,6 @@ services:
       - ./storage:/var/www/storage
       - ./bootstrap/cache:/var/www/bootstrap/cache
       - ./scripts:/scripts
-    networks:
-      - app-network
     entrypoint: ['/scripts/entrypoint.sh']
 
   typesense:

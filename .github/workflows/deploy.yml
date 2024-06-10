@@ -1,0 +1,43 @@
+name: Deploy to AWS Elastic Beanstalk
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up AWS CLI
+        run: |
+          sudo apt-get install -y python3-pip
+          pip3 install awscli
+
+      - name: Configure AWS credentials
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region ${{ secrets.AWS_REGION }}
+
+      - name: Install Elastic Beanstalk CLI
+        run: |
+          pip install awsebcli
+
+      - name: Initialize Elastic Beanstalk
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          EB_APP_NAME: ${{ secrets.EB_APP_NAME }}
+        run: |
+          eb init -p docker $EB_APP_NAME --region $AWS_REGION --platform "Docker running on 64bit Amazon Linux"
+
+      - name: Deploy to Elastic Beanstalk
+        env:
+          EB_ENV_NAME: ${{ secrets.EB_ENV_NAME }}
+        run: |
+          eb use $EB_ENV_NAME
+          eb deploy
