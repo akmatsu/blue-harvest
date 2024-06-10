@@ -25,22 +25,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up docker Buildx for build caching.
+        uses: docker/setup-buildx-action@v3
+
       - name: Log in to Docker Hub
         run: |
           echo ${{env.DOCKER_PASSWORD}} | docker login -u ${{ env.DOCKER_USERNAME }} --password-stdin
 
-      - name: Build Docker image
-        run: |
-          docker build -t freedomsmb/blueharvest .
+      - name: Cache Docker Layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-
 
-      - name: Push Docker image
-        run: |
-          docker push freedomsmb/blueharvest
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          content: .
+          push: true
+          tags: freedomsmb/blueharvest:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,src=/tmp/.buildx-cache
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assue: ${{ env.AWS_DEPLOYER_ROLE_ARN }}
+          role-to-assume: ${{ env.AWS_DEPLOYER_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Install Elastic Beanstalk CLI
