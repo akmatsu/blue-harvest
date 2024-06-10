@@ -1,9 +1,6 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: blueharvest
+    image: freedomsmb/blueharvest:latest
     ports:
       - '80:80'
     container_name: blueharvest

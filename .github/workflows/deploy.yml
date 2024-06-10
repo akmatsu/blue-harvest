@@ -7,9 +7,11 @@ on:
 
 env:
   AWS_REGION: us-west-2
-  AWS_DEPLOYER_ROLE_ARN: ${{ secrets.AWS_DEPLOYER_ROLE_ARN}}
   EB_APP_NAME: ${{ secrets.EB_APP_NAME }}
   EB_ENV_NAME: ${{ secrets.EB_ENV_NAME }}
+  AWS_DEPLOYER_ROLE_ARN: ${{ secrets.AWS_DEPLOYER_ROLE_ARN }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
 jobs:
   deploy:
@@ -23,11 +25,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.AWS_DEPLOYER_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
+      - name: Log in to Docker Hub
+        run: |
+          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t freedomsmb/blueharvest .
+          docker push freedomsmb/blueharvest
 
       - name: Install Elastic Beanstalk CLI
         run: |
@@ -35,9 +40,8 @@ jobs:
 
       - name: Initialize Elastic Beanstalk
         run: |
-          eb init -p docker ${{ env.EB_APP_NAME }} --region ${{ env.AWS_REGION }} --platform "Docker running on 64bit Amazon Linux 2023"
+          eb init -p docker "${{ env.EB_APP_NAME }}" --region ${{ env.AWS_REGION }}
 
       - name: Deploy to Elastic Beanstalk
         run: |
-          eb use ${{ env.EB_ENV_NAME }}
-          eb deploy
+          eb create "${{ env.EB_ENV_NAME }}" --cfg default --timeout 15 --platform "docker-compose" || eb deploy
