@@ -26,9 +26,7 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libsqlite3-dev \
     default-mysql-client \
-    && docker-php-ext-configure gd \
-    --with-freetype=/usr/include/ \
-    --with-jpeg=/usr/include/ \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql pdo_pgsql pdo_sqlite mysqli zip exif pcntl bcmath calendar \
     && pecl install imagick redis \
     && docker-php-ext-enable imagick redis
@@ -52,6 +50,6 @@ RUN chown -R www-data:www-data /var/www \
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
+# Expose port 80 and start php-fpm server
+EXPOSE 80
 CMD ["php-fpm"]
