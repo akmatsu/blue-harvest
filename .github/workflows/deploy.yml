@@ -45,7 +45,7 @@ jobs:
           push: true
           tags: freedomsmb/blueharvest:latest
           cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
