@@ -201,21 +201,21 @@ return [
               'name' => 'tags',
               'type' => 'string[]',
             ],
-            [
-              'name' => 'image',
-              'type' => 'image',
-              'store' => false,
-            ],
-            [
-              'name' => 'embedding',
-              'type' => 'float[]',
-              'embed' => [
-                'from' => ['image'],
-                'model_config' => [
-                  'model_name' => 'ts/clip-vit-b-p32',
-                ],
-              ],
-            ],
+            // [
+            //   'name' => 'image',
+            //   'type' => 'image',
+            //   'store' => false,
+            // ],
+            // [
+            //   'name' => 'embedding',
+            //   'type' => 'float[]',
+            //   'embed' => [
+            //     'from' => ['image'],
+            //     'model_config' => [
+            //       'model_name' => 'ts/clip-vit-b-p32',
+            //     ],
+            //   ],
+            // ],
             [
               'name' => 'user_id',
               'type' => 'int32',
@@ -223,7 +223,7 @@ return [
           ],
         ],
         'search-parameters' => [
-          'query_by' => 'name,tags,embedding',
+          'query_by' => 'name,tags',
         ],
       ],
       User::class => [

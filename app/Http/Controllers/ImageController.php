@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Image;
 use App\Models\Restriction;
 use App\Models\Tag;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -40,7 +41,10 @@ class ImageController extends Controller
     $imagesQuery = Image::query();
 
     if ($query) {
-      $imageIds = Image::search($query)->get()->pluck('id');
+      $imageIds = Image::search($query)
+        // ->options(['query_by' => 'name,tags'])
+        ->get()
+        ->pluck('id');
       $imagesQuery->whereIn('id', $imageIds);
     }
 
@@ -124,7 +128,7 @@ class ImageController extends Controller
       $dbImage->save();
       $this->generateOptimizedImages($dbImage, $path, $uniqueFolder);
 
-      $this->autoTag($dbImage, $file);
+      // $this->autoTag($dbImage, $file);
 
       $ids[] = $dbImage->id;
     }

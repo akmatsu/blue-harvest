@@ -90,21 +90,23 @@ class Image extends Model
 
   public function toSearchableArray()
   {
-    $base64String = $this->getBase64Data();
+    // $base64String = $this->getBase64Data();
 
     return array_merge($this->toArray(), [
       'id' => (string) $this->id,
       'name' => (string) $this->name,
       'created_at' => $this->created_at->timestamp,
       'tags' => $this->tags->pluck('name')->toArray(),
-      'image' => $base64String,
+      // 'image' => $base64String,
     ]);
   }
 
   public function getBase64Data()
   {
     $contents = $this->getFileContents('large');
-    return base64_encode($contents);
+    $base64 = base64_encode($contents);
+    Log::info($base64);
+    return $base64;
   }
 
   public function getFilePath(string $imageSize)
