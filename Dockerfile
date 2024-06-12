@@ -50,6 +50,6 @@ RUN chown -R www-data:www-data /var/www \
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Expose port 80 and start php-fpm server
-EXPOSE 80
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
 CMD ["php-fpm"]

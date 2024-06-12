@@ -2,7 +2,7 @@ services:
   app:
     image: freedomsmb/blueharvest:latest
     ports:
-      - '80:80'
+      - '9000:9000'
     container_name: blueharvest
     restart: unless-stopped
     tty: true
@@ -21,3 +21,13 @@ services:
     volumes:
       - ./typesense-data:/data
     command: '--data-dir /data --api-key=xyz --enable-cors'
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - .:/var/www
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - '80:80'
+    depends_on:
+      - app
