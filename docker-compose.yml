@@ -2,7 +2,7 @@ services:
   app:
     image: freedomsmb/blueharvest:latest
     ports:
-      - '8000:8000'
+      - '80:80'
     container_name: blueharvest
     restart: unless-stopped
     tty: true
@@ -12,8 +12,6 @@ services:
       - ./:/var/www
       - ./storage:/var/www/storage
       - ./bootstrap/cache:/var/www/bootstrap/cache
-      - ./scripts:/scripts
-    entrypoint: ['/scripts/entrypoint.sh']
 
   typesense:
     image: typesense/typesense:26.0
