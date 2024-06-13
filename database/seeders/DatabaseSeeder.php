@@ -48,11 +48,11 @@ class DatabaseSeeder extends Seeder
     if (!$admin) {
       $admin = new User();
       $admin->fill([
-        'name' => config('admin.name'),
-        'email' => config('admin.email'),
+        'name' => config('services.admin.name'),
+        'email' => config('services.admin.email'),
       ]);
 
-      $admin->password = Hash::make(config('admin.password'));
+      $admin->password = Hash::make(config('services.admin.password'));
       $admin->save();
     }
     if ($admin) {
