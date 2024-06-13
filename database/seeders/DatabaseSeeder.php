@@ -53,6 +53,7 @@ class DatabaseSeeder extends Seeder
       ]);
 
       $admin->password = Hash::make(config('admin.password'));
+      $admin->save();
     }
     if ($admin) {
       $admin->assignRole('admin');
