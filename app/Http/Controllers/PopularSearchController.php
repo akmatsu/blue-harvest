@@ -13,14 +13,8 @@ class PopularSearchController extends Controller
   public function __construct()
   {
     $this->typesense = new Client([
-      'api_key' => env('TYPESENSE_API_KEY'),
-      'nodes' => [
-        [
-          'host' => env('TYPESENSE_HOST', 'localhost'),
-          'port' => env('TYPESENSE_PORT', '8108'),
-          'protocol' => env('TYPESENSE_PROTOCOL', 'http'),
-        ],
-      ],
+      'api_key' => config('services.typesense.api_key'),
+      'nodes' => config('services.typesense.nodes'),
       'connection_timeout_seconds' => 2,
     ]);
   }
