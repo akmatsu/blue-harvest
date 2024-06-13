@@ -22,10 +22,16 @@ class DatabaseSeeder extends Seeder
     //   'email' => 'test@example.com',
     // ]);
 
-    $adminRole = Role::updateOrCreate([
+    $attributes = [
+      'email' => env('ADMIN_EMAIL'),
+    ];
+
+    $values = [
       'name' => env('ADMIN_NAME'),
       'password' => Hash::make(env('ADMIN_PASSWORD')),
-    ]);
+    ];
+
+    $adminRole = Role::updateOrCreate($attributes, $values);
 
     // Define permissions
     $permissions = [
