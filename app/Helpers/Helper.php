@@ -45,7 +45,7 @@ function ensureDirectoryExists(string $filePath)
 
 function generateUniqueFolder()
 {
-  return 'public/uploads/' . Str::uuid() . '/';
+  return 'public/uploads/' . Str::uuid();
 }
 
 function generateOptimizedImagePath(UploadedFile $file, int $width, int $height)
