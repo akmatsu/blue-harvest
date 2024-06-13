@@ -22,16 +22,7 @@ class DatabaseSeeder extends Seeder
     //   'email' => 'test@example.com',
     // ]);
 
-    $attributes = [
-      'email' => config('admin.email'),
-    ];
-
-    $values = [
-      'name' => config('admin.name'),
-      'password' => Hash::make(config('admin.password')),
-    ];
-
-    $adminRole = Role::updateOrCreate($attributes, $values);
+    $adminRole = Role::updateOrCreate(['name' => 'admin']);
 
     // Define permissions
     $permissions = [
@@ -52,7 +43,16 @@ class DatabaseSeeder extends Seeder
     }
 
     // Assign the admin role to a specific user
-    $admin = User::find(13); // Assuming the first user is the admin
+    $attributes = [
+      'name' => config('admin.name'),
+      'email' => config('admin.email'),
+    ];
+
+    $values = [
+      'password' => Hash::make(config('admin.password')),
+    ];
+
+    $admin = User::updateOrCreate($attributes, $values); // Assuming the first user is the admin
     if ($admin) {
       $admin->assignRole('admin');
     }
