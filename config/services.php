@@ -35,4 +35,15 @@ return [
     'client_secret' => env('MICROSOFT_CLIENT_SECRET'),
     'redirect' => env('MICROSOFT_REDIRECT_URI'),
   ],
+
+  'typesense' => [
+    'api_key' => env('TYPESENSE_API_KEY'),
+    'nodes' => [
+      [
+        'host' => env('TYPESENSE_HOST', 'localhost'),
+        'port' => env('TYPESENSE_PORT', '8108'),
+        'protocol' => env('TYPESENSE_PROTOCOL', 'http'),
+      ],
+    ],
+  ],
 ];
