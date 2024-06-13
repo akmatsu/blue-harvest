@@ -42,17 +42,18 @@ class DatabaseSeeder extends Seeder
       $adminRole->givePermissionTo($perm);
     }
 
-    // Assign the admin role to a specific user
-    $attributes = [
-      'name' => config('admin.name'),
-      'email' => config('admin.email'),
-    ];
+    // Assign the admin role to the admin user
 
-    $values = [
-      'password' => Hash::make(config('admin.password')),
-    ];
+    $admin = User::find(1);
+    if (!$admin) {
+      $admin = new User();
+      $admin->fill([
+        'name' => config('admin.name'),
+        'email' => config('admin.email'),
+      ]);
 
-    $admin = User::updateOrCreate($attributes, $values); // Assuming the first user is the admin
+      $admin->password = Hash::make(config('admin.password'));
+    }
     if ($admin) {
       $admin->assignRole('admin');
     }
