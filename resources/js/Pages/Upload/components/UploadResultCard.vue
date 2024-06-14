@@ -15,6 +15,7 @@ const form = useForm({
 });
 
 const toast = useToasts();
+const search = ref();
 
 function handleSubmit() {
   form.patch(`/images/${props.image.id}`, {
@@ -71,6 +72,7 @@ function getChangedFields() {
       ></v-text-field>
       <v-autocomplete
         v-model="form.tags"
+        v-model:search="search"
         label="tags"
         auto-select-first
         multiple
@@ -78,7 +80,9 @@ function getChangedFields() {
         item-value="name"
         item-title="name"
         :items="tags"
+        @update:model-value="search = undefined"
       />
+
       <div class="d-flex">
         <v-spacer></v-spacer>
         <v-dialog max-width="400px">
