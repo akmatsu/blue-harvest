@@ -21,10 +21,24 @@ export async function copyToClipboard(
   successMsg = 'Successfully copied to clipboard!',
 ) {
   const toast = useToasts();
-  try {
-    toast.success(successMsg);
-    await navigator.clipboard.writeText(text);
-  } catch (err) {
-    toast.error(`Failed to copy text: ${err}`);
+  if (navigator.clipboard) {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(successMsg);
+    } catch (err) {
+      toast.error(`Failed to copy text: ${err}`);
+    }
+  } else {
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      // This function is deprecated but we're using it here in case we're not in a secure context (HTTP instead of HTTPS) or an older browser.
+      document.execCommand('copy');
+      toast.success(successMsg);
+    } catch (err) {
+      toast.error(`Failed to copy text: ${err}`);
+    }
   }
 }
