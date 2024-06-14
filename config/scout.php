@@ -44,7 +44,7 @@ return [
     |
     */
 
-  'queue' => env('SCOUT_QUEUE', false),
+  'queue' => env('SCOUT_QUEUE', true),
 
   /*
     |--------------------------------------------------------------------------
@@ -186,7 +186,7 @@ return [
         'collection-schema' => [
           'fields' => [
             [
-              'name' => 'id',
+              'name' => 'image_id',
               'type' => 'string',
             ],
             [
@@ -201,24 +201,9 @@ return [
               'name' => 'tags',
               'type' => 'string[]',
             ],
-            // [
-            //   'name' => 'image',
-            //   'type' => 'image',
-            //   'store' => false,
-            // ],
-            // [
-            //   'name' => 'embedding',
-            //   'type' => 'float[]',
-            //   'embed' => [
-            //     'from' => ['image'],
-            //     'model_config' => [
-            //       'model_name' => 'ts/clip-vit-b-p32',
-            //     ],
-            //   ],
-            // ],
             [
               'name' => 'user_id',
-              'type' => 'int32',
+              'type' => 'string',
             ],
           ],
         ],
@@ -229,7 +214,6 @@ return [
       User::class => [
         'collection-schema' => [
           'fields' => [
-            ['name' => 'id', 'type' => 'string'],
             ['name' => 'name', 'type' => 'string'],
             ['name' => 'email', 'type' => 'string'],
             ['name' => 'created_at', 'type' => 'int64'],

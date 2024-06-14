@@ -90,14 +90,13 @@ class Image extends Model
 
   public function toSearchableArray()
   {
-    // $base64String = $this->getBase64Data();
-
     return array_merge($this->toArray(), [
       'id' => (string) $this->id,
+      'image_id' => (string) $this->id,
       'name' => (string) $this->name,
       'created_at' => $this->created_at->timestamp,
       'tags' => $this->tags->pluck('name')->toArray(),
-      // 'image' => $base64String,
+      'user_id' => (string) $this->user_id,
     ]);
   }
 

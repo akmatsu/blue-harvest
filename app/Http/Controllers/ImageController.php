@@ -35,10 +35,7 @@ class ImageController extends Controller
     $imagesQuery = Image::query();
 
     if ($query) {
-      $imageIds = Image::search($query)
-        // ->options(['query_by' => 'name,tags'])
-        ->get()
-        ->pluck('id');
+      $imageIds = Image::search($query)->get()->pluck('id');
       $imagesQuery->whereIn('id', $imageIds);
     }
 

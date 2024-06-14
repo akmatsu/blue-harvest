@@ -35,7 +35,13 @@ class PopularSearchController extends Controller
       return response()->json($response['hits']);
     } catch (\Exception $e) {
       Log::error('Failed to fetch popular searches: ' . $e->getMessage());
-      return response()->json([]);
+      return response()->json(
+        [
+          'error' => 'Failed to fetch popular searches',
+          'message' => $e->getMessage(),
+        ],
+        500
+      );
     }
   }
 }
