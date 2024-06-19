@@ -11,7 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\Process\Exception\ProcessFailedException;
+use Illuminate\Support\Facades\Storage;
 
 class ProcessImage implements ShouldQueue
 {
@@ -27,7 +27,6 @@ class ProcessImage implements ShouldQueue
   public function __construct($dbImage, $file)
   {
     $this->dbImageId = $dbImage->id;
-    $this->filePath = $file->getRealPath();
     $this->fileClientOriginalName = $file->getClientOriginalName();
   }
 
@@ -36,7 +35,8 @@ class ProcessImage implements ShouldQueue
    */
   public function handle(): void
   {
-    $contents = file_get_contents($this->filePath);
+    $dbImage = Image::findOrFail($this->dbImageId);
+    $contents = Storage::get($dbImage->path);
 
     $res = Http::attach('file', $contents, $this->fileClientOriginalName)
       ->timeout(60)
@@ -53,7 +53,6 @@ class ProcessImage implements ShouldQueue
       $tagIds[] = $tag->id;
     }
 
-    $dbImage = Image::find($this->dbImageId);
     $dbImage->tags()->syncWithoutDetaching($tagIds);
   }
 }
