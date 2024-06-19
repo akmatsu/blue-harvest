@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { Head, router } from '@inertiajs/vue3';
-import { Image, Paginated } from '@/types';
+import { CorePagination, ImageCard, MasonryGrid } from '@/Components';
+import { useRequest } from '@/composables';
 import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { useToasts } from '@/store/toasts';
-import { useRequest } from '@/composables';
-import { CorePagination, ImageCard, LinkCard, MasonryGrid } from '@/Components';
+import { Image, Paginated } from '@/types';
+import { Head, router } from '@inertiajs/vue3';
 
 const props = defineProps<{ images: Paginated<Image> }>();
 const scrollImages = ref(props.images.data);

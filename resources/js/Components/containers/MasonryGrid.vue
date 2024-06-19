@@ -17,7 +17,7 @@
     column-count: 3;
   }
 
-  @media screen and (min-width: 2000px) {
+  @media screen and (min-width: 1920px) {
     column-count: 4;
   }
 
