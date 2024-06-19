@@ -16,11 +16,15 @@ defineProps<{
     </template>
     <v-list>
       <div v-for="img in image.optimized_images" :key="image?.id">
-        <ViewOptionsListItem v-if="img" :image="img" />
+        <ViewOptionsListItem
+          v-if="img"
+          :image="img"
+          :attribution="image.attribution"
+        />
       </div>
       <v-divider></v-divider>
 
-      <ViewOptionsListItem :image="image" />
+      <ViewOptionsListItem :image="image" :attribution="image.attribution" />
     </v-list>
   </v-menu>
 </template>

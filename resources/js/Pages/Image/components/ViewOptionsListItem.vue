@@ -5,6 +5,7 @@ import axios from 'axios';
 
 const props = defineProps<{
   image: OptimizedImage | Image;
+  attribution: Image['attribution'];
 }>();
 
 async function handleCopy() {
@@ -25,7 +26,7 @@ async function handleDownload() {
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = blobUrl;
-      a.download = `${props.image.id}-${props.image.}`;
+      a.download = `${props.attribution}-${props.image.id}-blue-harvest${/\.\w+$/.exec(props.image.url)?.[0]}`;
 
       document.body.appendChild(a);
       a.click();

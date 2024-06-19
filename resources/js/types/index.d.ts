@@ -59,6 +59,7 @@ export interface Image {
   tags?: Tag[];
   restrictions?: Restriction[];
   is_restricted: boolean;
+  attribution: string;
 }
 
 export interface OptimizedImage {
