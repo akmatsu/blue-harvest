@@ -14,6 +14,10 @@ const page = ref(props.images.current_page);
 
 const search = ref<string>();
 
+function handleDelete(id?: number | number[]) {
+  if (id) imageDelete(id);
+}
+
 function handleSearch(query = search.value) {
   return router.get(
     `/images`,
@@ -39,7 +43,7 @@ function handleSearch(query = search.value) {
         :items-length="images.total"
         to="images.manageImage"
         @search="handleSearch"
-        @delete-image="imageDelete"
+        @delete-image="handleDelete"
       />
     </v-card>
   </CoreLayout>
