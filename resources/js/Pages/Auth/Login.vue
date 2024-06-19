@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import AuthLayout from '@/Layouts/AuthLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
-import { required } from '@/utils';
 import { useToasts } from '@/store/toasts';
-import { LinkBtn } from '@/Components';
+import { required } from '@/utils';
+import { Head, useForm } from '@inertiajs/vue3';
 
 defineProps<{
   canResetPassword?: boolean;
@@ -85,8 +84,6 @@ const submit = () => {
             >
               Log in
             </PrimaryBtn>
-            <LinkBtn link="login.microsoft">Sign in with Microsoft</LinkBtn>
-            <!-- <LinkBtn link="register">Don't have an account?</LinkBtn> -->
           </div>
         </v-form>
       </v-card-text>
