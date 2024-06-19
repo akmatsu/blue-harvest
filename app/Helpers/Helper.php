@@ -8,13 +8,13 @@ use Illuminate\Support\Str;
 function storeOptimizedImage(string $filePath, ImageInterface $image)
 {
   if (ensureDirectoryExists($filePath)) {
-    $encodedImage = $image->encodeByExtension(extension: 'webp', quality: 75);
+    $encodedImage = $image->encodeByExtension(extension: 'jpg', quality: 75);
     $path =
       $filePath .
       $image->width() .
       'x' .
       $image->height() .
-      '_optimized_image.webp';
+      '_optimized_image.jpg';
     Storage::put($path, $encodedImage->toFilePointer());
     return $path;
   } else {

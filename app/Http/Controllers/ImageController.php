@@ -134,6 +134,7 @@ class ImageController extends Controller
       'tags' => 'array',
       'tags.*' => 'string',
       'name' => 'string',
+      'attribution' => 'string',
     ]);
 
     $image = Image::findOrFail($id);
@@ -141,6 +142,10 @@ class ImageController extends Controller
     if ($request->has('name')) {
       $image->name = $request->input('name');
       $image->save();
+    }
+
+    if ($request->has('attribution')) {
+      $image->attribution = $request->input('attribution');
     }
 
     if ($request->has('tags')) {
@@ -356,41 +361,6 @@ class ImageController extends Controller
     $dbImage->width = $imageDetails[0];
     $dbImage->height = $imageDetails[1];
   }
-
-  // private function autoTag($dbImage, $file)
-  // {
-  //   try {
-  //     $contents = file_get_contents($file->getRealPath());
-
-  //     $res = Http::attach('file', $contents, $file->getClientOriginalName())
-  //       ->timeout(60)
-  //       ->post(config('services.clip.url'));
-
-  //     $resJson = $res->json();
-  //     $resTags = $resJson['tags'];
-  //     $resFlag = $resJson['flag'];
-  //     Log::info($resJson);
-
-  //     $tagIds = [];
-  //     foreach ($resTags as $tagName) {
-  //       $tag = Tag::firstOrCreate(['name' => $tagName]);
-  //       $tagIds[] = $tag->id;
-  //     }
-
-  //     $dbImage->tags()->syncWithoutDetaching($tagIds);
-  //   } catch (ProcessFailedException $exception) {
-  //     Log::error('Process failed', [
-  //       'message' => $exception->getMessage(),
-  //       'output' => $exception->getProcess()->getErrorOutput(),
-  //     ]);
-  //     throw $exception;
-  //   } catch (\Exception $e) {
-  //     Log::error('An unexpected error occurred', [
-  //       'message' => $e->getMessage(),
-  //       'trace' => $e->getTraceAsString(),
-  //     ]);
-  //   }
-  // }
 
   private function generateOptimizedImages($dbImage, $path, $uniqueFolder)
   {

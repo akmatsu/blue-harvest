@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Image, OptimizedImage } from '@/types';
-import { formatBytes, copyToClipboard } from '@/utils';
+import { copyToClipboard, formatBytes } from '@/utils';
 import axios from 'axios';
 
 const props = defineProps<{
@@ -25,7 +25,7 @@ async function handleDownload() {
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = blobUrl;
-      a.download = props.image.url;
+      a.download = `${props.image.id}-${props.image.}`;
 
       document.body.appendChild(a);
       a.click();

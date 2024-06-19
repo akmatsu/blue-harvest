@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { Head, router } from '@inertiajs/vue3';
+import { ImageTable } from '@/Components';
+import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { Image, Paginated } from '@/types';
 import { imageDelete } from '@/utils';
-import CoreLayout from '@/Layouts/CoreLayout.vue';
-import { ImageTable } from '@/Components';
+import { Head, router } from '@inertiajs/vue3';
 
 const props = defineProps<{ images: Paginated<Image> }>();
 

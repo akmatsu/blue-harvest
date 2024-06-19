@@ -3,6 +3,7 @@
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Scout\Searchable;
@@ -22,6 +23,7 @@ class Image extends Model
     'height',
     'folder_name',
     'is_restricted',
+    'attribution',
   ];
 
   protected $with = ['tags', 'restrictions'];
@@ -38,6 +40,12 @@ class Image extends Model
     static::deleting(function ($image) {
       $image->deleteFiles();
       $image->deleteFlags();
+    });
+
+    static::creating(function ($image) {
+      if (Auth::check()) {
+        $image->attribution = Auth::user()->name;
+      }
     });
   }
 
