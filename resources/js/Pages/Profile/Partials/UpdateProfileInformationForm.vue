@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { useToasts } from '@/store/toasts';
 import { required } from '@/utils';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 
 defineProps<{
   mustVerifyEmail?: boolean;
@@ -13,6 +14,19 @@ const form = useForm({
   name: user.name,
   email: user.email,
 });
+
+const toast = useToasts();
+
+function handleSubmit() {
+  form.patch(route('profile.update'), {
+    onSuccess: () => toast.success('Successfully updated profile information.'),
+    onError(err) {
+      for (const key in err) {
+        toast.error(err[key]);
+      }
+    },
+  });
+}
 </script>
 
 <template>
@@ -23,7 +37,7 @@ const form = useForm({
       Update your account's profile information and email address.
     </p>
 
-    <v-form @submit.prevent="form.patch(route('profile.update'))">
+    <v-form @submit.prevent="handleSubmit">
       <v-text-field
         v-model="form.name"
         label="Name"
@@ -62,7 +76,14 @@ const form = useForm({
       </div>
 
       <div class="flex items-center gap-4">
-        <v-btn color="primary" :disabled="form.processing">Save</v-btn>
+        <v-btn
+          color="primary"
+          :loading="form.processing"
+          :disabled="!form.isDirty"
+          type="submit"
+        >
+          Save
+        </v-btn>
       </div>
     </v-form>
   </section>

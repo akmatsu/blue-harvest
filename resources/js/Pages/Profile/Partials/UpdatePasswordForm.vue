@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import { useToasts } from '@/store/toasts';
+import { required } from '@/utils';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import { required } from '@/utils';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 const currentPasswordInput = ref<HTMLInputElement | null>(null);
+
+const isValid = ref(false);
+const formRef = ref();
 
 const form = useForm({
   current_password: '',
@@ -12,24 +16,30 @@ const form = useForm({
   password_confirmation: '',
 });
 
+const toast = useToasts();
+
 const updatePassword = () => {
-  form.put(route('password.update'), {
-    preserveScroll: true,
-    onSuccess: () => {
-      form.reset();
-    },
-    onError: () => {
-      if (form.errors.password) {
-        form.reset('password', 'password_confirmation');
-        passwordInput.value?.focus();
-      }
-      if (form.errors.current_password) {
-        form.reset('current_password');
-        currentPasswordInput.value?.focus();
-      }
-    },
-  });
+  if (isValid.value) {
+    form.put(route('password.update'), {
+      preserveScroll: true,
+      onSuccess: () => {
+        form.reset();
+        formRef.value.reset();
+        toast.success('Successfully updated password!');
+      },
+      onError: () => {
+        for (const key in form.errors) {
+          const msg = form.errors[key as keyof typeof form.errors];
+          if (msg) toast.error(msg);
+        }
+      },
+    });
+  }
 };
+
+function matchPassword(val: string) {
+  return val === form.password || 'Passwords do not match.';
+}
 </script>
 
 <template>
@@ -40,7 +50,7 @@ const updatePassword = () => {
       Ensure your account is using a long, random password to stay secure.
     </p>
 
-    <v-form @submit.prevent="updatePassword">
+    <v-form @submit.prevent="updatePassword" v-model="isValid" ref="formRef">
       <v-text-field
         ref="currentPasswordInput"
         v-model="form.current_password"
@@ -57,6 +67,7 @@ const updatePassword = () => {
         label="New Password"
         type="password"
         autocomplete="new-password"
+        :rules="[required]"
       />
 
       <v-text-field
@@ -65,23 +76,17 @@ const updatePassword = () => {
         label="Confirm new Password"
         type="password"
         autocomplete="new-password"
+        :rules="[required, matchPassword]"
       />
 
-      <v-btn color="primary" :disabled="form.processing">Update Password</v-btn>
-
-      <!-- <Transition
-        enter-active-class="transition ease-in-out"
-        enter-from-class="opacity-0"
-        leave-active-class="transition ease-in-out"
-        leave-to-class="opacity-0"
+      <v-btn
+        color="primary"
+        :loading="form.processing"
+        :disabled="!form.isDirty"
+        type="submit"
       >
-        <p
-          v-if="form.recentlySuccessful"
-          class="text-sm text-gray-600 dark:text-gray-400"
-        >
-          Saved.
-        </p>
-      </Transition> -->
+        Update Password
+      </v-btn>
     </v-form>
   </section>
 </template>
