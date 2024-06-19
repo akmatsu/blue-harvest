@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { CoreLayout } from '@/Layouts';
 import { useToasts } from '@/store/toasts';
-import { Image, Restriction, Tag } from '@/types';
-import { useForm, Head, router } from '@inertiajs/vue3';
+import { Image, Tag } from '@/types';
+import { Head, router, useForm } from '@inertiajs/vue3';
 
 const props = defineProps<{
   image: Image;
@@ -14,7 +14,7 @@ const deleteLoading = ref(false);
 
 const updateForm = useForm({
   name: props.image.name,
-  tags: props.image.tags?.map((t) => t.id) || [],
+  tags: props.image.tags?.map((t) => t.name) || [],
 });
 
 function handleUpdate() {
@@ -61,7 +61,7 @@ function handleDelete() {
             v-model="updateForm.tags"
             :items="tags"
             item-title="name"
-            item-value="id"
+            item-value="name"
             multiple
             chips
           ></v-autocomplete>
