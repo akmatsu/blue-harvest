@@ -40,7 +40,7 @@ class ProcessImage implements ShouldQueue
     $contents = Storage::get($dbImage->path);
 
     $res = Http::attach('file', $contents, $this->fileClientOriginalName)
-      ->timeout(60)
+      ->timeout(180)
       ->post(config('services.clip.url'));
 
     $resJson = $res->json();
