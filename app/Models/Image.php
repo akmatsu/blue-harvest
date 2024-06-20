@@ -24,6 +24,7 @@ class Image extends Model
     'folder_name',
     'is_restricted',
     'attribution',
+    'is_published',
   ];
 
   protected $with = ['tags', 'restrictions'];
@@ -132,6 +133,11 @@ class Image extends Model
   public function flags(): MorphMany
   {
     return $this->morphMany(Flag::class, 'flaggable');
+  }
+
+  public function publish()
+  {
+    $this->update(['is_published' => true]);
   }
 
   public function restrict(array $restrictionIds)

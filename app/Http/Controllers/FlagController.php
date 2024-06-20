@@ -49,6 +49,10 @@ class FlagController extends Controller
   public function dismiss(int $id)
   {
     $flag = Flag::findOrFail($id);
+    $flaggable = $flag->flaggable;
+    if ($flaggable) {
+      $flaggable->publish();
+    }
     $flag->delete();
     return redirect()
       ->route('admin.flags.index')
@@ -77,6 +81,7 @@ class FlagController extends Controller
 
     if ($flaggable) {
       $flaggable->restrict($valid['restriction_ids']);
+      $flaggable->publish();
     }
 
     return redirect()

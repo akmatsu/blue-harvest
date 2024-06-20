@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Flag;
 use App\Models\Image;
 use App\Models\Tag;
 use Illuminate\Bus\Queueable;
@@ -45,12 +46,26 @@ class ProcessImage implements ShouldQueue
     $resJson = $res->json();
     $resTags = $resJson['tags'];
     $resFlag = $resJson['flag'];
-    Log::info($resJson);
 
     $tagIds = [];
     foreach ($resTags as $tagName) {
       $tag = Tag::firstOrCreate(['name' => $tagName]);
       $tagIds[] = $tag->id;
+    }
+
+    if (!$resFlag) {
+      Log::info('Not flagging');
+      $dbImage->is_published = true;
+      $dbImage->save();
+    } else {
+      Log::info('Flagging');
+      $dbImage->is_published = false;
+      Flag::create([
+        'flaggable_id' => $dbImage->id,
+        'flaggable_type' => 'App\Models\Image',
+        'reason' => 'This image was automatically flagged by the AI',
+      ]);
+      $dbImage->save();
     }
 
     $dbImage->tags()->syncWithoutDetaching($tagIds);
