@@ -8,7 +8,15 @@ Route::get('/', [ImageController::class, 'index'])->name('index');
 Route::prefix('images')
   ->name('images.')
   ->group(function () {
-    Route::get('/{id}', [ImageController::class, 'view'])->name('view');
+    Route::get('/view/{id}', [ImageController::class, 'view'])->name('view');
+
+    Route::get('/download/{id}', [ImageController::class, 'download'])->name(
+      'download'
+    );
+    Route::get('/download/optimized/{id}', [
+      ImageController::class,
+      'downloadOptimized',
+    ])->name('download.optimized');
 
     Route::middleware(['auth', 'verified'])->group(function () {
       Route::get('/', [ImageController::class, 'manage'])->name('manage');
