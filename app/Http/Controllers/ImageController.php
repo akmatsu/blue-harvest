@@ -41,6 +41,8 @@ class ImageController extends Controller
       $imagesQuery->whereIn('id', $imageIds);
     }
 
+    $imagesQuery->where('is_published', true);
+
     if (!Auth::check()) {
       $imagesQuery->where('is_restricted', false);
     }
