@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useToasts } from '@/store/toasts';
 import type { Image, OptimizedImage } from '@/types';
 import { copyToClipboard, formatBytes } from '@/utils';
 import axios from 'axios';
@@ -8,6 +9,8 @@ const props = defineProps<{
   attribution: Image['attribution'];
 }>();
 
+const toast = useToasts();
+
 async function handleCopy() {
   const url = props.image.url;
   if (url.startsWith('http')) await copyToClipboard(url);
@@ -15,27 +18,30 @@ async function handleCopy() {
 }
 
 async function handleDownload() {
-  const url = props.image.url;
-
   try {
-    const res = await axios.get(url, { responseType: 'blob' });
-    if (res) {
-      const blob = await res.data;
+    const path = Object.hasOwn(props.image, 'image_id')
+      ? 'images.download.optimized'
+      : 'images.download';
 
-      const blobUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = blobUrl;
-      a.download = `${props.attribution}-${props.image.id}-blue-harvest${/\.\w+$/.exec(props.image.url)?.[0]}`;
+    const res = await axios.get(route(path, { id: props.image.id }), {
+      responseType: 'blob',
+    });
 
-      document.body.appendChild(a);
-      a.click();
+    const url = window.URL.createObjectURL(res.data);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute(
+      'download',
+      `${props.attribution}-${props.image.id}-blue-harvest${/\.\w+$/.exec(props.image.url)?.[0]}`,
+    );
+    link.setAttribute('target', '_self');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-      window.URL.revokeObjectURL(blobUrl);
-      document.body.removeChild(a);
-    }
-  } catch (error) {
-    console.error('Failed to download image', error);
+    toast.success('Downloading image.');
+  } catch (err) {
+    toast.error('Failed to download file.');
   }
 }
 </script>

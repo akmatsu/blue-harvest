@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ProcessImage;
 use App\Models\Image;
+use App\Models\OptimizedImage;
 use App\Models\Restriction;
 use App\Models\Tag;
 // use Exception;
@@ -126,6 +127,38 @@ class ImageController extends Controller
     }
 
     return redirect()->route('upload.results', ['ids' => $ids]);
+  }
+
+  public function download(int $id)
+  {
+    Log::info('Download function called with ID: ' . $id);
+    $image = Image::findOrFail($id);
+    $filePath = $image->path;
+
+    Log::info('File path: ' . $filePath);
+
+    if (!Storage::exists($filePath)) {
+      Log::error('File down not exist at path: ' . $filePath);
+      return response()->json(['error' => 'File not found'], 404);
+    }
+
+    return Storage::download($filePath);
+  }
+
+  public function downloadOptimized(int $id)
+  {
+    Log::info('Download function called with ID: ' . $id);
+    $image = OptimizedImage::findOrFail($id);
+    $filePath = $image->path;
+
+    Log::info('File path: ' . $filePath);
+
+    if (!Storage::exists($filePath)) {
+      Log::error('File down not exist at path: ' . $filePath);
+      return response()->json(['error' => 'File not found'], 404);
+    }
+
+    return Storage::download($filePath);
   }
 
   public function updateImage(int $id, Request $request)
