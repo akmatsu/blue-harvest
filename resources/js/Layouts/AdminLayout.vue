@@ -25,7 +25,7 @@ const drawer = ref(false);
     />
     <MobileDrawer :nav-items="adminNav" v-model="drawer" />
     <v-main>
-      <v-container :fluid="fluid">
+      <v-container :fluid="fluid" class="app-container">
         <slot />
       </v-container>
 
@@ -33,3 +33,12 @@ const drawer = ref(false);
     </v-main>
   </v-app>
 </template>
+
+<style lang="scss">
+.app-container {
+  @media screen and (min-width: 1920px) {
+    padding-left: 250px;
+    padding-right: 250px;
+  }
+}
+</style>

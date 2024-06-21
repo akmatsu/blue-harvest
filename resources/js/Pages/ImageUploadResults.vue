@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { Image, Tag } from '@/types';
 import { CoreLayout } from '@/Layouts';
+import { Image, Tag } from '@/types';
 import { UploadResultCard } from './Upload/components';
 
 defineProps<{

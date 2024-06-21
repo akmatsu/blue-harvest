@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Image } from '@/types';
 import { formatDate } from '@/utils';
+import { useDisplay } from 'vuetify';
 import { LinkBtn } from '../buttons';
 
 defineProps<{
@@ -13,6 +14,8 @@ defineEmits<{
   (e: 'deleteImage', value?: number | number[]): void;
 }>();
 
+const { smAndDown } = useDisplay();
+
 const selected = defineModel<number[]>();
 const page = defineModel<number | string>('page');
 const itemsPerPage = defineModel<string | number>('itemsPerPage', {
@@ -21,6 +24,10 @@ const itemsPerPage = defineModel<string | number>('itemsPerPage', {
 
 const headers = [
   {
+    title: 'Thumbnail',
+    key: 'url',
+  },
+  {
     title: 'ID',
     key: 'id',
   },
@@ -28,10 +35,10 @@ const headers = [
     title: 'TYPE',
     key: 'mime_type',
   },
-  {
-    title: 'Name',
-    key: 'name',
-  },
+  // {
+  //   title: 'Name',
+  //   key: 'name',
+  // },
   {
     title: 'Created',
     key: 'created_at',
@@ -58,9 +65,17 @@ const headers = [
   },
   {
     title: 'Actions',
-    key: 'url',
+    key: 'actions',
   },
 ];
+
+function itemUrl(image: Image) {
+  if (image.optimized_images) {
+    const img = image.optimized_images.find((im) => im.size === 'small');
+    if (img) return img?.url;
+  }
+  return image.url;
+}
 </script>
 
 <template>
@@ -73,6 +88,7 @@ const headers = [
     :headers="headers"
     item-value="id"
     show-select
+    :mobile="smAndDown"
     @update:page="$emit('search')"
     @update:items-per-page="$emit('search')"
   >
@@ -122,20 +138,26 @@ const headers = [
     <template #item.is_restricted="{ item }">
       {{ !!item.is_restricted }}
     </template>
-    <template #item.url="{ item }">
+    <template #item.actions="{ item }">
       <LinkBtn :link="to" :params="{ id: item.id }" color="primary">
         View Image
       </LinkBtn>
     </template>
+    <template #item.url="{ item }">
+      <v-img :src="itemUrl(item)"></v-img>
+      <!-- <LinkBtn :link="to" :params="{ id: item.id }" color="primary">
+        View Image
+      </LinkBtn> -->
+    </template>
     <template #item.restrictions="{ item }">
-      <v-chip-group>
+      <v-chip-group column>
         <v-chip v-for="r in item.restrictions" density="compact">
           {{ r.name }}
         </v-chip>
       </v-chip-group>
     </template>
     <template #item.tags="{ item }">
-      <v-chip-group>
+      <v-chip-group column>
         <v-chip
           v-for="tag in item.tags"
           density="compact"
