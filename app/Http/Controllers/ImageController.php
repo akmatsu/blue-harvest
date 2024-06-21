@@ -161,6 +161,8 @@ class ImageController extends Controller
       'tags' => 'array',
       'tags.*' => 'string',
       'name' => 'string',
+      'status' => 'string',
+      'description' => 'nullable|string',
       'attribution' => 'string',
     ]);
 
@@ -173,6 +175,14 @@ class ImageController extends Controller
 
     if ($request->has('attribution')) {
       $image->attribution = $request->input('attribution');
+    }
+
+    if ($request->has('description')) {
+      $image->description = $request->input('description');
+    }
+
+    if ($request->has('status')) {
+      $image->status = $request->input('status');
     }
 
     if ($request->has('tags')) {

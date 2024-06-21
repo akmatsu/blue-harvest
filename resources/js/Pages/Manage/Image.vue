@@ -12,10 +12,47 @@ const props = defineProps<{
 const toast = useToasts();
 const deleteLoading = ref(false);
 
-const updateForm = useForm({
+const updateForm = useForm<{
+  name: string;
+  description: string;
+  tags: string[];
+  status: Image['status'];
+  attribution: string;
+}>({
   name: props.image.name,
+  description: props.image.description || '',
   tags: props.image.tags?.map((t) => t.name) || [],
+  status: props.image.status,
+  attribution: props.image.attribution,
 });
+
+const statusOptions: Image['status'][] = [
+  // 'unprocessed',
+  // 'pending processing',
+  // 'processing',
+  // 'pending review',
+  'private',
+  'public',
+];
+
+const requestForm = useForm({
+  flaggable_id: props.image.id,
+  flaggable_type: 'App\\Models\\Image',
+  reason: 'User requested Admin review to publish image.',
+});
+
+function requestAdminReview() {
+  requestForm.post(route('flags.store'), {
+    preserveScroll: true,
+    // preserveState: true,
+    onSuccess: () => toast.success('Successfully requested Admin review.'),
+    onError(err) {
+      for (const key in err) {
+        toast.error(err[key]);
+      }
+    },
+  });
+}
 
 function handleUpdate() {
   updateForm.patch(route('images.update', { id: props.image.id }), {
@@ -56,6 +93,35 @@ function handleDelete() {
         <h6 class="text-h6 mb-4">Image info</h6>
         <v-form @submit.prevent="handleUpdate" class="mb-8">
           <v-text-field label="Name" v-model="updateForm.name"></v-text-field>
+          <v-text-field
+            label="Attribution"
+            v-model="updateForm.attribution"
+          ></v-text-field>
+          <v-text-field
+            label="Description"
+            v-model="updateForm.description"
+          ></v-text-field>
+          <v-row>
+            <v-col cols="auto">
+              <v-select
+                :disabled="
+                  image.status !== 'public' && image.status !== 'private'
+                "
+                label="Status"
+                v-model="updateForm.status"
+                :items="statusOptions"
+              ></v-select>
+            </v-col>
+            <v-col>
+              <primary-btn
+                v-if="image.status === 'unprocessed'"
+                @click="requestAdminReview"
+                :loading="requestForm.processing"
+              >
+                Request admin review to publish this image
+              </primary-btn>
+            </v-col>
+          </v-row>
           <v-autocomplete
             label="Tags"
             v-model="updateForm.tags"
