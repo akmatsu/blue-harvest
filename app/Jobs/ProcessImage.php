@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Flag;
 use App\Models\Image;
 use App\Models\Tag;
+use App\Notifications\ImageAutoFlagNotification;
 use App\Notifications\ImageProcessedNotification;
 use App\Notifications\ImageProcessFailedNotification;
 use Exception;
@@ -14,7 +15,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ProcessImage implements ShouldQueue
@@ -40,6 +40,8 @@ class ProcessImage implements ShouldQueue
   public function handle(): void
   {
     $dbImage = Image::findOrFail($this->dbImageId);
+    $dbImage->status = 'processing';
+    $dbImage->save();
 
     $contents = Storage::get($dbImage->path);
 
@@ -58,10 +60,10 @@ class ProcessImage implements ShouldQueue
     }
 
     if (!$resFlag) {
-      $dbImage->is_published = true;
+      $dbImage->status = 'public';
       $dbImage->save();
     } else {
-      $dbImage->is_published = false;
+      $dbImage->status = 'pending review';
       Flag::create([
         'flaggable_id' => $dbImage->id,
         'flaggable_type' => 'App\Models\Image',
@@ -72,12 +74,18 @@ class ProcessImage implements ShouldQueue
 
     $dbImage->tags()->syncWithoutDetaching($tagIds);
 
-    $dbImage->user->notify(new ImageProcessedNotification($dbImage));
+    if (!$resFlag) {
+      $dbImage->user->notify(new ImageProcessedNotification($dbImage));
+    } else {
+      $dbImage->user->notify(new ImageAutoFlagNotification($dbImage));
+    }
   }
 
   public function failed(Exception $exc): void
   {
     $image = Image::findOrFail($this->dbImageId);
+    $image->status = 'unprocessed';
+    $image->save();
     $image->user->notify(new ImageProcessFailedNotification($image));
   }
 }

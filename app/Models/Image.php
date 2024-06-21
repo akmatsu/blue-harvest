@@ -25,6 +25,7 @@ class Image extends Model
     'is_restricted',
     'attribution',
     'is_published',
+    'status',
   ];
 
   protected $with = ['tags', 'restrictions'];
@@ -136,7 +137,7 @@ class Image extends Model
 
   public function publish()
   {
-    $this->update(['is_published' => true]);
+    $this->update(['status' => 'public']);
   }
 
   public function restrict(array $restrictionIds)

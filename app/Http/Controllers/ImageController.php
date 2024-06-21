@@ -7,15 +7,12 @@ use App\Models\Image;
 use App\Models\OptimizedImage;
 use App\Models\Restriction;
 use App\Models\Tag;
-// use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Intervention\Image\Laravel\Facades\Image as ImageFacade;
-// use Symfony\Component\Process\Exception\ProcessFailedException;
 use Typesense\Client;
 
 class ImageController extends Controller
@@ -41,7 +38,7 @@ class ImageController extends Controller
       $imagesQuery->whereIn('id', $imageIds);
     }
 
-    $imagesQuery->where('is_published', true);
+    $imagesQuery->where('status', 'public');
 
     if (!Auth::check()) {
       $imagesQuery->where('is_restricted', false);
@@ -120,6 +117,7 @@ class ImageController extends Controller
       $path = storeBaseImage($uniqueFolder, $file);
 
       $this->populateImageData($dbImage, $file, $path, $uniqueFolder);
+      $dbImage->status = 'pending processing';
       $dbImage->save();
       $this->generateOptimizedImages($dbImage, $path, $uniqueFolder);
 
@@ -205,6 +203,7 @@ class ImageController extends Controller
     $similarImages = Image::whereHas('tags', function ($query) use ($tagIds) {
       $query->whereIn('tags.id', $tagIds);
     })
+      ->where('status', 'public')
       ->where('id', '!=', $id)
       ->take(15)
       ->get();
