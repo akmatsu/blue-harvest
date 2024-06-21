@@ -29,7 +29,6 @@ watch(
 );
 
 function removeFile(index: number) {
-  console.log(index);
   files.value?.splice(index, 1);
 }
 

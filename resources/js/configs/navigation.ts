@@ -13,13 +13,13 @@ export const navigation: NavItem[] = [
     to: 'index',
   },
   {
-    title: 'Manage Your Images',
+    title: 'Your Images',
     icon: 'mdi-database',
     to: 'images.manage',
     requireAuth: true,
   },
   {
-    title: 'Upload a new Image',
+    title: 'Upload',
     icon: 'mdi-upload',
     to: 'upload.index',
     requireAuth: true,
@@ -28,17 +28,17 @@ export const navigation: NavItem[] = [
 
 export const adminNav: NavItem[] = [
   {
-    title: 'Manage Images',
+    title: 'Images',
     to: 'admin.images.index',
     icon: 'mdi-image-multiple',
   },
   {
-    title: 'Manage Users',
+    title: 'Users',
     to: 'admin.users.index',
     icon: 'mdi-account-group',
   },
   {
-    title: 'View Flags',
+    title: 'Flags',
     to: 'admin.flags.index',
     icon: 'mdi-flag',
   },

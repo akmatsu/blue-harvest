@@ -113,7 +113,6 @@ class Image extends Model
   {
     $contents = $this->getFileContents('large');
     $base64 = base64_encode($contents);
-    Log::info($base64);
     return $base64;
   }
 

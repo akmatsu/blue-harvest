@@ -5,6 +5,9 @@ namespace App\Jobs;
 use App\Models\Flag;
 use App\Models\Image;
 use App\Models\Tag;
+use App\Notifications\ImageProcessedNotification;
+use App\Notifications\ImageProcessFailedNotification;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -37,6 +40,7 @@ class ProcessImage implements ShouldQueue
   public function handle(): void
   {
     $dbImage = Image::findOrFail($this->dbImageId);
+
     $contents = Storage::get($dbImage->path);
 
     $res = Http::attach('file', $contents, $this->fileClientOriginalName)
@@ -54,11 +58,9 @@ class ProcessImage implements ShouldQueue
     }
 
     if (!$resFlag) {
-      Log::info('Not flagging');
       $dbImage->is_published = true;
       $dbImage->save();
     } else {
-      Log::info('Flagging');
       $dbImage->is_published = false;
       Flag::create([
         'flaggable_id' => $dbImage->id,
@@ -69,5 +71,13 @@ class ProcessImage implements ShouldQueue
     }
 
     $dbImage->tags()->syncWithoutDetaching($tagIds);
+
+    $dbImage->user->notify(new ImageProcessedNotification($dbImage));
+  }
+
+  public function failed(Exception $exc): void
+  {
+    $image = Image::findOrFail($this->dbImageId);
+    $image->user->notify(new ImageProcessFailedNotification($image));
   }
 }

@@ -28,6 +28,7 @@ const isAuth = computed(() => !!page.props.auth.user);
         {{ item.title }}
       </v-btn>
     </div>
+
     <UserMenu v-if="isAuth" />
     <LinkBtn v-else link="login" color="primary" variant="flat">log in</LinkBtn>
   </div>

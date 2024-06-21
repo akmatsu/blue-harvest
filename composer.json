@@ -10,6 +10,7 @@
         "intervention/image": "^3.6",
         "intervention/image-laravel": "^1.2",
         "laravel/framework": "^11.0",
+        "laravel/reverb": "@beta",
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.9",
         "laravel/socialite": "^5.14",

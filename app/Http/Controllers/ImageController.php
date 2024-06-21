@@ -133,11 +133,8 @@ class ImageController extends Controller
 
   public function download(int $id)
   {
-    Log::info('Download function called with ID: ' . $id);
     $image = Image::findOrFail($id);
     $filePath = $image->path;
-
-    Log::info('File path: ' . $filePath);
 
     if (!Storage::exists($filePath)) {
       Log::error('File down not exist at path: ' . $filePath);
@@ -149,11 +146,8 @@ class ImageController extends Controller
 
   public function downloadOptimized(int $id)
   {
-    Log::info('Download function called with ID: ' . $id);
     $image = OptimizedImage::findOrFail($id);
     $filePath = $image->path;
-
-    Log::info('File path: ' . $filePath);
 
     if (!Storage::exists($filePath)) {
       Log::error('File down not exist at path: ' . $filePath);

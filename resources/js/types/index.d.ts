@@ -13,6 +13,22 @@ export interface Role {
   };
 }
 
+export interface Notification<T = any> {
+  id: string;
+  type: string;
+  notifiable_type: string;
+  notifiable_id: number;
+  data: T;
+  read_at: null | string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ImageProcessedNotificationData {
+  image_id: number;
+  message: string;
+}
+
 export interface Flag {
   id: number;
   created_at: string;
