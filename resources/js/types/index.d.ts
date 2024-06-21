@@ -64,6 +64,7 @@ export interface Image {
   id: number;
   mime_type: string | null;
   name: string;
+  description: string;
   path: string;
   size: number;
   updated_at: string;
@@ -75,6 +76,13 @@ export interface Image {
   tags?: Tag[];
   restrictions?: Restriction[];
   is_restricted: boolean;
+  status:
+    | 'unprocessed'
+    | 'pending processing'
+    | 'processing'
+    | 'pending review'
+    | 'public'
+    | 'private';
   attribution: string;
 }
 

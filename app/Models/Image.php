@@ -140,6 +140,11 @@ class Image extends Model
     $this->update(['status' => 'public']);
   }
 
+  public function pendingReview()
+  {
+    $this->update(['status' => 'pending review']);
+  }
+
   public function restrict(array $restrictionIds)
   {
     $this->restrictions()->sync($restrictionIds);

@@ -36,12 +36,14 @@ class FlagController extends Controller
 
     $userId = auth()->check() ? auth()->id() : null;
 
-    Flag::create([
+    $flag = Flag::create([
       'user_id' => $userId,
       'flaggable_id' => $request->flaggable_id,
       'flaggable_type' => $request->flaggable_type,
       'reason' => $request->reason,
     ]);
+
+    $flag->flaggable->pendingReview();
 
     return back()->with('message', 'Thank you for your report.');
   }
