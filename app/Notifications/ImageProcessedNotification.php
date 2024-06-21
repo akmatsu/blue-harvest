@@ -13,6 +13,7 @@ class ImageProcessedNotification extends Notification implements ShouldQueue
   use Queueable;
 
   protected $image;
+  protected $message = 'Your image has been processed and published.';
 
   /**
    * Create a new notification instance.
@@ -36,7 +37,7 @@ class ImageProcessedNotification extends Notification implements ShouldQueue
   {
     return new BroadcastMessage([
       'image_id' => $this->image->id,
-      'message' => 'Your image has been processed.',
+      'message' => $this->message,
     ]);
   }
 
@@ -49,7 +50,7 @@ class ImageProcessedNotification extends Notification implements ShouldQueue
   {
     return [
       'image_id' => $this->image->id,
-      'message' => 'Your Image has been processed.',
+      'message' => $this->message,
     ];
   }
 
@@ -57,7 +58,7 @@ class ImageProcessedNotification extends Notification implements ShouldQueue
   {
     return [
       'image_id' => $this->image->id,
-      'message' => 'Your image has been processed.',
+      'message' => $this->message,
     ];
   }
 }

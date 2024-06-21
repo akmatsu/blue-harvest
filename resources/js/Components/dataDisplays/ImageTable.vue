@@ -49,6 +49,10 @@ const headers = [
     key: 'restrictions',
   },
   {
+    title: 'Status',
+    key: 'status',
+  },
+  {
     title: 'Tags',
     key: 'tags',
   },

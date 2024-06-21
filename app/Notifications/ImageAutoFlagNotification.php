@@ -8,12 +8,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
-class ImageProcessFailedNotification extends Notification implements ShouldQueue
+class ImageAutoFlagNotification extends Notification implements ShouldQueue
 {
   use Queueable;
 
   protected $image;
-  protected $message = 'Your image failed to process.';
+  protected $message = 'Your image was processed but was auto flagged and is pending Admin review.';
 
   /**
    * Create a new notification instance.
