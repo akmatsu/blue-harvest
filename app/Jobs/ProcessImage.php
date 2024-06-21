@@ -21,6 +21,13 @@ class ProcessImage implements ShouldQueue
 {
   use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+  public $tries = 3;
+
+  /**
+   * The number of times the job may be attempted.
+   *
+   * @var int
+   */
   protected $dbImageId;
   protected $filePath;
   protected $fileClientOriginalName;
