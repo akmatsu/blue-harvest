@@ -145,9 +145,6 @@ function itemUrl(image: Image) {
     </template>
     <template #item.url="{ item }">
       <v-img :src="itemUrl(item)"></v-img>
-      <!-- <LinkBtn :link="to" :params="{ id: item.id }" color="primary">
-        View Image
-      </LinkBtn> -->
     </template>
     <template #item.restrictions="{ item }">
       <v-chip-group column>
