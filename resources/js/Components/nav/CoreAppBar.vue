@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { NavTabs, SearchBar, ThemeToggle } from '@/Components';
+import { NavTabs, NotificationBtn, SearchBar, ThemeToggle } from '@/Components';
+import { NavItem } from '@/configs/navigation';
 import { useDisplay } from 'vuetify';
 import Logo from '../Logo.vue';
-import { NavItem } from '@/configs/navigation';
 
 defineProps<{
   searchable?: boolean;
@@ -41,6 +41,7 @@ const search = defineModel<string>('search');
     <v-divider vertical class="mx-2"></v-divider>
     <template #append>
       <NavTabs v-if="mdAndUp" class="mr-2" :items="navItems" />
+      <NotificationBtn />
       <v-app-bar-nav-icon v-if="!mdAndUp" @click="drawer = !drawer" />
     </template>
   </v-app-bar>

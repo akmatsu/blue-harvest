@@ -11,7 +11,7 @@ defineProps<{
   <v-menu>
     <template #activator="{ props }">
       <primary-btn v-bind="props" append-icon="mdi-chevron-down">
-        Download
+        Use Image
       </primary-btn>
     </template>
     <v-list>
