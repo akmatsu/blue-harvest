@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ToastStack, MobileDrawer, CoreAppBar } from '@/Components';
+import { CoreAppBar, MobileDrawer, ToastStack } from '@/Components';
 import { navigation } from '@/configs/navigation';
 
 defineProps<{
@@ -26,7 +26,7 @@ const drawer = ref(false);
     />
     <MobileDrawer v-model="drawer" :nav-items="navigation" />
     <v-main>
-      <v-container :fluid="fluid">
+      <v-container class="app-container">
         <slot />
       </v-container>
 
@@ -34,3 +34,12 @@ const drawer = ref(false);
     </v-main>
   </v-app>
 </template>
+
+<style lang="scss">
+.app-container {
+  @media screen and (min-width: 1920px) {
+    padding-left: 250px;
+    padding-right: 250px;
+  }
+}
+</style>

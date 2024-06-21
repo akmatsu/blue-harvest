@@ -3,6 +3,7 @@ import { CoreLayout } from '@/Layouts';
 import { useToasts } from '@/store/toasts';
 import { Image, Tag } from '@/types';
 import { Head, router, useForm } from '@inertiajs/vue3';
+import { ViewOptions } from '../Image/components';
 
 const props = defineProps<{
   image: Image;
@@ -87,7 +88,11 @@ function handleDelete() {
 <template>
   <Head :title="`Image ${image.name}`" />
   <CoreLayout>
-    <v-card :title="image.name">
+    <v-card>
+      <v-card-actions>
+        <v-spacer> </v-spacer>
+        <ViewOptions :image="image" />
+      </v-card-actions>
       <v-img :src="image.url" max-width="100%" max-height="700px"></v-img>
       <v-card-text>
         <h6 class="text-h6 mb-4">Image info</h6>

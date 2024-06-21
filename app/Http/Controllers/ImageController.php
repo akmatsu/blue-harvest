@@ -232,7 +232,12 @@ class ImageController extends Controller
 
   public function manageImage(int $id)
   {
-    $image = Image::findOrFail($id);
+    $image = Image::with([
+      'optimizedImages' => function ($query) {
+        $query->whereIn('size', ['small', 'medium', 'large']);
+      },
+      'tags',
+    ])->findOrFail($id);
     $tags = Tag::all();
 
     return Inertia::render('Manage/Image', [
