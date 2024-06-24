@@ -208,6 +208,7 @@ return [
             [
               'name' => 'description',
               'type' => 'string',
+              'optional' => true,
             ],
           ],
         ],
