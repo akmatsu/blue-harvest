@@ -12,8 +12,8 @@ defineProps<{
 <template>
   <CoreLayout title="Upload Results">
     <v-alert icon="mdi-information" color="success">
-      You're images have successfully uploaded and are still being processed.
-      You will receive a notification when you images are finished processing
+      You're images were successfully uploaded and are being processed. You will
+      receive a notification when they are finished processing.
       <template #append>
         <div class="d-flex flex-column" style="gap: 4px">
           <LinkBtn link="upload.index"> Upload more images </LinkBtn>
