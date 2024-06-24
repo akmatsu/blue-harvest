@@ -35,7 +35,7 @@ const drawer = ref(false);
 </template>
 
 <style lang="scss">
-.app-container {
+div.v-container.app-container {
   @media screen and (min-width: 1920px) {
     padding-left: 250px;
     padding-right: 250px;
