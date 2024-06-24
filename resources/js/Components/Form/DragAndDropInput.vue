@@ -44,6 +44,9 @@ function maxFiles(val: File[]) {
     <v-file-input
       v-model="files"
       density="comfortable"
+      label="Images"
+      hint="You can drag and drop files or click the input to upload files."
+      persistent-hint
       clearable
       multiple
       chips
