@@ -26,6 +26,7 @@ class Image extends Model
     'attribution',
     'is_published',
     'status',
+    'description',
   ];
 
   protected $with = ['tags', 'restrictions'];
@@ -107,6 +108,7 @@ class Image extends Model
       'created_at' => $this->created_at->timestamp,
       'tags' => $this->tags->pluck('name')->toArray(),
       'user_id' => (string) $this->user_id,
+      'description' => $this->description,
     ]);
   }
 

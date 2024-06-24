@@ -205,10 +205,14 @@ return [
               'name' => 'user_id',
               'type' => 'string',
             ],
+            [
+              'name' => 'description',
+              'type' => 'string',
+            ],
           ],
         ],
         'search-parameters' => [
-          'query_by' => 'name,tags',
+          'query_by' => 'name,tags,description',
         ],
       ],
       User::class => [
