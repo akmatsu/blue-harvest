@@ -9,8 +9,11 @@ const isFormValid = ref(false);
 const toast = useToasts();
 const dialog = ref(false);
 const progress = ref(0);
+const isDragging = ref(false);
 
-const form = useForm({
+const form = useForm<{
+  files?: File[];
+}>({
   files: undefined,
 });
 
@@ -35,11 +38,39 @@ async function handleSubmit() {
 const processText = computed(() =>
   progress.value < 100 ? 'Uploading Images...' : 'Processing Images...',
 );
+
+function onDragOver() {
+  isDragging.value = true;
+}
+
+function onDragLeave() {
+  isDragging.value = false;
+}
+
+function onDrop(event: DragEvent) {
+  isDragging.value = false;
+  const files = event.dataTransfer?.files;
+  if (files) {
+    form.files ? form.files.push(...files) : (form.files = [...files]);
+  }
+}
 </script>
 
 <template>
   <Head title="Image Upload" />
-  <CoreLayout>
+  <CoreLayout
+    @dragover.prevent="onDragOver"
+    @dragleave="onDragLeave"
+    @drop.prevent="onDrop"
+  >
+    <v-fade-transition>
+      <div
+        :class="['drag-drop-area', { dragging: isDragging }]"
+        v-if="isDragging"
+      >
+        <v-icon icon="mdi-upload" size="50" color="white"></v-icon>
+      </div>
+    </v-fade-transition>
     <v-card title="Image Upload Form" class="w-full">
       <v-card-text>
         <v-form v-model="isFormValid" @submit.prevent="handleSubmit">
@@ -75,3 +106,20 @@ const processText = computed(() =>
     </v-dialog>
   </CoreLayout>
 </template>
+
+<style lang="scss" scoped>
+.drag-drop-area {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  transition: background-color 0.3s;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+</style>
