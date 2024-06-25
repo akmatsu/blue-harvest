@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useToasts } from '@/store/toasts';
+import { useRequest } from '@/composables';
 import { ImageProcessedNotificationData, Notification } from '@/types';
 import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
@@ -15,53 +15,71 @@ type broadcastNotification = {
 
 const notifications = ref<broadcastNotification[]>();
 
-const toast = useToasts();
-
 onMounted(() => {
   if (page.props.auth?.user?.id) {
-    window.Echo.private(
-      `App.Models.User.${page.props.auth.user.id}`,
-    ).notification((notification: broadcastNotification) => {
-      if (Array.isArray(notifications.value))
-        notifications.value.push(notification);
-      else notifications.value = [notification];
-    });
+    connectToWS();
+    getNotifications.exec();
   }
-
-  axios
-    .get<
-      Notification<ImageProcessedNotificationData>[]
-    >('/notifications/unread')
-    .then((response) => {
-      notifications.value =
-        response.data?.map((n) => {
-          const val: broadcastNotification = {
-            image_id: n.data.image_id,
-            id: n.id,
-            message: n.data.message,
-            type: n.type,
-          };
-
-          return val;
-        }) || [];
-    });
 });
 
-async function markAsRead(id: string | number, imageId: number) {
-  try {
+function connectToWS() {
+  window.Echo.private(
+    `App.Models.User.${page.props.auth.user.id}`,
+  ).notification((notification: broadcastNotification) => {
+    if (Array.isArray(notifications.value))
+      notifications.value.push(notification);
+    else notifications.value = [notification];
+  });
+}
+
+const getNotifications = reactive(
+  useRequest(async () => {
+    const res = await axios.get<Notification<ImageProcessedNotificationData>[]>(
+      '/notifications/unread',
+    );
+
+    if (res.data) {
+      notifications.value = res.data?.map((n) => {
+        return formatNotification(n);
+      });
+    }
+  }),
+);
+
+const markAsRead = reactive(
+  useRequest(async (id: string | number, imageId: number) => {
     await axios.post(route('notifications.read', { id }), {}).then((res) => {
       notifications.value = res.data;
     });
 
     router.get(route('images.manageImage', { id: imageId }));
-  } catch (err) {
-    toast.error('Something went wrong. Please try again later.');
-  }
+  }),
+);
+
+const markAllAsRead = reactive(
+  useRequest(async () => {
+    await axios.post<Notification<ImageProcessedNotificationData>[]>(
+      route('notifications.read.all'),
+    );
+
+    notifications.value = [];
+  }),
+);
+
+function formatNotification(
+  n: Notification<ImageProcessedNotificationData>,
+): broadcastNotification {
+  return {
+    image_id: n.data.image_id,
+    id: n.id,
+    message: n.data.message,
+    type: n.type,
+  };
 }
 </script>
 
 <template>
-  <v-menu>
+  <v-menu :close-on-content-click="false">
     <template #activator="{ props }">
       <v-btn size="x-small" icon v-bind="props">
         <v-badge dot v="if=" color="red" v-if="notifications?.length">
@@ -72,7 +90,13 @@ async function markAsRead(id: string | number, imageId: number) {
     </template>
     <v-card>
       <v-card-actions>
-        <v-btn>Dismiss All</v-btn>
+        <v-btn
+          @click="markAllAsRead.exec"
+          :disabled="!notifications?.length"
+          :loading="markAllAsRead.loading"
+        >
+          Dismiss All
+        </v-btn>
       </v-card-actions>
       <v-list>
         <v-list-item
@@ -83,7 +107,7 @@ async function markAsRead(id: string | number, imageId: number) {
           prepend-icon="mdi-check"
           :href="route('images.view', { id: notification.image_id })"
           @click.prevent.stop="
-            markAsRead(notification.id, notification.image_id)
+            markAsRead.exec(notification.id, notification.image_id)
           "
         ></v-list-item>
       </v-list>

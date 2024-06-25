@@ -25,6 +25,11 @@ Route::post('/notifications/read/{id}', [
   'read',
 ])->name('notifications.read');
 
+Route::post('/notifications/read', [
+  NotificationController::class,
+  'readAll',
+])->name('notifications.read.all');
+
 require __DIR__ . '/auth.php';
 require __DIR__ . '/web_routes/image.php';
 require __DIR__ . '/web_routes/admin.php';

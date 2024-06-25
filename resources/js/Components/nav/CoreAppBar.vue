@@ -41,7 +41,7 @@ const search = defineModel<string>('search');
     <v-divider vertical class="mx-2"></v-divider>
     <template #append>
       <NavTabs v-if="mdAndUp" class="mr-2" :items="navItems" />
-      <NotificationBtn />
+      <NotificationBtn v-if="$page.props.auth.user" />
       <v-app-bar-nav-icon v-if="!mdAndUp" @click="drawer = !drawer" />
     </template>
   </v-app-bar>
