@@ -206,14 +206,37 @@ return [
               'type' => 'string',
             ],
             [
+              'name' => 'is_public',
+              'type' => 'int64',
+            ],
+            [
+              'name' => 'is_restricted',
+              'type' => 'int64',
+            ],
+            [
               'name' => 'description',
               'type' => 'string',
               'optional' => true,
             ],
+            [
+              'name' => 'image',
+              'type' => 'image',
+              'store' => false,
+            ],
+            [
+              'name' => 'embedding',
+              'type' => 'float[]',
+              'embed' => [
+                'from' => ['image'],
+                'model_config' => [
+                  'model_name' => 'ts/clip-vit-b-p32',
+                ],
+              ],
+            ],
           ],
         ],
         'search-parameters' => [
-          'query_by' => 'name,tags,description',
+          'query_by' => 'tags,description,name,embedding,',
         ],
       ],
       User::class => [

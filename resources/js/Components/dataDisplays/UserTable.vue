@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { User } from '@/types';
-import { formatDate } from '@/utils';
 import { LinkBtn } from '@/Components';
 import UserCreate from '@/Pages/Admin/components/user/UserCreate.vue';
+import { User } from '@/types';
+import { formatDate } from '@/utils';
 
 defineProps<{
   users: User[];
@@ -59,6 +59,7 @@ const headers = [
     v-model:page="page"
     item-value="id"
     show-select
+    :items-per-page-options="[10, 25, 50, 100]"
     :items="users"
     :items-length
     :headers
