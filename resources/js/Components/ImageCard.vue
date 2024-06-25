@@ -13,6 +13,10 @@ const url = computed(() => {
   }
   return props.image.url;
 });
+
+function getQuery(tag: string) {
+  return `tag:"${tag}"`;
+}
 </script>
 
 <template>
@@ -23,9 +27,9 @@ const url = computed(() => {
         <v-chip
           size="small"
           v-for="tag in image.tags"
-          :href="route('index', { query: tag.name })"
+          :href="route('index', { query: getQuery(tag.name) })"
           @click.prevent.stop="
-            $inertia.get(route('index', { query: tag.name }))
+            $inertia.get(route('index', { query: getQuery(tag.name) }))
           "
         >
           {{ tag.name }}

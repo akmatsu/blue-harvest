@@ -85,6 +85,7 @@ function itemUrl(image: Image) {
     v-model:page="page"
     :items="images"
     :items-length="itemsLength"
+    :items-per-page-options="[10, 25, 50, 100]"
     :headers="headers"
     item-value="id"
     show-select

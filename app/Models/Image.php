@@ -101,6 +101,7 @@ class Image extends Model
 
   public function toSearchableArray()
   {
+    $base64 = $this->getBase64Data();
     return array_merge($this->toArray(), [
       'id' => (string) $this->id,
       'image_id' => (string) $this->id,
@@ -109,13 +110,17 @@ class Image extends Model
       'tags' => $this->tags->pluck('name')->toArray(),
       'user_id' => (string) $this->user_id,
       'description' => $this->description,
+      'image' => $base64,
+      'is_public' => $this->status == 'public' ? 1 : 0,
+      'is_restricted' => $this->is_restricted ? 1 : 0,
     ]);
   }
 
   public function getBase64Data()
   {
-    $contents = $this->getFileContents('large');
+    $contents = $this->getFileContents('medium');
     $base64 = base64_encode($contents);
+    Log::info($base64);
     return $base64;
   }
 

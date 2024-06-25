@@ -29,26 +29,37 @@ class ImageController extends Controller
   }
   public function index(Request $request)
   {
-    $query = $request->input('query');
+    $query = $request->input('query', '*');
     $limit = $request->input('count', 25);
-    $imagesQuery = Image::query();
+    // $imagesQuery = Image::query();
 
-    if ($query) {
-      $imageIds = Image::search($query)->get()->pluck('id');
-      $imagesQuery->whereIn('id', $imageIds);
-    }
+    // if ($query) {
+    //   $imageIds = Image::search($query)
+    //     ->options(['query_by' => 'embedding'])
+    //     ->get()
+    //     ->pluck('id');
+    //   $imagesQuery->whereIn('id', $imageIds);
+    // }
 
-    $imagesQuery->where('status', 'public');
+    // $imagesQuery->where('status', 'public');
 
-    if (!Auth::check()) {
-      $imagesQuery->where('is_restricted', false);
-    }
+    // if (!Auth::check()) {
+    //   $imagesQuery->where('is_restricted', false);
+    // }
 
-    $images = $imagesQuery
-      ->with([
-        'optimizedImages' => function ($query) {
-          $query->whereIn('size', ['small', 'medium', 'large']);
-        },
+    // $images = $imagesQuery
+    //   ->with([
+    //     'optimizedImages' => function ($query) {
+    //       $query->whereIn('size', ['small', 'medium', 'large']);
+    //     },
+    //   ])
+    //   ->paginate($limit);
+
+    $filters = $this->extractFilters($query);
+    $searchQuery = $this->stripFiltersFromQuery($query);
+    $images = Image::search($searchQuery)
+      ->options([
+        'filter_by' => implode('&&', $filters),
       ])
       ->paginate($limit);
 
@@ -493,5 +504,22 @@ class ImageController extends Controller
         ],
       ]);
     }
+  }
+
+  private function extractFilters($query)
+  {
+    $filters = [];
+    preg_match_all('/(tag):(\w+|"[\w\s]+")/', $query, $matches, PREG_SET_ORDER);
+
+    foreach ($matches as $match) {
+      $filters[] = $match[1] . 's' . ':' . preg_replace('/"/', '', $match[2]);
+    }
+
+    return $filters;
+  }
+
+  private function stripFiltersFromQuery($query)
+  {
+    return preg_replace('/(tag):(\w+|"[\w\s]+")/', '', $query);
   }
 }
