@@ -2,6 +2,7 @@
 import { NavTabs, NotificationBtn, SearchBar, ThemeToggle } from '@/Components';
 import { NavItem } from '@/configs/navigation';
 import { useDisplay } from 'vuetify';
+import { appConfig } from '@/configs/app';
 import Logo from '../Logo.vue';
 
 defineProps<{
@@ -22,11 +23,12 @@ const search = defineModel<string>('search');
   <v-app-bar density="compact">
     <template #prepend>
       <v-btn icon href="/" @click.prevent.stop="$inertia.get('/')">
-        <Logo style="width: 40px" />
+        <!-- <Logo style="width: 40px" /> -->
+        <v-img src="/logo.png" width="40px"></v-img>
       </v-btn>
     </template>
 
-    <v-app-bar-title v-if="mdAndUp">Blue Harvest</v-app-bar-title>
+    <v-app-bar-title v-if="mdAndUp">{{ appConfig.name }}</v-app-bar-title>
 
     <v-form
       v-if="searchable"
