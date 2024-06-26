@@ -111,7 +111,7 @@ class Image extends Model
       'user_id' => (string) $this->user_id,
       'description' => $this->description,
       'image' => $base64,
-      'is_public' => $this->status == 'public' ? 1 : 0,
+      'status' => $this->status,
       'is_restricted' => $this->is_restricted ? 1 : 0,
     ]);
   }
@@ -120,7 +120,6 @@ class Image extends Model
   {
     $contents = $this->getFileContents('medium');
     $base64 = base64_encode($contents);
-    Log::info($base64);
     return $base64;
   }
 

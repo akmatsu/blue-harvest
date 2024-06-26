@@ -31,39 +31,21 @@ class ImageController extends Controller
   {
     $query = $request->input('query', '*');
     $limit = $request->input('count', 25);
-    // $imagesQuery = Image::query();
-
-    // if ($query) {
-    //   $imageIds = Image::search($query)
-    //     ->options(['query_by' => 'embedding'])
-    //     ->get()
-    //     ->pluck('id');
-    //   $imagesQuery->whereIn('id', $imageIds);
-    // }
-
-    // $imagesQuery->where('status', 'public');
-
-    // if (!Auth::check()) {
-    //   $imagesQuery->where('is_restricted', false);
-    // }
-
-    // $images = $imagesQuery
-    //   ->with([
-    //     'optimizedImages' => function ($query) {
-    //       $query->whereIn('size', ['small', 'medium', 'large']);
-    //     },
-    //   ])
-    //   ->paginate($limit);
 
     $filters = $this->extractFilters($query);
     $searchQuery = $this->stripFiltersFromQuery($query);
-    $images = Image::search($searchQuery)
-      ->options([
-        'filter_by' => implode('&&', $filters),
-      ])
-      ->paginate($limit);
+    $images = Image::search($searchQuery)->whereIn('status', ['public']);
+    if ($filters) {
+      $images->whereIn('tags', $filters);
+    }
 
-    if ($query && $images->total() > 0) {
+    if (!Auth::check()) {
+      $images->where('is_restricted', 0);
+    }
+
+    $results = $images->paginate($limit);
+
+    if ($query && $results->total() > 0) {
       $this->logSearchQuery($query);
     }
 
@@ -71,7 +53,7 @@ class ImageController extends Controller
       return response()->json($images);
     }
 
-    return Inertia::render('Browse', ['images' => $images]);
+    return Inertia::render('Browse', ['images' => $results]);
   }
 
   public function uploadView()
@@ -512,7 +494,7 @@ class ImageController extends Controller
     preg_match_all('/(tag):(\w+|"[\w\s]+")/', $query, $matches, PREG_SET_ORDER);
 
     foreach ($matches as $match) {
-      $filters[] = $match[1] . 's' . ':' . preg_replace('/"/', '', $match[2]);
+      $filters[] = preg_replace('/"/', '', $match[2]);
     }
 
     return $filters;
