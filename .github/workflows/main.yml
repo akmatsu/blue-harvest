@@ -10,22 +10,20 @@ jobs:
 
     steps:
     - name: Action-SSH
-      # You may pin to the exact commit or the version.
-      # uses: tiyee/action-ssh@b2d48d44e978ff09e0c37479a429a8374da6bb63
       uses: tiyee/action-ssh@v1.0.1
       with:
         host: ${{ secrets.AWS_EC2_IP }}
         username: ubuntu
         privateKey: ${{ secrets.AWS_EC2_SSH_KEY }}
         command: | 
-          cd ./blue-harvest
-          git pull
-          composer install --no-dev --prever-dist --no-progress --no-interaction
-          npm i
-          npm run build
-          php artisan migrate
-          php artisan optimize:clear
-          php artisan optimize
-          sudo systemctl restart nginx
+          cd ./blue-harvest &&
+          git pull && 
+          composer install --no-dev --prever-dist --no-progress --no-interaction &&
+          npm i &&
+          npm run build &&
+          php artisan migrate &&
+          php artisan optimize:clear &&
+          php artisan optimize &&
+          sudo systemctl restart nginx &&
           sudo supervisorctl reload
           
