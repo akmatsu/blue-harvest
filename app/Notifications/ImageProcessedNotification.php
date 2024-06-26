@@ -21,6 +21,7 @@ class ImageProcessedNotification extends Notification implements ShouldQueue
   public function __construct(Image $image)
   {
     $this->image = $image;
+    $this->onQueue('notifications');
   }
 
   /**
