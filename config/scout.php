@@ -206,8 +206,8 @@ return [
               'type' => 'string',
             ],
             [
-              'name' => 'is_public',
-              'type' => 'int64',
+              'name' => 'status',
+              'type' => 'string',
             ],
             [
               'name' => 'is_restricted',
