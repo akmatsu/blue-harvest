@@ -18,7 +18,7 @@ jobs:
         command: | 
           cd ./blue-harvest &&
           git pull && 
-          composer install --no-dev --prever-dist --no-progress --no-interaction &&
+          composer install --no-dev --prefer-dist --no-progress --no-interaction &&
           npm i &&
           npm run build &&
           php artisan migrate &&
