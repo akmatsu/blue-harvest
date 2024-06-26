@@ -8,8 +8,8 @@ use App\Models\Tag;
 use App\Notifications\ImageAutoFlagNotification;
 use App\Notifications\ImageProcessedNotification;
 use App\Notifications\ImageProcessFailedNotification;
-use Exception;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -17,27 +17,27 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
-class ProcessImage implements ShouldQueue
+class ProcessImage implements ShouldQueue, ShouldBeUnique
 {
   use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-  public $tries = 3;
 
   /**
    * The number of times the job may be attempted.
    *
    * @var int
    */
-  protected $dbImageId;
+  public $tries = 3;
+
+  protected Image $dbImage;
   protected $filePath;
   protected $fileClientOriginalName;
 
   /**
    * Create a new job instance.
    */
-  public function __construct($dbImage, $file)
+  public function __construct(Image $img, $file)
   {
-    $this->dbImageId = $dbImage->id;
+    $this->dbImage = $img;
     $this->fileClientOriginalName = $file->getClientOriginalName();
   }
 
@@ -46,11 +46,10 @@ class ProcessImage implements ShouldQueue
    */
   public function handle(): void
   {
-    $dbImage = Image::findOrFail($this->dbImageId);
-    $dbImage->status = 'processing';
-    $dbImage->save();
+    $this->dbImage->status = 'processing';
+    $this->dbImage->save();
 
-    $contents = Storage::get($dbImage->path);
+    $contents = Storage::get($this->dbImage->path);
 
     $res = Http::attach('file', $contents, $this->fileClientOriginalName)
       ->timeout(180)
@@ -67,30 +66,33 @@ class ProcessImage implements ShouldQueue
     }
 
     if (!$resFlag) {
-      $dbImage->status = 'public';
-      $dbImage->save();
+      $this->dbImage->status = 'public';
     } else {
-      $dbImage->status = 'pending review';
+      $this->dbImage->status = 'pending review';
       Flag::create([
-        'flaggable_id' => $dbImage->id,
+        'flaggable_id' => $this->dbImage->id,
         'flaggable_type' => 'App\Models\Image',
         'reason' => 'This image was automatically flagged by the AI',
       ]);
-      $dbImage->save();
     }
 
-    $dbImage->tags()->syncWithoutDetaching($tagIds);
+    $this->dbImage->tags()->syncWithoutDetaching($tagIds);
+    $this->dbImage->save();
 
     if (!$resFlag) {
-      $dbImage->user->notify(new ImageProcessedNotification($dbImage));
+      $this->dbImage->user->notify(
+        new ImageProcessedNotification($this->dbImage)
+      );
     } else {
-      $dbImage->user->notify(new ImageAutoFlagNotification($dbImage));
+      $this->dbImage->user->notify(
+        new ImageAutoFlagNotification($this->dbImage)
+      );
     }
   }
 
-  public function failed(Exception $exc): void
+  public function failed(): void
   {
-    $image = Image::findOrFail($this->dbImageId);
+    $image = $this->dbImage;
     $image->status = 'unprocessed';
     $image->save();
     $image->user->notify(new ImageProcessFailedNotification($image));
