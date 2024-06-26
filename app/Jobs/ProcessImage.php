@@ -39,6 +39,7 @@ class ProcessImage implements ShouldQueue, ShouldBeUnique
   {
     $this->dbImage = $img;
     $this->fileClientOriginalName = $file->getClientOriginalName();
+    $this->onQueue('processImages');
   }
 
   /**
