@@ -21,9 +21,9 @@ jobs:
           composer install --no-dev --prefer-dist --no-progress --no-interaction &&
           /home/ubuntu/.nvm/versions/node/v20.14.0/bin/npm i &&
           /home/ubuntu/.nvm/versions/node/v20.14.0/bin/npm run build &&
-          /usr/bin/php /home/ubuntu/blue-harvest/artisan migrate &&
-          /usr/bin/php /home/ubuntu/blue-harvest/artisan optimize:clear &&
-          /usr/bin/php /home/ubuntu/blue-harvest/artisan optimize &&
+          php artisan migrate --force &&
+          php artisan optimize:clear &&
+          php artisan optimize &&
           sudo systemctl restart nginx &&
           sudo supervisorctl reload
           
