@@ -47,7 +47,7 @@ class Image extends Model
 
     static::creating(function ($image) {
       if (Auth::check()) {
-        $image->attribution = Auth::user()->name;
+        $image->attribution = 'MSB Public Affairs';
       }
     });
   }

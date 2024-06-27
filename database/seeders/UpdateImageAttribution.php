@@ -20,7 +20,7 @@ class UpdateImageAttribution extends Seeder
         $user = User::find($image->user_id);
         if ($user) {
           Image::where('id', $image->id)->update([
-            'attribution' => $user->name,
+            'attribution' => 'MSB Public Affairs',
           ]);
         }
       }
