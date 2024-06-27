@@ -15,12 +15,24 @@ const deleteLoading = ref(false);
 
 const updateForm = useForm({
   name: props.image.name,
+  description: props.image.description || '',
   tags: props.image.tags?.map((t) => t.name) || [],
+  status: props.image.status,
+  attribution: props.image.attribution,
 });
 
 const restrictionForm = useForm({
   restriction_ids: props.image.restrictions?.map((r) => r.id) || [],
 });
+
+const statusOptions: Image['status'][] = [
+  // 'unprocessed',
+  // 'pending processing',
+  // 'processing',
+  // 'pending review',
+  'private',
+  'public',
+];
 
 function handleUpdate() {
   updateForm.patch(route('admin.images.update', { id: props.image.id }), {
@@ -77,6 +89,20 @@ function handleDelete() {
         <h6 class="text-h6 mb-4">Image info</h6>
         <v-form @submit.prevent="handleUpdate" class="mb-8">
           <v-text-field label="Name" v-model="updateForm.name"></v-text-field>
+          <v-text-field
+            label="Attribution"
+            v-model="updateForm.attribution"
+          ></v-text-field>
+          <v-text-field
+            label="Description"
+            v-model="updateForm.description"
+          ></v-text-field>
+          <v-select
+            :disabled="image.status !== 'public' && image.status !== 'private'"
+            label="Status"
+            v-model="updateForm.status"
+            :items="statusOptions"
+          ></v-select>
           <v-autocomplete
             label="Tags"
             v-model="updateForm.tags"
