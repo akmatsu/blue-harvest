@@ -169,4 +169,21 @@ class Image extends Model
       ]);
     }
   }
+
+  public function getSimilarImages()
+  {
+    $vectorQuery = $vectorQuery = 'embedding:([], id:' . $this->id . ')';
+    Log::info($vectorQuery);
+    $images = Image::search('*')
+      ->options([
+        'vector_query' => $vectorQuery,
+      ])
+      ->whereIn('status', ['public']);
+
+    if (!Auth::check()) {
+      $images->where('is_restricted', 0);
+    }
+
+    return $images->take(15)->get();
+  }
 }

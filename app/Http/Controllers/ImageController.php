@@ -27,6 +27,7 @@ class ImageController extends Controller
       'connection_timeout_seconds' => 2,
     ]);
   }
+
   public function index(Request $request)
   {
     $query = $request->input('query', '*');
@@ -201,17 +202,7 @@ class ImageController extends Controller
       'tags',
     ])->findOrFail($id);
 
-    $similarSearch = Image::search('*')
-      ->options([
-        'vector_query' => 'embedding([], id:' . $image->id . ')',
-      ])
-      ->whereIn('status', ['public']);
-
-    if (!Auth::check()) {
-      $similarSearch->where('is_restricted', 0);
-    }
-
-    $similarImages = $similarSearch->take(15)->get();
+    $similarImages = $image->getSimilarImages();
 
     return Inertia::render('Image/View', [
       'image' => $image,
