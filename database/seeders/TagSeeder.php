@@ -204,6 +204,7 @@ class TagSeeder extends Seeder
       'Icon',
       'Construction',
       'People',
+      'GIS',
       'Petersville Community Council',
       'Point MacKenzie Community Council',
       'Skwentna Community Council',
