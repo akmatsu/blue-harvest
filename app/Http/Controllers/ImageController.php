@@ -201,15 +201,17 @@ class ImageController extends Controller
       'tags',
     ])->findOrFail($id);
 
-    $tagIds = $image->tags->pluck('id');
+    $similarSearch = Image::search('*')
+      ->options([
+        'vector_query' => 'embedding([], id:' . $image->id . ')',
+      ])
+      ->whereIn('status', ['public']);
 
-    $similarImages = Image::whereHas('tags', function ($query) use ($tagIds) {
-      $query->whereIn('tags.id', $tagIds);
-    })
-      ->where('status', 'public')
-      ->where('id', '!=', $id)
-      ->take(15)
-      ->get();
+    if (!Auth::check()) {
+      $similarSearch->where('is_restricted', 0);
+    }
+
+    $similarImages = $similarSearch->take(15)->get();
 
     return Inertia::render('Image/View', [
       'image' => $image,
