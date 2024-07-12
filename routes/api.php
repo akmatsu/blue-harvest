@@ -1,8 +1,14 @@
 <?php
 
+use App\Http\Controllers\RESTImageController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SmartCropController;
 
-Route::get('/blue-harvest', [SmartCropController::class, 'index'])
-  ->middleware('throttle:120,1')
-  ->name('blue-harvest');
+Route::prefix('v1')
+  ->name('v1')
+  ->group(function () {
+    Route::prefix('images')
+      ->name('images')
+      ->group(function () {
+        Route::get('/', [RESTImageController::class, 'index'])->name('index');
+      });
+  });

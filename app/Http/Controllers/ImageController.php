@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TypesenseHelper;
 use App\Jobs\ProcessImage;
 use App\Models\Image;
 use App\Models\OptimizedImage;
@@ -13,19 +14,14 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Intervention\Image\Laravel\Facades\Image as ImageFacade;
-use Typesense\Client;
 
 class ImageController extends Controller
 {
-  protected Client $typesense;
+  protected $tsHelper;
 
   public function __construct()
   {
-    $this->typesense = new Client([
-      'api_key' => config('services.typesense.api_key'),
-      'nodes' => config('services.typesense.nodes'),
-      'connection_timeout_seconds' => 2,
-    ]);
+    $this->tsHelper = new TypesenseHelper();
   }
 
   public function index(Request $request)
@@ -33,8 +29,8 @@ class ImageController extends Controller
     $query = $request->input('query', '*');
     $limit = $request->input('count', 25);
 
-    $filters = $this->extractFilters($query);
-    $searchQuery = $this->stripFiltersFromQuery($query);
+    $filters = $this->tsHelper->extractFilters($query);
+    $searchQuery = $this->tsHelper->stripFiltersFromQuery($query);
     $images = Image::search($searchQuery)->whereIn('status', ['public']);
     if ($filters) {
       $images->whereIn('tags', $filters);
@@ -47,7 +43,7 @@ class ImageController extends Controller
     $results = $images->paginate($limit);
 
     if ($query && $results->total() > 0) {
-      $this->logSearchQuery($query);
+      $this->tsHelper->logSearchQuery($query);
     }
 
     if ($request->wantsJson()) {
@@ -250,7 +246,7 @@ class ImageController extends Controller
           ->paginate($count);
 
         if ($images->total() > 0) {
-          $this->logSearchQuery($query);
+          $this->tsHelper->logSearchQuery($query);
         }
       } else {
         $images = Image::where('user_id', $user->id)
@@ -319,7 +315,7 @@ class ImageController extends Controller
       $imageIds = Image::search($query)->get()->pluck('id');
       $images = Image::whereIn('id', $imageIds)->with('tags')->paginate($count);
       if ($images->total() > 0) {
-        $this->logSearchQuery($query);
+        $this->tsHelper->logSearchQuery($query);
       }
     } else {
       $images = Image::with('tags')->paginate($count);
@@ -424,77 +420,5 @@ class ImageController extends Controller
         ]);
       }
     }
-  }
-
-  private function logSearchQuery(string $query)
-  {
-    try {
-      $this->createPopularSearchesCollectionIfNotExists();
-
-      // Search for the document with the given query
-      $searchResults = $this->typesense->collections[
-        'popular_searches'
-      ]->documents->search([
-        'q' => $query,
-        'query_by' => 'query',
-        'filter_by' => 'query:=' . $query,
-        'per_page' => 1,
-      ]);
-
-      if (count($searchResults['hits']) > 0) {
-        // If the document exists, increment the count
-        $document = $searchResults['hits'][0]['document'];
-        $updatedCount = $document['count'] + 1;
-        $this->typesense->collections['popular_searches']->documents[
-          $document['id']
-        ]->update([
-          'query' => $query,
-          'count' => $updatedCount,
-          'timestamp' => now()->timestamp,
-        ]);
-      } else {
-        // If the document does not exist, create a new one
-        $this->typesense->collections['popular_searches']->documents->upsert([
-          'query' => $query,
-          'count' => 1,
-          'timestamp' => now()->timestamp,
-        ]);
-      }
-    } catch (\Exception $e) {
-      Log::error('Failed to log search query: ' . $e->getMessage());
-    }
-  }
-
-  private function createPopularSearchesCollectionIfNotExists()
-  {
-    try {
-      $this->typesense->collections['popular_searches']->retrieve();
-    } catch (\Typesense\Exceptions\ObjectNotFound $e) {
-      $this->typesense->collections->create([
-        'name' => 'popular_searches',
-        'fields' => [
-          ['name' => 'query', 'type' => 'string'],
-          ['name' => 'count', 'type' => 'int32'],
-          ['name' => 'timestamp', 'type' => 'int32'],
-        ],
-      ]);
-    }
-  }
-
-  private function extractFilters($query)
-  {
-    $filters = [];
-    preg_match_all('/(tag):(\w+|"[\w\s]+")/', $query, $matches, PREG_SET_ORDER);
-
-    foreach ($matches as $match) {
-      $filters[] = preg_replace('/"/', '', $match[2]);
-    }
-
-    return $filters;
-  }
-
-  private function stripFiltersFromQuery($query)
-  {
-    return preg_replace('/(tag):(\w+|"[\w\s]+")/', '', $query);
   }
 }
