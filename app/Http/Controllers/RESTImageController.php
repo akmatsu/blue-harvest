@@ -34,6 +34,18 @@ class RESTImageController extends Controller
     }
 
     $results = $images->paginate($limit);
+    $results
+      ->getCollection()
+      ->makeHidden([
+        'path',
+        'created_at',
+        'updated_at',
+        'folder_name',
+        'is_restricted',
+        'is_published',
+        'status',
+        'user_id',
+      ]);
 
     if ($query && $results->total() > 0) {
       $this->tsHelper->logSearchQuery($query);
