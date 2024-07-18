@@ -30,7 +30,7 @@ const { exec: execSearch } = useRequest(handleSearch, {
       <ImageCard v-for="image in scrollImages" :key="image.id" :image="image" />
     </MasonryGrid>
     <div class="d-flex justify-center">
-      <CorePagination :pagination="images" />
+      <CorePagination :pagination="images" :search="search" />
     </div>
   </CoreLayout>
 </template>
