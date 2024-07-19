@@ -100,6 +100,8 @@ function onDrop(event: DragEvent) {
             :model-value="progress"
             color="primary"
             :indeterminate="progress === 100"
+            height="30"
+            striped
           ></v-progress-linear>
         </v-card-text>
       </v-card>
