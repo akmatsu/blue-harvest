@@ -42,7 +42,7 @@ class ImageController extends Controller
 
     $results = $images->paginate($limit);
 
-    if ($query && $results->total() > 0) {
+    if ($query && $query !== '*' && $results->total() > 0) {
       $this->tsHelper->logSearchQuery($query);
     }
 
@@ -244,10 +244,6 @@ class ImageController extends Controller
         $images = Image::whereIn('id', $imageIds)
           ->with('tags')
           ->paginate($count);
-
-        if ($images->total() > 0) {
-          $this->tsHelper->logSearchQuery($query);
-        }
       } else {
         $images = Image::where('user_id', $user->id)
           ->with('tags')
@@ -314,9 +310,6 @@ class ImageController extends Controller
     if ($query) {
       $imageIds = Image::search($query)->get()->pluck('id');
       $images = Image::whereIn('id', $imageIds)->with('tags')->paginate($count);
-      if ($images->total() > 0) {
-        $this->tsHelper->logSearchQuery($query);
-      }
     } else {
       $images = Image::with('tags')->paginate($count);
     }

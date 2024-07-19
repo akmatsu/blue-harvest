@@ -47,7 +47,7 @@ class RESTImageController extends Controller
         'user_id',
       ]);
 
-    if ($query && $results->total() > 0) {
+    if ($query && $query !== '*' && $results->total() > 0) {
       $this->tsHelper->logSearchQuery($query);
     }
 
