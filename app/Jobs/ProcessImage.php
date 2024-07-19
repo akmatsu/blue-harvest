@@ -57,6 +57,10 @@ class ProcessImage implements ShouldQueue, ShouldBeUnique
       ->post(config('services.clip.url'));
 
     $resJson = $res->json();
+    if (!isset($resJson['tags'], $resJson['flag'])) {
+      $this->failed();
+      return;
+    }
     $resTags = $resJson['tags'];
     $resFlag = $resJson['flag'];
 
