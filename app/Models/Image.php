@@ -29,7 +29,7 @@ class Image extends Model
     'description',
   ];
 
-  protected $with = ['tags', 'restrictions'];
+  protected $with = ['tags', 'restrictions', 'optimizedImages'];
 
   public function user()
   {
@@ -80,13 +80,11 @@ class Image extends Model
   public function predefinedImages()
   {
     $optimizedImages = $this->optimizedImages;
-    $grouped = [
+    return [
       'small' => $optimizedImages->where('size', 'small')->first(),
       'medium' => $optimizedImages->where('size', 'medium')->first(),
       'large' => $optimizedImages->where('size', 'large')->first(),
     ];
-
-    return $grouped;
   }
 
   public function tags()

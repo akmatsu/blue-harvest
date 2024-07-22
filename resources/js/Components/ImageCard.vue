@@ -8,7 +8,9 @@ const props = defineProps<{
 
 const url = computed(() => {
   if (props.image.optimized_images) {
-    const img = props.image.optimized_images.find((im) => im.size === 'medium');
+    const img = props.image.optimized_images?.find(
+      (im) => im.size === 'medium',
+    );
     if (img) return img?.url;
   }
   return props.image.url;
