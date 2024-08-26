@@ -21,14 +21,14 @@
         "pusher-js": "^8.4.0-rc2",
         "sass": "^1.75.0",
         "typescript": "^5.0.2",
-        "unplugin-auto-import": "^0.17.5",
+        "unplugin-auto-import": "^0.18.2",
         "vite": "^5.0",
         "vite-plugin-vuetify": "^2.0.3",
         "vue": "^3.4.0",
         "vue-tsc": "^2.0.14"
     },
     "dependencies": {
-        "@vueuse/core": "^10.9.0",
+        "@vueuse/core": "^11.0.3",
         "dayjs": "^1.11.11",
         "imagesloaded": "^5.0.0",
         "pinia": "^2.1.7",
