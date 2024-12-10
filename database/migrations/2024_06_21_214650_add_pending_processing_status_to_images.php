@@ -30,17 +30,19 @@ return new class extends Migration {
    */
   public function down(): void
   {
-    Schema::table('images', function (Blueprint $table) {
-      $table
-        ->enum('status', [
-          'unprocessed',
-          'processing',
-          'pending review',
-          'public',
-          'private',
-        ])
-        ->default('unprocessed')
-        ->change();
-    });
+    if (Schema::hasColumn('images', 'status')) {
+      Schema::table('images', function (Blueprint $table) {
+        $table
+          ->enum('status', [
+            'unprocessed',
+            'processing',
+            'pending review',
+            'public',
+            'private',
+          ])
+          ->default('unprocessed')
+          ->change();
+      });
+    }
   }
 };

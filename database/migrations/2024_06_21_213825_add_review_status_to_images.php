@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -29,11 +30,16 @@ return new class extends Migration {
    */
   public function down(): void
   {
+    DB::table('images')
+      ->whereNotIn('status', ['unprocessed', 'processing', 'public', 'private'])
+      ->update(['status' => 'unprocessed']);
+
     Schema::table('images', function (Blueprint $table) {
       $table
         ->enum('status', ['unprocessed', 'processing', 'public', 'private'])
-        ->default('unprocessed');
-      $table->string('description')->change();
+        ->default('unprocessed')
+        ->change();
+      // $table->string('description')->change();
     });
   }
 };
