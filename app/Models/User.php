@@ -18,7 +18,14 @@ class User extends Authenticatable
    *
    * @var array<int, string>
    */
-  protected $fillable = ['name', 'email', 'password'];
+  protected $fillable = [
+    'name',
+    'email',
+    'password',
+    'azure_id',
+    'azure_token',
+    'azure_refresh_token',
+  ];
 
   protected $with = ['roles'];
 

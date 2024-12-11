@@ -10,7 +10,36 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
+
+Route::get('/azure/redirect', function () {
+  return Socialite::driver('azure')->redirect();
+})->name('login.azure');
+
+Route::get('/azure/callback', function () {
+  $azureUser = Socialite::driver('azure')->user();
+
+  $user = User::where('email', $azureUser->email)
+    ->orWhere('azure_id', $azureUser->id)
+    ->first();
+
+  if ($user) {
+    $user->update([
+      'name' => $azureUser->name,
+      'email' => $azureUser->email,
+      'azure_id' => $azureUser->id,
+      // 'azure_token' => $azureUser->token,
+      // 'azure_refresh_token' => $azureUser->refreshToken,
+    ]);
+  }
+
+  Auth::login($user);
+
+  return redirect('/');
+})->name('login.azure.callback');
 
 Route::middleware('guest')->group(function () {
   Route::get('register', [RegisteredUserController::class, 'create'])->name(
@@ -43,16 +72,6 @@ Route::middleware('guest')->group(function () {
   Route::post('reset-password', [NewPasswordController::class, 'store'])->name(
     'password.store'
   );
-
-  Route::get('login/microsoft', [
-    OauthController::class,
-    'redirectToMicrosoft',
-  ])->name('login.microsoft');
-
-  Route::get('/login/microsoft/callback', [
-    OauthController::class,
-    'handleMicrosoftCallback',
-  ]);
 });
 
 Route::middleware('auth')->group(function () {
