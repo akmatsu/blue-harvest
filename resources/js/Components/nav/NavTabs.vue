@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { LinkBtn, UserMenu } from '@/Components';
+import { UserMenu } from '@/Components';
 import { NavItem } from '@/configs/navigation';
 
 import { usePage } from '@inertiajs/vue3';

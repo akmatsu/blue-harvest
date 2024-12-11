@@ -31,8 +31,6 @@ Route::get('/azure/callback', function () {
       'name' => $azureUser->name,
       'email' => $azureUser->email,
       'azure_id' => $azureUser->id,
-      // 'azure_token' => $azureUser->token,
-      // 'azure_refresh_token' => $azureUser->refreshToken,
     ]);
   }
 
