@@ -62,9 +62,8 @@ const isAdmin = computed(
     <v-list-item
       v-else
       prepend-icon="mdi-account-plus"
-      href="/register"
-      title="Register"
-      @click.prevent.stop="$inertia.get('/register')"
+      href="/azure/redirect"
+      title="Log In"
     />
     <ThemeToggle>
       <template #activator="{ props, isDark, icon }">
