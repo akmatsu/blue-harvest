@@ -30,6 +30,9 @@ const isAuth = computed(() => !!page.props.auth.user);
     </div>
 
     <UserMenu v-if="isAuth" />
-    <LinkBtn v-else link="login" color="primary" variant="flat">log in</LinkBtn>
+
+    <VBtn v-else color="primary" href="/azure/redirect" variant="flat">
+      Log In
+    </VBtn>
   </div>
 </template>

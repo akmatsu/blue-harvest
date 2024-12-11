@@ -14,7 +14,7 @@ return [
     |
     */
 
-  'paths' => ['api/*', 'sanctum/csrf-cookie', 'login/microsoft/callback'],
+  'paths' => ['api/*', 'sanctum/csrf-cookie', 'azure/callback'],
 
   'allowed_methods' => ['*'],
 

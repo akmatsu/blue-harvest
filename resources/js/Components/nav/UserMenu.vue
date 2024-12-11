@@ -44,7 +44,7 @@ const isAdmin = computed(
         href="/logout"
         @click.prevent.stop="$inertia.post('/logout')"
       >
-        <v-list-item-title> Log out </v-list-item-title>
+        <v-list-item-title>Log out</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>

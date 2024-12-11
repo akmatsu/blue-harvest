@@ -29,8 +29,8 @@ class AppServiceProvider extends ServiceProvider
       \SocialiteProviders\Manager\SocialiteWasCalled $event
     ) {
       $event->extendSocialite(
-        'microsoft',
-        \SocialiteProviders\Microsoft\Provider::class
+        'azure',
+        \SocialiteProviders\Azure\Provider::class
       );
     });
   }
