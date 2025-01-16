@@ -1,28 +1,153 @@
 # Blue Harvest
 
-Blue Harvest is an image hosting repository similar to Unsplash it's created by the Web Team at the [Matanuska-Susitna Borough](https://matsugov.us). It's built using Laravel with Vue via InertiaJS.
+Blue Harvest is an image hosting repository similar to Unsplash it's created by the Web Team at the [Matanuska-Susitna Borough](https://matsu.gov). It's built using Laravel with Vue via InertiaJS.
 
-## Local development
+## Local Development Setup
 
 ### Install [NodeJS](https://nodejs.org/)
 
-NodeJS is required to run the application frontend.
+NodeJS is required to bundle the application frontend.
+
+### Create your `.env` file
+
+> You must configure your `.env` file or the application will not start Follow the rest of the steps then reach out to a team member for any missing values.
+
+```bash
+cp .env.example .env
+```
 
 ### Install [PHP](https://www.php.net/), [Composer](https://getcomposer.org/), and [Laravel](https://laravel.com/).
 
-PHP, Composer, and laravel are all required to run the application.
+PHP, Composer, and Laravel are all required to run the application.
 
 ### Install the [required PHP modules](#required-php-modules)
 
-The application will not work if you do not have the required PHP modules installed on your machine. The process is slightly different depending on your OS.
+### Install Required PHP Modules
+
+> The application requires specific PHP modules to function properly. Installation steps vary by operating system:
+
+**Ubuntu/Debian:**
+
+```bash
+sudo apt update
+sudo apt install php-bcmath php-curl php-gd php-imagick php-redis php-xml php-zip
+# etc...
+```
+
+**MacOS (using Homebrew):**
+
+```bash
+brew install php
+brew install imagemagick
+pecl install imagick redis
+# etc...
+```
+
+**Windows:**
+
+- Enable required extensions in your `php.ini` file
+- Use [XAMPP](https://www.apachefriends.org/) or [Laravel Homestead](https://laravel.com/docs/homestead) for a pre-configured environment
+
+See the [complete list of required modules](#required-php-modules) below.
+
+### Setup Typesense
+
+Typesense powers the search functionality in Blue Harvest. Follow these steps to set it up:
+
+1. Install Typesense by following their [Installation Guide](https://typesense.org/docs/guide/install-typesense.html#option-2-local-machine-self-hosting)
+2. Configure your `.env` file with the appropriate Typesense connection values
+3. Start the Typesense server
+
+Without proper Typesense configuration, the search features will not work.
+
+### Setup the Database
+
+This application uses MySQL as the database. You must have a MySQL server running to use the application. To install MySQL, follow the instructions on the [MySQL website](https://dev.mysql.com/doc/mysql-installation-excerpt/8.0/en/). Double check the version, we will always try to using the latest LTS. As of this writing the latest LTS is 8.0.
+
+Once MySQL is installed you will need to create a user and database for the application:
+
+#### **Login to MySQL**
+
+```bash
+mysql -u root -p
+```
+
+#### **Create the database**
+
+```mysql
+CREATE DATABASE blue_harvest;
+```
+
+#### **Create the user**
+
+```mysql
+CREATE USER 'blueharvest_user'@'localhost' IDENTIFIED BY 'password';
+```
+
+#### **Grant the user access to the database**
+
+```mysql
+GRANT ALL PRIVILEGES ON blue_harvest.* TO 'blueharvest_user'@'localhost';
+```
+
+#### **Flush privileges**
+
+```mysql
+FLUSH PRIVILEGES;
+```
+
+#### **Exit MySQL**
+
+```mysql
+exit
+```
+
+#### **Update your `.env` file**
+
+After following these steps be sure to update your `.env` file with the appropriate database connection values.
+
+#### **Run the migrations**
+
+```bash
+php artisan migrate
+```
+
+### Setup your App key
+
+```bash
+php artisan key:generate
+```
+
+If for some reason your `.env` doesn't update automatically you can copy the output and paste it into `.env` manually.
 
 ### Setup the [Blue Harvest Clip API](https://github.com/akmatsu/clip_api)
 
-The CLIP api is required in order to handle image processing like automatic tagging and automatic flagging.
+AI image processing features (auto tagging and content flagging) require the Clip API to be set up. These features will be disabled if the API is not configured.
+
+### Setup Reverb
+
+> Not required for local development, but notifications will not work if you do not enable reverb.
+
+```bash
+php artisan install:broadcasting
+```
 
 ### Setup Your IDE
 
 This application uses [Prettier](https://prettier.io/) for automatic code formatting and (ESLint)[https://eslint.org/] for JavaScript/TypeScript linting. Ensure your IDE is setup to support these tools.
+
+### Start the development server
+
+> Please note each of the commands will need to be run in their own terminal window. For more details about each command see the [commands section](#commands).
+
+```bash
+npm run dev
+php artisan serve
+php artisan queue:work
+php artisan queue:work --queue=scout
+php artisan queue:work --queue=processImages
+php artisan reverb:start
+```
 
 ## Commands
 
