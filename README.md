@@ -20,8 +20,6 @@ cp .env.example .env
 
 PHP, Composer, and Laravel are all required to run the application.
 
-### Install the [required PHP modules](#required-php-modules)
-
 ### Install Required PHP Modules
 
 > The application requires specific PHP modules to function properly. Installation steps vary by operating system:
