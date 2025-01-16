@@ -9,21 +9,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Action-SSH
-      uses: tiyee/action-ssh@v1.0.1
-      with:
-        host: ${{ secrets.AWS_EC2_IP }}
-        username: ubuntu
-        privateKey: ${{ secrets.AWS_EC2_SSH_KEY }}
-        command: | 
-          cd ./blue-harvest &&
-          git pull && 
-          composer install --no-dev --prefer-dist --no-progress --no-interaction &&
-          /home/ubuntu/.nvm/versions/node/v20.14.0/bin/npm i &&
-          /home/ubuntu/.nvm/versions/node/v20.14.0/bin/npm run build &&
-          php artisan migrate --force &&
-          php artisan optimize:clear &&
-          php artisan optimize &&
-          sudo systemctl restart nginx &&
-          sudo supervisorctl reload
-          
+      - name: Action-SSH
+        uses: tiyee/action-ssh@v1.0.1
+        with:
+          host: ${{ secrets.AWS_EC2_IP }}
+          username: ubuntu
+          privateKey: ${{ secrets.AWS_EC2_SSH_KEY }}
+          command: |
+            cd ./blue-harvest &&
+            git pull && 
+            composer install --no-dev --prefer-dist --no-progress --no-interaction &&
+            /home/ubuntu/.nvm/versions/node/v20.14.0/bin/npm i &&
+            /home/ubuntu/.nvm/versions/node/v20.14.0/bin/npm run build &&
+            php artisan migrate --force &&
+            php artisan optimize:clear &&
+            php artisan optimize &&
+            sudo systemctl restart nginx &&
+            sudo supervisorctl reload
