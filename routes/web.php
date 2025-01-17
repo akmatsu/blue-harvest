@@ -34,3 +34,4 @@ require __DIR__ . '/auth.php';
 require __DIR__ . '/web_routes/image.php';
 require __DIR__ . '/web_routes/admin.php';
 require __DIR__ . '/web_routes/profile.php';
+require __DIR__ . '/web_routes/tag.php';
