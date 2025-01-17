@@ -20,6 +20,14 @@ const form = useForm({
   tags: props.image.tags?.map((tag) => tag.name),
 });
 
+watch(
+  () => props.image,
+  (image) => {
+    form.name = image.name;
+    form.tags = image.tags?.map((tag) => tag.name);
+  },
+);
+
 const toast = useToasts();
 const search = ref();
 

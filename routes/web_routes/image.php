@@ -24,6 +24,9 @@ Route::prefix('images')
         'manageImage'
       );
       Route::post('/', [ImageController::class, 'upload'])->name('upload');
+      Route::patch('/', [ImageController::class, 'bulkUpdate'])->name(
+        'update.bulk'
+      );
       Route::delete('/', [ImageController::class, 'bulkDelete'])->name(
         'delete.bulk'
       );

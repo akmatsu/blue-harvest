@@ -189,6 +189,62 @@ class ImageController extends Controller
     return back();
   }
 
+  public function bulkUpdate(Request $request)
+  {
+    $validated = $request->validate([
+      'ids' => 'array',
+      'ids.*' => 'integer|exists:images,id',
+      'tags' => 'array',
+      'tags.*' => 'string',
+      'name' => 'nullable|string',
+      'description' => 'nullable|string',
+      'attribution' => 'string',
+      'status' => 'string',
+    ]);
+
+    $queryIds = $request->query('ids', []);
+
+    $images = Image::whereIn('id', $validated['ids'])->get();
+
+    foreach ($images as $image) {
+      if (isset($validated['tags'])) {
+        $tagIds = [];
+        foreach ($validated['tags'] as $tagName) {
+          $tag = Tag::firstOrCreate(['name' => $tagName]);
+          $tagIds[] = $tag->id;
+        }
+
+        $image->tags()->syncWithoutDetaching($tagIds);
+      }
+
+      if (isset($validated['status'])) {
+        $image->status = $validated['status'];
+      }
+
+      if (isset($validated['name'])) {
+        $image->name = $validated['name'];
+      }
+
+      if (isset($validated['attribution'])) {
+        $image->attribution = $validated['attribution'];
+      }
+
+      if (isset($validated['description'])) {
+        $image->description = $validated['description'];
+      }
+
+      $image->save();
+    }
+
+    $updatedImages = Image::whereIn('id', $queryIds)->with('tags')->get();
+    $tags = Tag::all();
+
+    return back()->with([
+      'images' => $updatedImages,
+      'tags' => $tags,
+    ]);
+  }
+
   public function view($id)
   {
     $image = Image::with([
