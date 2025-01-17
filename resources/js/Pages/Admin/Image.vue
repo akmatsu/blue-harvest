@@ -98,7 +98,6 @@ function handleDelete() {
             v-model="updateForm.description"
           ></v-text-field>
           <v-select
-            :disabled="image.status !== 'public' && image.status !== 'private'"
             label="Status"
             v-model="updateForm.status"
             :items="statusOptions"

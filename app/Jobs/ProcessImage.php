@@ -100,6 +100,11 @@ class ProcessImage implements ShouldQueue, ShouldBeUnique
     $image = $this->dbImage;
     $image->status = 'unprocessed';
     $image->save();
+    Flag::create([
+      'flaggable_id' => $image->id,
+      'flaggable_type' => 'App\Models\Image',
+      'reason' => 'This image could not be processed by the AI',
+    ]);
     $image->user->notify(new ImageProcessFailedNotification($image));
   }
 }
