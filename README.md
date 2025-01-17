@@ -2,6 +2,26 @@
 
 Blue Harvest is a powerful image hosting repository developed by the Web Team at the [Matanuska-Susitna Borough](https://matsu.gov). Built with Laravel and Vue.js through InertiaJS, it offers functionality similar to Unsplash, providing a robust platform for image storage and management.
 
+## Table of Contents
+
+- [Requirements](#requirements)
+- [Local Development Setup](#local-development-setup)
+  - [Install NodeJS](#install-nodejs)
+  - [Configure Environment Variables](#configure-environment-variables)
+  - [Install PHP, Composer, and Laravel](#install-php-composer-and-laravel)
+  - [Install Required PHP Modules](#install-required-php-modules)
+  - [Setup Typesense](#setup-typesense)
+  - [Setup the Database](#setup-the-database)
+  - [Setup your App key](#setup-your-app-key)
+  - [Setup Reverb](#setup-reverb)
+  - [Setup Your IDE](#setup-your-ide)
+  - [Setup the Blue Harvest Clip API](#setup-the-blue-harvest-clip-api)
+  - [Start the development server](#start-the-development-server)
+- [Commands](#commands)
+  - [Development Server](#development-server)
+  - [Setup Commands](#setup-commands)
+- [Required PHP Modules](#required-php-modules)
+
 ## Requirements
 
 - PHP 8.x

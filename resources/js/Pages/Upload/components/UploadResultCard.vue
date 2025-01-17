@@ -7,7 +7,13 @@ import { useForm } from '@inertiajs/vue3';
 const props = defineProps<{
   image: Image;
   tags: Partial<Tag>[];
+  selection: Number[];
 }>();
+
+const selected = defineModel('selected', {
+  type: Boolean,
+  default: false,
+});
 
 const form = useForm({
   name: props.image.name,
@@ -26,6 +32,13 @@ function handleSubmit() {
   });
 }
 
+watch(
+  () => props.selection,
+  (selection) => {
+    selected.value = selection.includes(props.image.id);
+  },
+);
+
 function getChangedFields() {
   const changedFields: { name?: string; tags?: string[] } = {};
   if (form.name !== props.image.name) {
@@ -42,6 +55,7 @@ function getChangedFields() {
 
 <template>
   <v-list-item>
+    <v-checkbox v-model="selected" class="mr-2"></v-checkbox>
     <template #prepend>
       <v-dialog width="600" max-width="100%">
         <template #activator="{ props }">
