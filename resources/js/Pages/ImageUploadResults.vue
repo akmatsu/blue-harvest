@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { LinkBtn } from '@/Components';
 import { CoreLayout } from '@/Layouts';
-import { Image, Tag } from '@/types';
+import { Image } from '@/types';
 import { UploadResultCard } from './Upload/components';
 import { useForm } from '@inertiajs/vue3';
 import { useToasts } from '@/store/toasts';
+import { TagSelection } from '@/Components';
 
 const props = defineProps<{
   images: Image[];
-  tags: Tag[];
 }>();
 
 const opened = ref(false);
@@ -20,22 +20,13 @@ function closeDialog() {
 }
 
 const updatedImages = ref<Image[]>([]);
-const updatedTags = ref<Tag[]>([]);
 
 function setUpdatedImages(images: Image[]) {
   updatedImages.value = images;
 }
 
-function clearUpdatedImages() {
-  updatedImages.value = [];
-}
-
 const currentImages = computed(() => {
   return updatedImages.value.length > 0 ? updatedImages.value : props.images;
-});
-
-const currentTags = computed(() => {
-  return updatedTags.value.length > 0 ? updatedTags.value : props.tags;
 });
 
 const form = useForm<{ ids: number[]; name: string; tags: string[] }>({
@@ -76,7 +67,6 @@ function handleBulkUpdate() {
   form.patch(`/images${window.location.search}`, {
     onSuccess: (page) => {
       setUpdatedImages(page.props.images as Image[]);
-      updatedTags.value = page.props.tags as Tag[];
       closeDialog();
     },
     onError(errors) {
@@ -127,15 +117,8 @@ function handleBulkUpdate() {
               :disabled="form.processing"
             >
               <v-text-field v-model="form.name" label="Name" outlined dense />
-              <v-autocomplete
-                v-model="form.tags"
-                label="Tags"
-                multiple
-                chips
-                item-value="name"
-                item-title="name"
-                :items="currentTags"
-              />
+              <tag-selection v-model="form.tags" />
+
               <div class="d-flex justify-end">
                 <primary-btn type="submit" :loading="form.processing">
                   Update Selected
@@ -150,7 +133,6 @@ function handleBulkUpdate() {
       <div v-for="(image, index) in currentImages" :key="image.id">
         <UploadResultCard
           :image="image"
-          :tags="tags"
           :selection="form.ids"
           @update:selected="updateSelection(image.id, $event)"
         />

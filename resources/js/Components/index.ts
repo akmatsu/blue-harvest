@@ -7,3 +7,4 @@ export * from './containers';
 export { default as ToastStack } from './ToastStack.vue';
 export { default as ThemeToggle } from './ThemeToggle.vue';
 export { default as ImageCard } from './ImageCard.vue';
+export { default as TagSelection } from './TagSelection.vue';

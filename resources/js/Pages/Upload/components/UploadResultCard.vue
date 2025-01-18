@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { useToasts } from '@/store/toasts';
-import { Image, Tag } from '@/types';
+import { Image } from '@/types';
 import { imageDelete, required } from '@/utils';
 import { useForm } from '@inertiajs/vue3';
+import { TagSelection } from '@/Components';
 
 const props = defineProps<{
   image: Image;
-  tags: Partial<Tag>[];
   selection: Number[];
 }>();
 
@@ -29,7 +29,6 @@ watch(
 );
 
 const toast = useToasts();
-const search = ref();
 
 function handleSubmit() {
   form.patch(`/images/${props.image.id}`, {
@@ -53,7 +52,7 @@ function getChangedFields() {
     changedFields.name = form.name;
   }
 
-  if (form.tags !== props.tags.map((tag) => tag.name)) {
+  if (form.tags !== props.image.tags?.map((tag) => tag.name)) {
     changedFields.tags = form.tags;
   }
 
@@ -63,10 +62,10 @@ function getChangedFields() {
 
 <template>
   <v-list-item>
-    <v-checkbox v-model="selected" class="mr-2"></v-checkbox>
     <template #prepend>
       <v-dialog width="600" max-width="100%">
         <template #activator="{ props }">
+          <v-checkbox v-model="selected" class="mr-2"></v-checkbox>
           <div>
             <v-img
               :src="image.url"
@@ -92,18 +91,7 @@ function getChangedFields() {
         label="Name"
         :rules="[required]"
       ></v-text-field>
-      <v-autocomplete
-        v-model="form.tags"
-        v-model:search="search"
-        label="tags"
-        auto-select-first
-        multiple
-        chips
-        item-value="name"
-        item-title="name"
-        :items="tags"
-        @update:model-value="search = undefined"
-      />
+      <tag-selection v-model="form.tags" />
 
       <div class="d-flex">
         <v-spacer></v-spacer>
