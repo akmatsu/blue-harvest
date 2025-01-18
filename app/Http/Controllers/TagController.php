@@ -22,23 +22,12 @@ class TagController extends Controller
 
   public function store(Request $request)
   {
-    try {
-      $validated = $request->validate([
-        'name' => 'required|string|unique:tags,name',
-      ]);
+    $validated = $request->validate([
+      'name' => 'required|string|unique:tags,name',
+    ]);
 
-      $tag = Tag::create($validated);
-      return response()->json($tag, 201);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-      return response()->json(
-        [
-          'message' => 'Validation failed',
-          'errors' => $e->errors(),
-        ],
-        422
-      );
-    } catch (Exception $e) {
-      return response()->json($e->getMessage(), $e->getCode());
-    }
+    Tag::create($validated);
+
+    return back();
   }
 }
