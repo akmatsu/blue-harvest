@@ -6,7 +6,6 @@ import { Head } from '@inertiajs/vue3';
 
 defineProps<{
   images: Image[];
-  tags: Tag[];
 }>();
 </script>
 
@@ -15,7 +14,7 @@ defineProps<{
   <AdminLayout>
     <v-list>
       <div v-for="(image, index) in images" :key="image.id">
-        <UploadResultCard :image :tags />
+        <UploadResultCard :image />
         <v-divider v-if="index !== images.length - 1"></v-divider>
       </div>
     </v-list>

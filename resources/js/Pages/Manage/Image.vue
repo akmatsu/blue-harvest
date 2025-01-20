@@ -4,10 +4,10 @@ import { useToasts } from '@/store/toasts';
 import { Image, Tag } from '@/types';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { ViewOptions } from '../Image/components';
+import TagSelection from '@/Components/TagSelection.vue';
 
 const props = defineProps<{
   image: Image;
-  tags: Tag[];
 }>();
 
 const toast = useToasts();
@@ -27,14 +27,7 @@ const updateForm = useForm<{
   attribution: props.image.attribution,
 });
 
-const statusOptions: Image['status'][] = [
-  // 'unprocessed',
-  // 'pending processing',
-  // 'processing',
-  // 'pending review',
-  'private',
-  'public',
-];
+const statusOptions: Image['status'][] = ['private', 'public'];
 
 const requestForm = useForm({
   flaggable_id: props.image.id,
@@ -127,15 +120,9 @@ function handleDelete() {
               </primary-btn>
             </v-col>
           </v-row>
-          <v-autocomplete
-            label="Tags"
-            v-model="updateForm.tags"
-            :items="tags"
-            item-title="name"
-            item-value="name"
-            multiple
-            chips
-          ></v-autocomplete>
+
+          <TagSelection v-model="updateForm.tags" />
+
           <primary-btn
             type="submit"
             :disabled="!updateForm.isDirty"
