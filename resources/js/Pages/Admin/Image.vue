@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TagSelection from '@/Components/TagSelection.vue';
 import { AdminLayout } from '@/Layouts';
 import { useToasts } from '@/store/toasts';
 import { Image, Restriction, Tag } from '@/types';
@@ -102,15 +103,7 @@ function handleDelete() {
             v-model="updateForm.status"
             :items="statusOptions"
           ></v-select>
-          <v-autocomplete
-            label="Tags"
-            v-model="updateForm.tags"
-            :items="tags"
-            item-title="name"
-            item-value="name"
-            multiple
-            chips
-          ></v-autocomplete>
+          <TagSelection v-model="updateForm.tags" />
           <primary-btn
             type="submit"
             :disabled="!updateForm.isDirty"

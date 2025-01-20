@@ -7,7 +7,7 @@ import DismissDialog from './components/flag/DismissDialog.vue';
 import RestrictDialog from './components/flag/RestrictDialog.vue';
 import DeleteDialog from './components/flag/DeleteDialog.vue';
 
-const props = defineProps<{
+defineProps<{
   flag: Flag;
   restrictions: Restriction[];
 }>();
