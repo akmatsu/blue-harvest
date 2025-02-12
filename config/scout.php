@@ -241,7 +241,6 @@ return [
         ],
         'search-parameters' => [
           'query_by' => 'tags,description,name,embedding,',
-          'sort_by' => '_text_match:desc,name:asc',
         ],
       ],
       User::class => [
