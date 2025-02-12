@@ -1,25 +1,30 @@
 <script lang="ts" setup>
-import { Flag } from '@/types';
+import { Flag, Image } from '@/types';
 import { formatDate } from '@/utils';
 import { LinkBtn } from '../buttons';
+import { useDisplay } from 'vuetify';
+import { useTableProps } from '@/composables/useTableProps';
+import DismissDialog from '@/Pages/Admin/components/flag/DismissDialog.vue';
+import DeleteDialog from '@/Pages/Admin/components/flag/DeleteDialog.vue';
 
 defineProps<{
   flags: Flag[];
   itemsLength: number;
 }>();
 
-const emits = defineEmits<{
+defineEmits<{
   (e: 'search', value?: string): void;
   (e: 'delete', value?: number[]): void;
 }>();
 
-const selected = defineModel<number[]>();
-
-const itemsPerPage = defineModel<string | number>('itemsPerPage', {
-  default: 25,
-});
+const { smAndDown } = useDisplay();
+const { getItemUrl, itemsPerPage, page, selected } = useTableProps();
 
 const headers = [
+  {
+    title: 'Thumbnail',
+    key: 'flaggable',
+  },
   {
     title: 'ID',
     key: 'id',
@@ -49,15 +54,35 @@ const headers = [
 
 <template>
   <v-data-table-server
+    show-select
     v-model="selected"
     v-model:items-per-page="itemsPerPage"
-    item-value="id"
+    v-model:page="page"
     :items="flags"
     :itemsLength
     :headers
+    item-value="id"
+    :mobile="smAndDown"
     @update:page="$emit('search')"
     @update:items-per-page="$emit('search')"
   >
+    <template #top>
+      <v-toolbar>
+        <v-card-actions>
+          <DismissDialog
+            :flag-id="selected"
+            :disabled="!selected?.length"
+            label="Dismiss Selected"
+          />
+
+          <DeleteDialog
+            :flag-id="selected"
+            :disabled="!selected?.length"
+            label="Deleted Selected"
+          />
+        </v-card-actions>
+      </v-toolbar>
+    </template>
     <template #item.created_at="{ item }">
       {{ formatDate(item.created_at) }}
     </template>
@@ -72,6 +97,9 @@ const headers = [
       >
         View
       </LinkBtn>
+    </template>
+    <template #item.flaggable="{ item }">
+      <v-img :src="getItemUrl(item.flaggable!)" />
     </template>
   </v-data-table-server>
 </template>

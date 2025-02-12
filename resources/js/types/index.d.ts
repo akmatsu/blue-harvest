@@ -150,7 +150,7 @@ export type PopularSearches = {
 export interface CoreLinkProps {
   link?: string;
   params?: {
-    [key: string]: string | number | undefined;
+    [key: string]: string | number | string[] | number[] | undefined;
   };
   preserveScroll?: boolean;
   preserveState?: boolean;

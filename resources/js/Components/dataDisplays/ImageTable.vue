@@ -3,6 +3,7 @@ import { Image } from '@/types';
 import { formatDate } from '@/utils';
 import { useDisplay } from 'vuetify';
 import { LinkBtn } from '../buttons';
+import { useTableProps } from '@/composables/useTableProps';
 
 defineProps<{
   images: Image[];
@@ -15,12 +16,7 @@ defineEmits<{
 }>();
 
 const { smAndDown } = useDisplay();
-
-const selected = defineModel<number[]>();
-const page = defineModel<number | string>('page');
-const itemsPerPage = defineModel<string | number>('itemsPerPage', {
-  default: 25,
-});
+const { getItemUrl, itemsPerPage, page, selected } = useTableProps();
 
 const headers = [
   {
@@ -35,10 +31,6 @@ const headers = [
     title: 'TYPE',
     key: 'mime_type',
   },
-  // {
-  //   title: 'Name',
-  //   key: 'name',
-  // },
   {
     title: 'Created',
     key: 'created_at',
@@ -68,14 +60,6 @@ const headers = [
     key: 'actions',
   },
 ];
-
-function itemUrl(image: Image) {
-  if (image.optimized_images) {
-    const img = image.optimized_images.find((im) => im.size === 'small');
-    if (img) return img?.url;
-  }
-  return image.url;
-}
 </script>
 
 <template>
@@ -95,39 +79,52 @@ function itemUrl(image: Image) {
   >
     <template #top>
       <v-toolbar>
-        <v-dialog max-width="400px">
-          <template #activator="{ props }">
-            <v-btn
-              prepend-icon="mdi-delete"
-              v-bind="props"
-              color="error"
-              :disabled="!selected?.length"
-            >
-              Delete
-            </v-btn>
-          </template>
-          <template #default="{ isActive }">
-            <v-card title="Delete Images">
-              <v-card-text>
-                <p>
-                  Are you sure you want to delete the selected images? This is
-                  not reversible.
-                </p>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn @click="isActive.value = false">Cancel</v-btn>
-                <v-btn
-                  variant="flat"
-                  color="error"
-                  @click="$emit('deleteImage', selected)"
-                >
-                  Delete
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-        </v-dialog>
+        <v-card-actions>
+          <v-dialog max-width="400px">
+            <template #activator="{ props }">
+              <v-btn
+                prepend-icon="mdi-delete"
+                v-bind="props"
+                color="error"
+                :disabled="!selected?.length"
+              >
+                Delete
+              </v-btn>
+            </template>
+            <template #default="{ isActive }">
+              <v-card title="Delete Images">
+                <v-card-text>
+                  <p>
+                    Are you sure you want to delete the selected images? This is
+                    not reversible.
+                  </p>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn @click="isActive.value = false">Cancel</v-btn>
+                  <v-btn
+                    variant="flat"
+                    color="error"
+                    @click="$emit('deleteImage', selected)"
+                  >
+                    Delete
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </template>
+          </v-dialog>
+          <LinkBtn
+            :disabled="!selected?.length"
+            link="upload.results"
+            color="primary"
+            :params="{ ids: selected }"
+          >
+            <span class="d-flex align-center">
+              <v-icon left class="mr-2">mdi-pencil</v-icon>
+              Edit Selected
+            </span>
+          </LinkBtn>
+        </v-card-actions>
       </v-toolbar>
     </template>
     <template #item.created_at="{ item }">
@@ -145,7 +142,7 @@ function itemUrl(image: Image) {
       </LinkBtn>
     </template>
     <template #item.url="{ item }">
-      <v-img :src="itemUrl(item)"></v-img>
+      <v-img :src="getItemUrl(item)"></v-img>
     </template>
     <template #item.restrictions="{ item }">
       <v-chip-group column>

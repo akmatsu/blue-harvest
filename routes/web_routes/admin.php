@@ -71,24 +71,40 @@ Route::middleware(['auth', 'verified'])->group(function () {
           Route::get('/', [FlagController::class, 'index'])
             ->middleware('can:view flags')
             ->name('index');
+
+          Route::delete('/', [FlagController::class, 'dismissBulk'])
+            ->middleware('can:delete flags')
+            ->name('dismiss.bulk');
+
+          Route::delete('/flaggables', [
+            FlagController::class,
+            'deleteFlaggableBulk',
+          ])
+            ->middleware('can:delete flags')
+            ->name('delete.bulk');
+
           Route::get('/{id}', [FlagController::class, 'show'])
             ->middleware('can:view flags')
             ->name('show');
+
           Route::delete('/{id}', [FlagController::class, 'dismiss'])
             ->middleware('can:delete flags')
             ->name('dismiss');
+
           Route::delete('/{id}/flaggable', [
             FlagController::class,
             'deleteFlaggable',
           ])
             ->middleware('can:edit flags')
             ->name('delete');
+
           Route::post('/{id}/restrict', [
             FlagController::class,
             'restrictFlaggable',
           ])
             ->middleware('can:edit flags')
             ->name('restrict');
+
           Route::post('/{id}/lift-restriction', [
             FlagController::class,
             'liftFlaggableRestriction',
