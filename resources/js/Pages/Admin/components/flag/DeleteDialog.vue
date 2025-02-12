@@ -2,24 +2,51 @@
 import { useToasts } from '@/store/toasts';
 import { router } from '@inertiajs/vue3';
 
-const props = defineProps<{
-  flagId: number | string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    flagId?: number | string | number[] | string[];
+    disabled?: boolean;
+    label?: string;
+  }>(),
+  {
+    label: 'Delete Item',
+  },
+);
 const dialog = ref(false);
 const loading = ref(false);
 const toast = useToasts();
 
 function deleteItem() {
-  router.delete(route('admin.flags.delete', { id: props.flagId }), {
-    onStart: () => (loading.value = true),
-    onFinish: () => (loading.value = false),
-    onSuccess: () => toast.success('Successfully deleted the flagged item.'),
-    onError(err) {
-      for (const key in err) {
-        toast.error(err[key]);
-      }
-    },
-  });
+  if (Array.isArray(props.flagId)) {
+    router.delete(
+      route('admin.flags.delete.bulk', { flag_ids: props.flagId }),
+      {
+        onStart: () => (loading.value = true),
+        onFinish: () => {
+          loading.value = false;
+          dialog.value = false;
+        },
+        onSuccess: () =>
+          toast.success('Successfully deleted the flagged items.'),
+        onError(err) {
+          for (const key in err) {
+            toast.error(err[key]);
+          }
+        },
+      },
+    );
+  } else {
+    router.delete(route('admin.flags.delete', { id: props.flagId }), {
+      onStart: () => (loading.value = true),
+      onFinish: () => (loading.value = false),
+      onSuccess: () => toast.success('Successfully deleted the flagged item.'),
+      onError(err) {
+        for (const key in err) {
+          toast.error(err[key]);
+        }
+      },
+    });
+  }
 }
 </script>
 
@@ -31,8 +58,9 @@ function deleteItem() {
         v-bind="props"
         prepend-icon="mdi-delete"
         color="error"
+        :disabled
       >
-        Delete Item
+        {{ label }}
       </v-btn>
     </template>
     <v-card title="Delete reported item">

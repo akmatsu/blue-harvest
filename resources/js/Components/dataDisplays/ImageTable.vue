@@ -3,6 +3,7 @@ import { Image } from '@/types';
 import { formatDate } from '@/utils';
 import { useDisplay } from 'vuetify';
 import { LinkBtn } from '../buttons';
+import { useTableProps } from '@/composables/useTableProps';
 
 defineProps<{
   images: Image[];
@@ -15,12 +16,7 @@ defineEmits<{
 }>();
 
 const { smAndDown } = useDisplay();
-
-const selected = defineModel<number[]>();
-const page = defineModel<number | string>('page');
-const itemsPerPage = defineModel<string | number>('itemsPerPage', {
-  default: 25,
-});
+const { getItemUrl, itemsPerPage, page, selected } = useTableProps();
 
 const headers = [
   {
@@ -35,10 +31,6 @@ const headers = [
     title: 'TYPE',
     key: 'mime_type',
   },
-  // {
-  //   title: 'Name',
-  //   key: 'name',
-  // },
   {
     title: 'Created',
     key: 'created_at',
@@ -68,14 +60,6 @@ const headers = [
     key: 'actions',
   },
 ];
-
-function itemUrl(image: Image) {
-  if (image.optimized_images) {
-    const img = image.optimized_images.find((im) => im.size === 'small');
-    if (img) return img?.url;
-  }
-  return image.url;
-}
 </script>
 
 <template>
@@ -145,7 +129,7 @@ function itemUrl(image: Image) {
       </LinkBtn>
     </template>
     <template #item.url="{ item }">
-      <v-img :src="itemUrl(item)"></v-img>
+      <v-img :src="getItemUrl(item)"></v-img>
     </template>
     <template #item.restrictions="{ item }">
       <v-chip-group column>

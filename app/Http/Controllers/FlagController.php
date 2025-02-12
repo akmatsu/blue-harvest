@@ -61,6 +61,26 @@ class FlagController extends Controller
       ->with('message', 'Flag Dismissed.');
   }
 
+  public function dismissBulk(Request $request)
+  {
+    $valid = $request->validate([
+      'flag_ids' => 'required|array',
+      'flag_ids.*' => 'int|exists:flags,id',
+    ]);
+
+    $flags = Flag::find($valid['flag_ids']);
+    $flags->map(function ($flag) {
+      $flaggable = $flag->flaggable;
+      if ($flaggable) {
+        $flaggable->publish();
+      }
+    });
+
+    Flag::destroy($valid['flag_ids']);
+
+    return back()->with('message', 'Flags dismissed.');
+  }
+
   public function deleteFlaggable(int $id)
   {
     $flag = Flag::findOrFail($id);
@@ -70,6 +90,21 @@ class FlagController extends Controller
     return redirect()
       ->route('admin.flags.index')
       ->with('message', 'Flagged item deleted.');
+  }
+
+  public function deleteFlaggableBulk(Request $request)
+  {
+    $valid = $request->validate([
+      'flag_ids' => 'required|array',
+      'flag_ids.*' => 'int|exists:flags,id',
+    ]);
+
+    $flags = Flag::find($valid['flag_ids']);
+    $flags->map(function ($flag) {
+      return $flag->flaggable->delete();
+    });
+
+    return back()->with('message', 'Flagged items deleted.');
   }
 
   public function restrictFlaggable(int $id, Request $request)
