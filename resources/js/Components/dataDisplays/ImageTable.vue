@@ -79,39 +79,52 @@ const headers = [
   >
     <template #top>
       <v-toolbar>
-        <v-dialog max-width="400px">
-          <template #activator="{ props }">
-            <v-btn
-              prepend-icon="mdi-delete"
-              v-bind="props"
-              color="error"
-              :disabled="!selected?.length"
-            >
-              Delete
-            </v-btn>
-          </template>
-          <template #default="{ isActive }">
-            <v-card title="Delete Images">
-              <v-card-text>
-                <p>
-                  Are you sure you want to delete the selected images? This is
-                  not reversible.
-                </p>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn @click="isActive.value = false">Cancel</v-btn>
-                <v-btn
-                  variant="flat"
-                  color="error"
-                  @click="$emit('deleteImage', selected)"
-                >
-                  Delete
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-        </v-dialog>
+        <v-card-actions>
+          <v-dialog max-width="400px">
+            <template #activator="{ props }">
+              <v-btn
+                prepend-icon="mdi-delete"
+                v-bind="props"
+                color="error"
+                :disabled="!selected?.length"
+              >
+                Delete
+              </v-btn>
+            </template>
+            <template #default="{ isActive }">
+              <v-card title="Delete Images">
+                <v-card-text>
+                  <p>
+                    Are you sure you want to delete the selected images? This is
+                    not reversible.
+                  </p>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn @click="isActive.value = false">Cancel</v-btn>
+                  <v-btn
+                    variant="flat"
+                    color="error"
+                    @click="$emit('deleteImage', selected)"
+                  >
+                    Delete
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </template>
+          </v-dialog>
+          <LinkBtn
+            :disabled="!selected?.length"
+            link="upload.results"
+            color="primary"
+            :params="{ ids: selected }"
+          >
+            <span class="d-flex align-center">
+              <v-icon left class="mr-2">mdi-pencil</v-icon>
+              Edit Selected
+            </span>
+          </LinkBtn>
+        </v-card-actions>
       </v-toolbar>
     </template>
     <template #item.created_at="{ item }">

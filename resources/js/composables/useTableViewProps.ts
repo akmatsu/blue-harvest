@@ -15,7 +15,7 @@ export function useTableViewProps(
   const search = ref<string>();
 
   function handleDelete(id?: number | number[], admin?: boolean) {
-    if (id) imageDelete(id);
+    if (id) imageDelete(id, admin);
   }
 
   function handleSearch(query = search.value) {
