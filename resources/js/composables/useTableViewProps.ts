@@ -1,4 +1,3 @@
-import { Image, Paginated } from '@/types';
 import { imageDelete } from '@/utils';
 import { router } from '@inertiajs/vue3';
 

@@ -3,7 +3,6 @@ import { Image } from '@/types';
 import { formatDate } from '@/utils';
 import { useDisplay } from 'vuetify';
 import { LinkBtn } from '../buttons';
-import { useTableProps } from '@/composables/useTableProps';
 
 defineProps<{
   images: Image[];
@@ -16,7 +15,20 @@ defineEmits<{
 }>();
 
 const { smAndDown } = useDisplay();
-const { getItemUrl, itemsPerPage, page, selected } = useTableProps();
+
+const selected = defineModel<number[]>();
+const page = defineModel<number | string>('page');
+const itemsPerPage = defineModel<string | number>('itemsPerPage', {
+  default: 25,
+});
+
+function getItemUrl(image: Image) {
+  if (image.optimized_images) {
+    const img = image.optimized_images.find((im) => im.size === 'small');
+    if (img) return img?.url;
+  }
+  return image.url;
+}
 
 const headers = [
   {

@@ -1,18 +1,34 @@
 <script lang="ts" setup>
 import { ImageTable } from '@/Components';
-import { useTableViewProps } from '@/composables/useTableViewProps';
 import { AdminLayout } from '@/Layouts';
 import { Image, Paginated } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { imageDelete } from '@/utils';
+import { Head, router } from '@inertiajs/vue3';
 
 const props = defineProps<{ images: Paginated<Image> }>();
 
-const { search, selected, page, itemsPerPage, handleSearch, handleDelete } =
-  useTableViewProps(
-    props.images.per_page,
-    props.images.current_page,
+const selected = ref<number[]>([]);
+
+const itemsPerPage = ref(props.images.per_page);
+const page = ref(props.images.current_page);
+
+const search = ref<string>();
+
+function handleDelete(id?: number | number[], admin?: boolean) {
+  if (id) imageDelete(id, admin);
+}
+
+function handleSearch(query = search.value) {
+  return router.get(
     '/admin/images',
+    {
+      query,
+      count: itemsPerPage.value,
+      ...(!query && { page: page.value }),
+    },
+    { only: ['images'] },
   );
+}
 </script>
 
 <template>

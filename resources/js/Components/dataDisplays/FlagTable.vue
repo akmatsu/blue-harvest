@@ -3,7 +3,6 @@ import { Flag, Image } from '@/types';
 import { formatDate } from '@/utils';
 import { LinkBtn } from '../buttons';
 import { useDisplay } from 'vuetify';
-import { useTableProps } from '@/composables/useTableProps';
 import DismissDialog from '@/Pages/Admin/components/flag/DismissDialog.vue';
 import DeleteDialog from '@/Pages/Admin/components/flag/DeleteDialog.vue';
 
@@ -17,8 +16,21 @@ defineEmits<{
   (e: 'delete', value?: number[]): void;
 }>();
 
+const selected = defineModel<number[]>();
+const page = defineModel<number | string>('page');
+const itemsPerPage = defineModel<string | number>('itemsPerPage', {
+  default: 25,
+});
+
+function getItemUrl(image: Image) {
+  if (image.optimized_images) {
+    const img = image.optimized_images.find((im) => im.size === 'small');
+    if (img) return img?.url;
+  }
+  return image.url;
+}
+
 const { smAndDown } = useDisplay();
-const { getItemUrl, itemsPerPage, page, selected } = useTableProps();
 
 const headers = [
   {

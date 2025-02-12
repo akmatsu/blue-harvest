@@ -5,7 +5,7 @@ import { router } from '@inertiajs/vue3';
 const props = withDefaults(
   defineProps<{
     flagId?: number | string | number[] | string[];
-    disabled: boolean;
+    disabled?: boolean;
     label?: string;
   }>(),
   {

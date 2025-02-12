@@ -2,17 +2,33 @@
 import { ImageTable } from '@/Components';
 import CoreLayout from '@/Layouts/CoreLayout.vue';
 import { Image, Paginated } from '@/types';
-import { Head } from '@inertiajs/vue3';
-import { useTableViewProps } from '@/composables/useTableViewProps';
+import { Head, router } from '@inertiajs/vue3';
+import { imageDelete } from '@/utils';
 
 const props = defineProps<{ images: Paginated<Image> }>();
 
-const { search, selected, page, itemsPerPage, handleSearch, handleDelete } =
-  useTableViewProps(
-    props.images.per_page,
-    props.images.current_page,
+const selected = ref<number[]>([]);
+
+const itemsPerPage = ref(props.images.per_page);
+const page = ref(props.images.current_page);
+
+const search = ref<string>();
+
+function handleDelete(id?: number | number[], admin?: boolean) {
+  if (id) imageDelete(id, admin);
+}
+
+function handleSearch(query = search.value) {
+  return router.get(
     '/images',
+    {
+      query,
+      count: itemsPerPage.value,
+      ...(!query && { page: page.value }),
+    },
+    { only: ['images'] },
   );
+}
 </script>
 
 <template>

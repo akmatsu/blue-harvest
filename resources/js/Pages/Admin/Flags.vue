@@ -3,14 +3,30 @@ import { FlagTable } from '@/Components';
 import { useTableViewProps } from '@/composables/useTableViewProps';
 import { AdminLayout } from '@/Layouts';
 import { Flag, Paginated } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 
 const props = defineProps<{
   flags: Paginated<Flag>;
 }>();
 
-const { search, selected, page, itemsPerPage, handleSearch, handleDelete } =
-  useTableViewProps(props.flags.per_page, props.flags.current_page, '/flags');
+const selected = ref<number[]>([]);
+
+const itemsPerPage = ref(props.flags.per_page);
+const page = ref(props.flags.current_page);
+
+const search = ref<string>();
+
+function handleSearch(query = search.value) {
+  return router.get(
+    '/flags',
+    {
+      query,
+      count: itemsPerPage.value,
+      ...(!query && { page: page.value }),
+    },
+    { only: ['images'] },
+  );
+}
 </script>
 
 <template>
@@ -26,7 +42,6 @@ const { search, selected, page, itemsPerPage, handleSearch, handleDelete } =
           :items-length="flags.total"
           to="images.manageImage"
           @search="handleSearch"
-          @delete-image="handleDelete"
         />
       </v-card-text>
     </v-card>
