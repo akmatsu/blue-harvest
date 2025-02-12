@@ -26,14 +26,17 @@ class ImageController extends Controller
 
   public function index(Request $request)
   {
-    $query = $request->input('query', '*');
+    $query = (string) $request->input('query', '*');
     $limit = $request->input('count', 25);
 
     $filters = $this->tsHelper->extractFilters($query);
     $searchQuery = $this->tsHelper->stripFiltersFromQuery($query);
     $images = Image::search($searchQuery)->whereIn('status', ['public']);
-    if ($filters) {
-      $images->whereIn('tags', $filters);
+
+    if (is_string($query)) {
+      if ($filters) {
+        $images->whereIn('tags', $filters);
+      }
     }
 
     if (!Auth::check()) {
@@ -299,10 +302,12 @@ class ImageController extends Controller
 
         $images = Image::whereIn('id', $imageIds)
           ->with('tags')
+          ->orderBy('created_at', 'desc')
           ->paginate($count);
       } else {
         $images = Image::where('user_id', $user->id)
           ->with('tags')
+          ->orderBy('created_at', 'desc')
           ->paginate($count);
       }
 
