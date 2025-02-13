@@ -15,7 +15,6 @@ const form = useForm<{ name?: string }>({
 });
 
 async function fetchTags() {
-  console.log(form.name);
   return axios.get<Tag[]>('/tags', {
     params: { query: form.name },
   });
