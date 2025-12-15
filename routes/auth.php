@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -26,11 +27,24 @@ Route::get('/azure/callback', function () {
     ->orWhere('azure_id', $azureUser->id)
     ->first();
 
+  Log::info('Azure OAuth user:', [
+    'azure_id' => $azureUser->id,
+    'name' => $azureUser->name,
+    'email' => $azureUser->email,
+  ]);
+
   if ($user) {
     $user->update([
       'name' => $azureUser->name,
       'email' => $azureUser->email,
       'azure_id' => $azureUser->id,
+    ]);
+  } else {
+    $user = User::create([
+      'name' => $azureUser->name,
+      'email' => $azureUser->email,
+      'azure_id' => $azureUser->id,
+      'password' => bcrypt(bin2hex(random_bytes(16))),
     ]);
   }
 
