@@ -27,12 +27,6 @@ Route::get('/azure/callback', function () {
     ->orWhere('azure_id', $azureUser->id)
     ->first();
 
-  Log::info('Azure OAuth user:', [
-    'azure_id' => $azureUser->id,
-    'name' => $azureUser->name,
-    'email' => $azureUser->email,
-  ]);
-
   if ($user) {
     $user->update([
       'name' => $azureUser->name,
