@@ -15,7 +15,6 @@ Blue Harvest is a powerful image hosting repository developed by the Web Team at
   - [Setup your App key](#setup-your-app-key)
   - [Setup Reverb](#setup-reverb)
   - [Setup Your IDE](#setup-your-ide)
-  - [Setup the Blue Harvest Clip API](#setup-the-blue-harvest-clip-api)
   - [Start the development server](#start-the-development-server)
 - [Commands](#commands)
   - [Development Server](#development-server)
@@ -28,10 +27,9 @@ Blue Harvest is a powerful image hosting repository developed by the Web Team at
 - Node.js (Latest LTS)
 - Composer
 - Laravel
-- MySQL 8.0
+- MySQL
 - Typesense Server
 - [PHP Modules](#required-php-modules)
-- [Blue Harvest Clip API](https://github.com/akmatsu/clip_api) (for AI features)
 
 - IDE with support for:
   - Prettier
@@ -160,7 +158,6 @@ npm run dev
 php artisan serve
 php artisan queue:work
 php artisan queue:work --queue=scout
-php artisan queue:work --queue=processImages
 php artisan reverb:start
 ```
 
@@ -180,7 +177,6 @@ php artisan serve
 # Queue workers
 php artisan queue:work                         # Default queue (notifications)
 php artisan queue:work --queue=scout          # Search indexing
-php artisan queue:work --queue=processImages  # Image processing
 
 # WebSocket server for real-time events
 php artisan reverb:start

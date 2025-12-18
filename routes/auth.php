@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -31,6 +32,13 @@ Route::get('/azure/callback', function () {
       'name' => $azureUser->name,
       'email' => $azureUser->email,
       'azure_id' => $azureUser->id,
+    ]);
+  } else {
+    $user = User::create([
+      'name' => $azureUser->name,
+      'email' => $azureUser->email,
+      'azure_id' => $azureUser->id,
+      'password' => bcrypt(bin2hex(random_bytes(16))),
     ]);
   }
 

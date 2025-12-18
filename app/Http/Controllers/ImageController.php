@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\TypesenseHelper;
-use App\Jobs\ProcessImage;
+use App\Models\Flag;
 use App\Models\Image;
 use App\Models\OptimizedImage;
 use App\Models\Restriction;
 use App\Models\Tag;
+use App\Notifications\ImageAutoFlagNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -93,6 +94,7 @@ class ImageController extends Controller
     ]);
   }
 
+  // Handles multiple file uploads
   public function upload(Request $request)
   {
     $request->validate([
@@ -110,11 +112,18 @@ class ImageController extends Controller
       $path = storeBaseImage($uniqueFolder, $file);
 
       $this->populateImageData($dbImage, $file, $path, $uniqueFolder);
-      $dbImage->status = 'pending processing';
+      $dbImage->status = 'pending review';
       $dbImage->save();
+
       $this->generateOptimizedImages($dbImage, $path, $uniqueFolder);
 
-      ProcessImage::dispatch($dbImage, $file);
+      // Automatically flag image for review
+      Flag::create([
+        'flaggable_id' => $dbImage->id,
+        'flaggable_type' => 'App\Models\Image',
+        'reason' => 'This image is pending review after upload',
+      ]);
+      $dbImage->user->notify(new ImageAutoFlagNotification($dbImage));
 
       $ids[] = $dbImage->id;
     }
