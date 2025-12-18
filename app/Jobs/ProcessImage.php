@@ -52,15 +52,19 @@ class ProcessImage implements ShouldQueue, ShouldBeUnique
 
     $contents = Storage::get($this->dbImage->path);
 
+    // Send to CLIP service
     $res = Http::attach('file', $contents, $this->fileClientOriginalName)
       ->timeout(180)
       ->post(config('services.clip.url'));
 
+    // Handle errors
     $resJson = $res->json();
     if (!isset($resJson['tags'], $resJson['flag'])) {
       $this->failed();
       return;
     }
+
+    // Process response
     $resTags = $resJson['tags'];
     $resFlag = $resJson['flag'];
 
