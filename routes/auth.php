@@ -37,6 +37,12 @@ Route::get('/azure/callback', function () {
   return redirect('/');
 })->name('login.azure.callback');
 
+Route::middleware('guest')->group(function () {
+  Route::get('login', [AuthenticatedSessionController::class, 'create'])->name(
+    'login'
+  );
+});
+
 Route::middleware('auth')->group(function () {
   Route::post('logout', [
     AuthenticatedSessionController::class,

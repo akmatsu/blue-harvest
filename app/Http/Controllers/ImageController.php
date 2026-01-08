@@ -327,7 +327,7 @@ class ImageController extends Controller
       return Inertia::render('Manage/Images', ['images' => $images]);
     }
 
-    return redirect()->route('login');
+    return redirect()->route('login.azure');
   }
 
   public function delete($id)
