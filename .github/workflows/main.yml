@@ -19,7 +19,7 @@ jobs:
             cd ./blue-harvest &&
             git pull && 
             composer install --no-dev --prefer-dist --no-progress --no-interaction &&
-            /home/ubuntu/.nvm/versions/node/v20.14.0/bin/npm i &&
+            /home/ubuntu/.nvm/versions/node/v20.14.0/bin/npm ci &&
             /home/ubuntu/.nvm/versions/node/v20.14.0/bin/npm run build &&
             php artisan migrate --force &&
             php artisan optimize:clear &&
