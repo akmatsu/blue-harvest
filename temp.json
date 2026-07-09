@@ -1,0 +1,315 @@
+{
+  "Reservations": [
+    {
+      "ReservationId": "r-07b0f2f3f4d3d814b",
+      "OwnerId": "402790691795",
+      "Groups": [],
+      "Instances": [
+        {
+          "Architecture": "x86_64",
+          "BlockDeviceMappings": [
+            {
+              "DeviceName": "/dev/sda1",
+              "Ebs": {
+                "AttachTime": "2024-06-12T21:10:54+00:00",
+                "DeleteOnTermination": true,
+                "Status": "attached",
+                "VolumeId": "vol-0e9a3d680f8007d77"
+              }
+            }
+          ],
+          "ClientToken": "4d038600-721c-420a-a286-cafb03eda825",
+          "EbsOptimized": true,
+          "EnaSupport": true,
+          "Hypervisor": "xen",
+          "NetworkInterfaces": [
+            {
+              "Association": {
+                "IpOwnerId": "amazon",
+                "PublicDnsName": "ec2-34-209-43-56.us-west-2.compute.amazonaws.com",
+                "PublicIp": "34.209.43.56"
+              },
+              "Attachment": {
+                "AttachTime": "2024-06-12T21:10:54+00:00",
+                "AttachmentId": "eni-attach-017adb66dc1153dfb",
+                "DeleteOnTermination": true,
+                "DeviceIndex": 0,
+                "Status": "attached",
+                "NetworkCardIndex": 0
+              },
+              "Description": "",
+              "Groups": [
+                {
+                  "GroupId": "sg-0f9712f93e621694e",
+                  "GroupName": "blue harvest-prod-web-server-sg"
+                }
+              ],
+              "Ipv6Addresses": [],
+              "MacAddress": "02:2b:90:ac:50:37",
+              "NetworkInterfaceId": "eni-00046655cd086ad31",
+              "OwnerId": "402790691795",
+              "PrivateDnsName": "ip-172-31-21-166.us-west-2.compute.internal",
+              "PrivateIpAddress": "172.31.21.166",
+              "PrivateIpAddresses": [
+                {
+                  "Association": {
+                    "IpOwnerId": "amazon",
+                    "PublicDnsName": "ec2-34-209-43-56.us-west-2.compute.amazonaws.com",
+                    "PublicIp": "34.209.43.56"
+                  },
+                  "Primary": true,
+                  "PrivateDnsName": "ip-172-31-21-166.us-west-2.compute.internal",
+                  "PrivateIpAddress": "172.31.21.166"
+                }
+              ],
+              "SourceDestCheck": true,
+              "Status": "in-use",
+              "SubnetId": "subnet-62d49f1b",
+              "VpcId": "vpc-9b9e60e3",
+              "InterfaceType": "interface",
+              "Operator": {
+                "Managed": false
+              }
+            }
+          ],
+          "RootDeviceName": "/dev/sda1",
+          "RootDeviceType": "ebs",
+          "SecurityGroups": [
+            {
+              "GroupId": "sg-0f9712f93e621694e",
+              "GroupName": "blue harvest-prod-web-server-sg"
+            }
+          ],
+          "SourceDestCheck": true,
+          "Tags": [
+            {
+              "Key": "Name",
+              "Value": "blue harvest-prod-web-server"
+            },
+            {
+              "Key": "project",
+              "Value": "blue harvest"
+            },
+            {
+              "Key": "managed_by",
+              "Value": "terraform"
+            },
+            {
+              "Key": "environment",
+              "Value": "prod"
+            }
+          ],
+          "VirtualizationType": "hvm",
+          "CpuOptions": {
+            "CoreCount": 1,
+            "ThreadsPerCore": 2
+          },
+          "CapacityReservationSpecification": {
+            "CapacityReservationPreference": "open"
+          },
+          "HibernationOptions": {
+            "Configured": false
+          },
+          "MetadataOptions": {
+            "State": "applied",
+            "HttpTokens": "required",
+            "HttpPutResponseHopLimit": 2,
+            "HttpEndpoint": "enabled",
+            "HttpProtocolIpv6": "disabled",
+            "InstanceMetadataTags": "disabled"
+          },
+          "EnclaveOptions": {
+            "Enabled": false
+          },
+          "BootMode": "uefi-preferred",
+          "PlatformDetails": "Linux/UNIX",
+          "UsageOperation": "RunInstances",
+          "UsageOperationUpdateTime": "2024-06-12T21:10:54+00:00",
+          "PrivateDnsNameOptions": {
+            "HostnameType": "ip-name",
+            "EnableResourceNameDnsARecord": true,
+            "EnableResourceNameDnsAAAARecord": false
+          },
+          "MaintenanceOptions": {
+            "AutoRecovery": "default",
+            "RebootMigration": "default"
+          },
+          "CurrentInstanceBootMode": "uefi",
+          "NetworkPerformanceOptions": {
+            "BandwidthWeighting": "default"
+          },
+          "Operator": {
+            "Managed": false
+          },
+          "InstanceId": "i-00ff09ba275095149",
+          "ImageId": "ami-0cf2b4e024cdb6960",
+          "State": {
+            "Code": 16,
+            "Name": "running"
+          },
+          "PrivateDnsName": "ip-172-31-21-166.us-west-2.compute.internal",
+          "PublicDnsName": "ec2-34-209-43-56.us-west-2.compute.amazonaws.com",
+          "StateTransitionReason": "",
+          "KeyName": "blueharvest-ec2-keypair",
+          "AmiLaunchIndex": 0,
+          "ProductCodes": [],
+          "InstanceType": "t3a.large",
+          "LaunchTime": "2024-06-19T00:08:40+00:00",
+          "Placement": {
+            "AvailabilityZoneId": "usw2-az1",
+            "GroupName": "",
+            "Tenancy": "default",
+            "AvailabilityZone": "us-west-2a"
+          },
+          "Monitoring": {
+            "State": "disabled"
+          },
+          "SubnetId": "subnet-62d49f1b",
+          "VpcId": "vpc-9b9e60e3",
+          "PrivateIpAddress": "172.31.21.166",
+          "PublicIpAddress": "34.209.43.56"
+        }
+      ]
+    }
+  ],
+  "DBInstances": [
+    {
+      "DBInstanceIdentifier": "blue-harvest-database-instance",
+      "DBInstanceClass": "db.t3.small",
+      "Engine": "mysql",
+      "DBInstanceStatus": "available",
+      "MasterUsername": "blueharvestuser",
+      "DBName": "blueharvest_db",
+      "Endpoint": {
+        "Address": "blue-harvest-database-instance.cqcc6ehpi0yp.us-west-2.rds.amazonaws.com",
+        "Port": 3306,
+        "HostedZoneId": "Z1PVIF0B656C1W"
+      },
+      "AllocatedStorage": 20,
+      "InstanceCreateTime": "2024-06-12T22:36:09.793000+00:00",
+      "PreferredBackupWindow": "08:05-08:35",
+      "BackupRetentionPeriod": 7,
+      "DBSecurityGroups": [],
+      "VpcSecurityGroups": [
+        {
+          "VpcSecurityGroupId": "sg-0108811f8af891ee2",
+          "Status": "active"
+        },
+        {
+          "VpcSecurityGroupId": "sg-0f9712f93e621694e",
+          "Status": "active"
+        }
+      ],
+      "DBParameterGroups": [
+        {
+          "DBParameterGroupName": "default.mysql8.0",
+          "ParameterApplyStatus": "in-sync"
+        }
+      ],
+      "AvailabilityZone": "us-west-2a",
+      "DBSubnetGroup": {
+        "DBSubnetGroupName": "default",
+        "DBSubnetGroupDescription": "default",
+        "VpcId": "vpc-9b9e60e3",
+        "SubnetGroupStatus": "Complete",
+        "Subnets": [
+          {
+            "SubnetIdentifier": "subnet-62d49f1b",
+            "SubnetAvailabilityZone": {
+              "Name": "us-west-2a"
+            },
+            "SubnetOutpost": {},
+            "SubnetStatus": "Active"
+          },
+          {
+            "SubnetIdentifier": "subnet-dc6b1f97",
+            "SubnetAvailabilityZone": {
+              "Name": "us-west-2b"
+            },
+            "SubnetOutpost": {},
+            "SubnetStatus": "Active"
+          },
+          {
+            "SubnetIdentifier": "subnet-2befca71",
+            "SubnetAvailabilityZone": {
+              "Name": "us-west-2c"
+            },
+            "SubnetOutpost": {},
+            "SubnetStatus": "Active"
+          },
+          {
+            "SubnetIdentifier": "subnet-2ed4ef06",
+            "SubnetAvailabilityZone": {
+              "Name": "us-west-2d"
+            },
+            "SubnetOutpost": {},
+            "SubnetStatus": "Active"
+          }
+        ]
+      },
+      "PreferredMaintenanceWindow": "tue:07:06-tue:07:36",
+      "PendingModifiedValues": {},
+      "LatestRestorableTime": "2026-01-14T22:25:00+00:00",
+      "MultiAZ": false,
+      "EngineVersion": "8.0.42",
+      "AutoMinorVersionUpgrade": true,
+      "ReadReplicaDBInstanceIdentifiers": [],
+      "LicenseModel": "general-public-license",
+      "StorageThroughput": 0,
+      "OptionGroupMemberships": [
+        {
+          "OptionGroupName": "default:mysql-8-0",
+          "Status": "in-sync"
+        }
+      ],
+      "PubliclyAccessible": false,
+      "StorageType": "gp2",
+      "DbInstancePort": 0,
+      "StorageEncrypted": true,
+      "KmsKeyId": "arn:aws:kms:us-west-2:402790691795:key/625690ad-a844-4fab-ae8f-588824b04c7b",
+      "DbiResourceId": "db-AD2YAVBCT3IHJI4X6Y6N5HOFZY",
+      "CACertificateIdentifier": "rds-ca-rsa2048-g1",
+      "DomainMemberships": [],
+      "CopyTagsToSnapshot": true,
+      "MonitoringInterval": 60,
+      "EnhancedMonitoringResourceArn": "arn:aws:logs:us-west-2:402790691795:log-group:RDSOSMetrics:log-stream:db-AD2YAVBCT3IHJI4X6Y6N5HOFZY",
+      "MonitoringRoleArn": "arn:aws:iam::402790691795:role/rds-monitoring-role",
+      "DBInstanceArn": "arn:aws:rds:us-west-2:402790691795:db:blue-harvest-database-instance",
+      "IAMDatabaseAuthenticationEnabled": false,
+      "DatabaseInsightsMode": "standard",
+      "PerformanceInsightsEnabled": false,
+      "DeletionProtection": true,
+      "AssociatedRoles": [],
+      "MaxAllocatedStorage": 100,
+      "TagList": [
+        {
+          "Key": "project",
+          "Value": "blue harvest"
+        },
+        {
+          "Key": "environment",
+          "Value": "prod"
+        },
+        {
+          "Key": "managed_by",
+          "Value": "terraform"
+        },
+        {
+          "Key": "Name",
+          "Value": "blue harvest-prod-database"
+        }
+      ],
+      "CustomerOwnedIpEnabled": false,
+      "NetworkType": "IPV4",
+      "ActivityStreamStatus": "stopped",
+      "BackupTarget": "region",
+      "CertificateDetails": {
+        "CAIdentifier": "rds-ca-rsa2048-g1",
+        "ValidTill": "2026-12-30T07:06:03+00:00"
+      },
+      "DedicatedLogVolume": false,
+      "IsStorageConfigUpgradeAvailable": false,
+      "EngineLifecycleSupport": "open-source-rds-extended-support-disabled"
+    }
+  ]
+}

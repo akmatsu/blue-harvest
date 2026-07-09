@@ -109,8 +109,8 @@ mysql -u root -p
 
 # Create database and user
 CREATE DATABASE blue_harvest;
-CREATE USER 'blueharvest_user'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON blue_harvest.* TO 'blueharvest_user'@'localhost';
+CREATE USER 'laravel'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON blue_harvest.* TO 'laravel'@'localhost';
 FLUSH PRIVILEGES;
 exit
 ```
